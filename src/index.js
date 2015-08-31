@@ -14,7 +14,9 @@ function gsd(x, y, noiseLevel, options){
 
     //Lets remove the noise for better performance
     // but for this we need to make a copy of the data !
-    y.slice(0);
+    // for big arrays the faters seems to be: http://jsperf.com/clone-array-slice-vs-while-vs-for/3
+
+    y=[].concat(y);
     for(var i=y.length-1;i>=0;i--){
         if(Math.abs(y[i])<noiseLevel)
             y[i]=0;
