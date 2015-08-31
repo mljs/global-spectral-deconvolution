@@ -1,7 +1,13 @@
 'use strict';
 
-
+var fs = require('fs');
 var gsd = require("..");
+
+
+var spectrum=JSON.parse(fs.readFileSync('./test//C2.json'));
+
+
+
 
 
 describe('Global spectra deconvolution', function () {
@@ -10,8 +16,8 @@ describe('Global spectra deconvolution', function () {
     it('Should provide the right result ...', function () {
 
 
-        var result = gsd([1,2,3,4,5],[1,1,2,1,1], 0.2, 2);
-
+        var result = gsd(spectrum[0],spectrum[1], 0.001, 0.1);
+console.log("---------------")
         console.log(result);
 
     });

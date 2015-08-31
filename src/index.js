@@ -39,10 +39,7 @@ function gsd(x, y, noiseLevel, options){
         ddY[j-2]=(1/(7*dx*dx))*(2*y[j-2] - y[j-1] - 2*y[j] - y[j+1] + 2*y[j+2]);
     }
     // pushs max and min points in convolution functions
-    var size= Y.length;
-    var stackInt = new Array(size);
-    var intervals = new Array(size);
-    var minddY = new Array(size);
+
     var maxDdy=0;
     //console.log(Y.length);
     for (var i = 0; i < Y.length ; i++){
@@ -51,7 +48,10 @@ function gsd(x, y, noiseLevel, options){
         }
     }
     //console.log(maxY+"x"+maxDy+"x"+maxDdy);
+    var minddY = new Array();
     var broadMask = new Array();
+    var intervals = new Array();
+    var stackInt = new Array();
     for (var i = 1; i < Y.length -1 ; i++){
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {
@@ -67,9 +67,10 @@ function gsd(x, y, noiseLevel, options){
                 console.log("Error I don't know why "+e);
             }
         }
+
         if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
-            minddY.push( [X[i], Y[i], i] );
-            if(Math.abs(ddY[i])>0.0025*maxDdy){
+            minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            if(Math.abs(ddY[i])>0.0025*maxDdy){ // TODO should this be a parameter =
                 broadMask.push(false);
             }
             else{
@@ -77,6 +78,8 @@ function gsd(x, y, noiseLevel, options){
             }
         }
     }
+
+
     // creates a list with (frequency, linewith, height)
     dx = Math.abs(dx);
     //var signalsS = new Array();
