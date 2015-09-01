@@ -2,7 +2,8 @@
 function gsdLight(x, y, options){
     var options=options || {};
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
-    if (options.noiseLevel===undefined) options.noiseLevel=0;;
+    if (options.noiseLevel===undefined) options.noiseLevel=0;
+    if (options.maxCriteria===undefined) options.maxCriteria=true;
 
     if (options.noiseLevel>0) {
         y=[].concat(y);
@@ -33,41 +34,56 @@ function gsdLight(x, y, options){
     }
 
     var maxDdy=0;
+    var maxY = 0;
     //console.log(Y.length);
     for (var i = 0; i < Y.length ; i++){
         if(Math.abs(ddY[i])>maxDdy){
             maxDdy = Math.abs(ddY[i]);
         }
+        if(Math.abs(Y[i])>maxY){
+            maxY = Math.abs(Y[i]);
+        }
     }
     //console.log(maxY+"x"+maxDy+"x"+maxDdy);
     var minddY = [];
     var intervals = [];
-    var stackInt = [];
+    var lastMax = null;
+    var lastMin = null;
+    //By the intermediate value theorem We cannot find 2 consecutive maxima or minima
     for (var i = 1; i < Y.length -1 ; i++){
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {
-            stackInt.push(X[i]);
+            lastMax = X[i];
+            if(lastMin!=null){
+                intervals.push( [lastMax , lastMin] );
+            }
         }
 
         if ((dY[i] >= dY[i-1]) && (dY[i] > dY[i+1])||
             (dY[i] > dY[i-1]) && (dY[i] >= dY[i+1])) {
-            try{
-                intervals.push( [X[i] , stackInt.pop()] );
-            }
-            catch(e){
-                console.log("Error I don't know why "+e);
+            lastMin = X[i];
+            if(lastMax!=null){
+                intervals.push( [lastMax , lastMin] );
             }
         }
 
-        if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
-            minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+        if(options.maxCriteria){
+            //The peaks are considered the local maximum of the signal. i.e: NMR, MASS
+            if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
+                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            }
         }
+        else{
+            //The peaks are considered the local maximum of the signal. i.e: Absorption IR
+            if ((ddY[i] > ddY[i-1]) && (ddY[i] > ddY[i+1])) {
+                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            }
+        }
+
     }
 
 
     var signals = [];
-
-    Y.sort(function(a, b){return b-a});
 
     for (var j = 0; j < minddY.length; j++){
         var f = minddY[j];
@@ -85,7 +101,8 @@ function gsdLight(x, y, options){
                 var inter = possible[0];
                 var linewidth = Math.abs(inter[1] - inter[0]);
                 var height = f[1];
-                if (Math.abs(height) > options.minMaxRatio*Y[0]) {
+                //console.log(height);
+                if (Math.abs(height) > options.minMaxRatio*maxY) {
                     signals.push({
                         x: frequency,
                         y: height,

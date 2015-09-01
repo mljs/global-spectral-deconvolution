@@ -12,7 +12,7 @@ var y=xy[1];
 
 var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
 
-
+//console.log(y);
 var result=gsdLight(x, y, {noiseLevel: 0});
 
 console.log(result);
