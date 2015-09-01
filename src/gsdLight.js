@@ -113,7 +113,7 @@ function gsdLight(x, y, options){
             else
             {
                 //TODO: nested peaks
-                console.log("Nested "+possible);
+               // console.log("Nested "+possible);
             }
     }
 
