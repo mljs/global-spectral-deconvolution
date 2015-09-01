@@ -10,6 +10,8 @@ options:
  */
 
 function gsd(x, y, noiseLevel, options){
+    console.log("DO GSD")
+
     options=options || {minMaxRatio:0.00025,broadRatio:0.0025};
 
     //Lets remove the noise for better performance
@@ -179,3 +181,4 @@ function gsd(x, y, noiseLevel, options){
 }
 
 module.exports=gsd;
+
