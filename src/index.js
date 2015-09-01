@@ -15,6 +15,7 @@ function gsd(x, y, options){
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
     if (options.broadRatio===undefined) options.broadRatio=0.0025;
     if (options.noiseLevel===undefined) options.noiseLevel=0;
+    if (options.maxCriteria===undefined) options.maxCriteria=true;
 
 
     //Lets remove the noise for better performance
@@ -51,42 +52,63 @@ function gsd(x, y, options){
     // pushs max and min points in convolution functions
 
     var maxDdy=0;
+    var maxY = 0;
     //console.log(Y.length);
     for (var i = 0; i < Y.length ; i++){
         if(Math.abs(ddY[i])>maxDdy){
             maxDdy = Math.abs(ddY[i]);
+        }
+        if(Math.abs(Y[i])>maxY){
+            maxY = Math.abs(Y[i]);
         }
     }
     //console.log(maxY+"x"+maxDy+"x"+maxDdy);
     var minddY = new Array();
     var broadMask = new Array();
     var intervals = new Array();
-    var stackInt = new Array();
+    var lastMax = null;
+    var lastMin = null;
+
     for (var i = 1; i < Y.length -1 ; i++){
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {
-            stackInt.push(X[i]);
+            lastMax = X[i];
+            if(lastMin!=null){
+                intervals.push( [lastMax , lastMin] );
+            }
         }
 
         if ((dY[i] >= dY[i-1]) && (dY[i] > dY[i+1])||
             (dY[i] > dY[i-1]) && (dY[i] >= dY[i+1])) {
-            try{
-                intervals.push( [X[i] , stackInt.pop()] );
-            }
-            catch(e){
-                console.log("Error I don't know why "+e);
+            lastMin = X[i];
+            if(lastMax!=null){
+                intervals.push( [lastMax , lastMin] );
             }
         }
 
-        if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
-            minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-            if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
-                broadMask.push(false);
-            }
-            else{
-                broadMask.push(true);
+        if(options.maxCriteria){
+            if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
+                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+                if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
+                    broadMask.push(false);
+                }
+                else{
+                    broadMask.push(true);
+                }
             }
         }
+        else{
+            if ((ddY[i] > ddY[i-1]) && (ddY[i] > ddY[i+1])) {
+                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+                if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
+                    broadMask.push(false);
+                }
+                else{
+                    broadMask.push(true);
+                }
+            }
+        }
+
     }
     //console.log(minddY);
     // creates a list with (frequency, linewith, height)

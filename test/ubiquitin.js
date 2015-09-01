@@ -15,7 +15,7 @@ describe('Global spectra deconvolution', function () {
     var spectrum=parser.parse(fs.readFileSync('./test/ubiquitin.txt', 'utf-8'), {arrayType: 'xxyy'});
     var result = gsd(spectrum[0],spectrum[1], {noiseLevel: 0.001, minMaxRatio:0,broadRatio:0});
 
-
+    console.log(result.length);
     // Test case obtained from Pag 443, Chap 8.
     it('Should provide the right result ...', function () {
 
