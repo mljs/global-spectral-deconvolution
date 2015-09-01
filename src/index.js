@@ -10,7 +10,7 @@ options:
  */
 
 function gsd(x, y, noiseLevel, options){
-    var options=options || {};
+    options=options || {minMaxRatio:0.00025,broadRatio:0.0025};
 
     //Lets remove the noise for better performance
     // but for this we need to make a copy of the data !
@@ -27,17 +27,19 @@ function gsd(x, y, noiseLevel, options){
     var X = [];//x[2:(x.length-2)];
 
     // fill Savitzky-Golay polynomes
-    var size= x.length-2;
+    var size= x.length-4;
     var Y = new Array(size);
     var dY = new Array(size);
     var ddY = new Array(size);
     var counter=0;
-    for (var j = 2; j < size; j++) {
+
+    for (var j = 2; j < size-2; j++) {
         Y[j-2]=(1/35.0)*(-3*y[j-2] + 12*y[j-1] + 17*y[j] + 12*y[j+1] - 3*y[j+2]);
         X[j-2]=x[j];
         dY[j-2]=(1/(12*dx))*(y[j-2] - 8*y[j-1] + 8*y[j+1] - y[j+2]);
         ddY[j-2]=(1/(7*dx*dx))*(2*y[j-2] - y[j-1] - 2*y[j] - y[j+1] + 2*y[j+2]);
     }
+    //console.log(Y);
     // pushs max and min points in convolution functions
 
     var maxDdy=0;
@@ -70,7 +72,7 @@ function gsd(x, y, noiseLevel, options){
 
         if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
             minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-            if(Math.abs(ddY[i])>0.0025*maxDdy){ // TODO should this be a parameter =
+            if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
                 broadMask.push(false);
             }
             else{
@@ -78,23 +80,23 @@ function gsd(x, y, noiseLevel, options){
             }
         }
     }
-
-
+    //console.log(minddY);
     // creates a list with (frequency, linewith, height)
     dx = Math.abs(dx);
     //var signalsS = new Array();
     var signals = new Array();
-    var broadLines=[[[Number.MAX_VALUE,0,0]]];
+    var broadLines=[[Number.MAX_VALUE,0,0]];
 
-    Y.sort(function(a, b){return a-b});
-
+    Y.sort(function(a, b){return b-a});
+    //console.log(Y[0]);
     for (var j = 0; j < minddY.length; j++){
         var f = minddY[j];
         var frequency = f[0];
         var possible = new Array();
         for (var k=0;k<intervals.length;k++){
             var i = intervals[k];
-            if (frequency > i[0] && frequency < i[1])
+            //if (frequency > i[0] && frequency < i[1])
+            if(Math.abs(frequency-(i[0]+i[1])/2)<Math.abs(i[0]-i[1])/2)
                 possible.push(i);
         }
         //console.log("possible "+possible.length);
@@ -104,7 +106,7 @@ function gsd(x, y, noiseLevel, options){
                 var inter = possible[0];
                 var linewidth = Math.abs(inter[1] - inter[0]);
                 var height = f[1];
-                if (Math.abs(height) > 0.00025*Y[0]){
+                if (Math.abs(height) > options.minMaxRatio*Y[0]){
                     if(!broadMask[j]){
                         signals.push([frequency, height, linewidth]);
                         //signalsS.push([frequency, height]);
@@ -120,6 +122,9 @@ function gsd(x, y, noiseLevel, options){
                 console.log("Nested "+possible);
             }
     }
+
+    //console.log(x.length)
+    //console.log(broadLines.length)
     //console.log(signalsS);
     //Optimize the possible broad lines
     var max=0, maxI=0,count=0;
@@ -153,7 +158,7 @@ function gsd(x, y, noiseLevel, options){
                 }
             }
             else{
-                var fitted =  this.optimizeLorentzian(candidates);
+                var fitted =  [];//this.optimizeLorentzian(candidates);
                 //console.log(fitted);
                 signals.push(fitted);
                 //signalsS.push([fitted[0], fitted[1]]);
