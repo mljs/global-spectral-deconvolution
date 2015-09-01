@@ -15,7 +15,7 @@ var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
 
 var result=gsdLight(x, y, {noiseLevel: noiseLevel});
 
-
+console.log(result);
 
 describe.only('Check the peak picking of a simulated mass spectrum', function () {
     it('Check result', function () {

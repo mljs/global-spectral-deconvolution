@@ -9,20 +9,25 @@ options:
 *
  */
 
-function gsd(x, y, noiseLevel, options){
-    console.log("DO GSD")
+function gsd(x, y, options){
+    options=options || {};
+    if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
+    if (options.broadRatio===undefined) options.broadRatio=0.0025;
+    if (options.noiseLevel===undefined) options.noiseLevel=0;;
 
-    options=options || {minMaxRatio:0.00025,broadRatio:0.0025};
 
     //Lets remove the noise for better performance
     // but for this we need to make a copy of the data !
     // for big arrays the faters seems to be: http://jsperf.com/clone-array-slice-vs-while-vs-for/3
-
-    y=[].concat(y);
-    for(var i=y.length-1;i>=0;i--){
-        if(Math.abs(y[i])<noiseLevel)
-            y[i]=0;
+    if (options.noiseLevel>0) {
+        y=[].concat(y);
+        for (var i=0; i<y.length; i++){
+            if(Math.abs(y[i])<options.noiseLevel) {
+                y[i]=0;
+            }
+        }
     }
+
 
     var dx = x[1]-x[0];
     // fill convolution frequency axis
@@ -35,7 +40,7 @@ function gsd(x, y, noiseLevel, options){
     var ddY = new Array(size);
     var counter=0;
 
-    for (var j = 2; j < size-2; j++) {
+    for (var j = 2; j < size+2; j++) {
         Y[j-2]=(1/35.0)*(-3*y[j-2] + 12*y[j-1] + 17*y[j] + 12*y[j+1] - 3*y[j+2]);
         X[j-2]=x[j];
         dY[j-2]=(1/(12*dx))*(y[j-2] - 8*y[j-1] + 8*y[j+1] - y[j+2]);
