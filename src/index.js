@@ -17,6 +17,12 @@ function gsd(x, y, options){
     if (options.noiseLevel===undefined) options.noiseLevel=0;
     if (options.maxCriteria===undefined) options.maxCriteria=true;
 
+    //TODO Find a better way to do it.
+    if (options.functionType === undefined) options.functionType = "lorentzian";
+    //Lorentzian by default
+    var widthCorrection = 1.04720;// From http://mathworld.wolfram.com/LorentzianFunction.html
+    if(options.functionType === "gaussian")
+        widthCorrection = 1.17741; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
 
     //Lets remove the noise for better performance
     // but for this we need to make a copy of the data !
@@ -68,24 +74,25 @@ function gsd(x, y, options){
     var intervals = new Array();
     var lastMax = null;
     var lastMin = null;
-
+    console.log("dx "+dx);
     for (var i = 1; i < Y.length -1 ; i++){
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {
-            lastMax = X[i];
-            if(lastMin!=null){
+            lastMin = X[i];
+            //console.log("min "+lastMin);
+            if(dx>0&&lastMax!=null){
                 intervals.push( [lastMax , lastMin] );
             }
         }
 
         if ((dY[i] >= dY[i-1]) && (dY[i] > dY[i+1])||
             (dY[i] > dY[i-1]) && (dY[i] >= dY[i+1])) {
-            lastMin = X[i];
-            if(lastMax!=null){
+            lastMax = X[i];
+            //console.log("max "+lastMax);
+            if(dx<0&&lastMin!=null){
                 intervals.push( [lastMax , lastMin] );
             }
         }
-
         if(options.maxCriteria){
             if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
                 minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
@@ -108,7 +115,6 @@ function gsd(x, y, options){
                 }
             }
         }
-
     }
     //console.log(minddY);
     // creates a list with (frequency, linewith, height)
@@ -117,7 +123,7 @@ function gsd(x, y, options){
     var signals = new Array();
     var broadLines=[[Number.MAX_VALUE,0,0]];
 
-    Y.sort(function(a, b){return b-a});
+    //Y.sort(function(a, b){return b-a});
     //console.log(Y[0]);
     for (var j = 0; j < minddY.length; j++){
         var f = minddY[j];
@@ -134,9 +140,9 @@ function gsd(x, y, options){
             if (possible.length == 1)
             {
                 var inter = possible[0];
-                var linewidth = Math.abs(inter[1] - inter[0]);
+                var linewidth = Math.abs(inter[1] - inter[0])*widthCorrection;
                 var height = f[1];
-                if (Math.abs(height) > options.minMaxRatio*Y[0]){
+                if (Math.abs(height) > options.minMaxRatio*maxY){
                     if(!broadMask[j]){
                         signals.push([frequency, height, linewidth]);
                         //signalsS.push([frequency, height]);
@@ -149,7 +155,7 @@ function gsd(x, y, options){
             else
             {
                 //TODO: nested peaks
-                console.log("Nested "+possible);
+                //console.log("Nested "+possible);
             }
     }
 

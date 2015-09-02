@@ -19,7 +19,7 @@ describe('Global spectra deconvolution', function () {
 
 
         var result = gsd(spectrum[0],spectrum[1], {noiseLevel: 0.001, minMaxRatio:0});
-        console.log(result);
+        //console.log(result);
 
     });
 });
