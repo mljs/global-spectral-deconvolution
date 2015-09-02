@@ -1,6 +1,6 @@
 
 function gsdLight(x, y, options){
-    var options=options || {};
+    var options=Object.create(options || {});
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
     if (options.noiseLevel===undefined) options.noiseLevel=0;
     if (options.maxCriteria===undefined) options.maxCriteria=true;
