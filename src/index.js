@@ -11,7 +11,6 @@ options:
 
 function gsd(x, y, options){
     var options=options || {};
-    options.abc=1234;
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
     if (options.broadRatio===undefined) options.broadRatio=0.0025;
     if (options.noiseLevel===undefined) options.noiseLevel=0;

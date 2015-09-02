@@ -23,9 +23,10 @@ var result=gsdLight(x, y, {noiseLevel: 0, functionType:"gaussian"});
 console.log(result);
 console.log(result.length);
 
-/*describe.only('Check the peak picking of a simulated mass spectrum', function () {
+describe.only('Check the peak picking of a simulated mass spectrum', function () {
+
     it('Check result', function () {
 
     });
-});*/
+});
 
