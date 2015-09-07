@@ -73,7 +73,7 @@ function gsd(x, y, options){
     var intervals = new Array();
     var lastMax = null;
     var lastMin = null;
-    console.log("dx "+dx);
+    //console.log("dx "+dx);
     for (var i = 1; i < Y.length -1 ; i++){
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {

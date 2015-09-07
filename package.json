@@ -32,7 +32,7 @@
     "ml-stat": "^1.0.1"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "0.0.1",
+    "ml-optimize-lorentzian": "../optimize-lorentzian",
     "ml-stat": "^1.0.1",
     "xy-parser": "^1.1.0"
   }

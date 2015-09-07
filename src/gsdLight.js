@@ -5,13 +5,6 @@ function gsdLight(x, y, options){
     if (options.noiseLevel===undefined) options.noiseLevel=0;
     if (options.maxCriteria===undefined) options.maxCriteria=true;
 
-    //TODO Find a better way to do it.
-    if (options.functionType === undefined) options.functionType = "lorentzian";
-    //Lorentzian by default
-    var widthCorrection = 1.04720;// From http://mathworld.wolfram.com/LorentzianFunction.html
-    if(options.functionType === "gaussian")
-        widthCorrection = 1.17741; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
-
 
     if (options.noiseLevel>0) {
         y=[].concat(y);
@@ -30,25 +23,26 @@ function gsdLight(x, y, options){
     var Y = new Array(size);
     var dY = new Array(size);
     var ddY = new Array(size);
-    var dX = new Array(size);
+    //var dX = new Array(size);
     var dx = x[1]-x[0];
 
     for (var j = 2; j < size+2; j++) {
-        dx = 0;
+        /*dx = 0;
         dX[j-2] = x[j]-x[j-1];
         for(k=-1;k<=2;k++)
             dx+=x[j-k+1]-x[j-k];
-        dx/=4;
+        dx/=4;*/
+        dx = x[j]-x[j-1];
         Y[j-2]=(1/35.0)*(-3*y[j-2] + 12*y[j-1] + 17*y[j] + 12*y[j+1] - 3*y[j+2]);
         X[j-2]=x[j];
         dY[j-2]=(1/(12*dx))*(y[j-2] - 8*y[j-1] + 8*y[j+1] - y[j+2]);
         ddY[j-2]=(1/(7*dx*dx))*(2*y[j-2] - y[j-1] - 2*y[j] - y[j+1] + 2*y[j+2]);
 
-        if(Math.max(dx,dX[j-2])/Math.min(dx,dX[j-2])>1.00001){
+        /*if(Math.max(dx,dX[j-2])/Math.min(dx,dX[j-2])>1.00001){
 
             Y[j-2]=0;
 
-        }
+        }*/
 
     }
 
@@ -71,6 +65,7 @@ function gsdLight(x, y, options){
     //console.log(dx);
     //By the intermediate value theorem We cannot find 2 consecutive maxima or minima
     for (var i = 1; i < Y.length -1 ; i++){
+        //console.log(dY[i]);
         if ((dY[i] < dY[i-1]) && (dY[i] <= dY[i+1])||
             (dY[i] <= dY[i-1]) && (dY[i] < dY[i+1])) {
             lastMin = X[i];
@@ -128,7 +123,7 @@ function gsdLight(x, y, options){
                     signals.push({
                         x: frequency,
                         y: height,
-                        width: linewidth*widthCorrection
+                        width: linewidth//*widthCorrection
                     })
                 }
             }
