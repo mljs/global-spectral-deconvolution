@@ -39,7 +39,7 @@ function sampleFunction(from, to, x, y, lastIndex){
     return [sampleX, sampleY];
 }
 
-function optimizePeaks(peakList,x,y,n){
+function optimizePeaks(peakList,x,y,n, fnType){
     var i, j, lastIndex=[0];
     var groups = groupPeaks(peakList,n);
     var result = [];
@@ -49,7 +49,26 @@ function optimizePeaks(peakList,x,y,n){
         var peaks = groups[i].group;
         if(peaks.length>1){
             //Multiple peaks
-            console.log("Pending group of overlaped peaks "+peaks.length);
+            //console.log("Pending group of overlaped peaks "+peaks.length);
+            //console.log(groups[i].limits);
+            var sampling = sampleFunction(groups[i].limits[0]-groups[i].limits[1],groups[i].limits[0]+groups[i].limits[1],x,y,lastIndex);
+            //console.log(sampling);
+            if(sampling[0].length>5){
+                var error = peaks[0].width/1000;
+                var opts = [  3,    100, error, error, error, error*10, error*10,    11,    9,        1 ];
+                //var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
+                var optPeaks = [];
+                if(fnType=="gaussian")
+                    optPeaks = Opt.optimizeGaussianSum(sampling, peaks, opts);
+                else{
+                    if(fnType=="lorentzian"){
+                        optPeaks = Opt.optimizeLorentzianSum(sampling, peaks, opts);
+                    }
+                }
+                for(j=0;j<optPeaks.length;j++){
+                    result.push({x:optPeaks[j][0],y:optPeaks[j][1],width:optPeaks[j][2]});
+                }
+            }
         }
         else{
             //Single peak
@@ -58,17 +77,19 @@ function optimizePeaks(peakList,x,y,n){
                 peaks.x+n*peaks.width,x,y,lastIndex);
             //console.log(sampling);
             if(sampling[0].length>5){
-                var error = peaks.width/10000;
+                var error = peaks.width/1000;
                 var opts = [  3,    100, error, error, error, error*10, error*10,    11,    9,        1 ];
                 //var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
-                var gauss = Opt.optimizeSingleGaussian2(sampling[0], sampling[1], opts, peaks);
-                //console.log(gauss.X2);
-                gauss = gauss.p;
-                //console.log("Before");
-                //console.log(peakList[i]);
-                result.push({x:gauss[0],y:gauss[2],width:gauss[1]*2.35482}); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
-                //console.log("After");
-                //console.log(result);
+                //var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
+                var optPeak = [];
+                if(fnType=="gaussian")
+                    var optPeak = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks,  opts);
+                else{
+                    if(fnType=="lorentzian"){
+                        var optPeak = Opt.optimizeSingleLorentzian([sampling[0],sampling[1]], peaks,  opts);
+                    }
+                }
+                result.push({x:optPeak[0],y:optPeak[1],width:optPeak[2]}); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
             }
         }
 
@@ -132,8 +153,6 @@ function groupPeaks(peakList,nL){
     }
     return groups;
 }
-
-
 
 module.exports=optimizePeaks;
 

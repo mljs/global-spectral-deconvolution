@@ -8,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "build": "gulp build",
     "test": "mocha --require should --reporter mocha-better-spec-reporter --recursive"
   },
   "repository": {
@@ -24,6 +25,15 @@
   },
   "homepage": "https://github.com/mljs/global-spectra-deconvolution",
   "devDependencies": {
+    "browserify": "^8.1.3",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-header": "^1.2.2",
+    "gulp-rename": "^1.2.0",
+    "gulp-sourcemaps": "^1.3.0",
+    "gulp-uglify": "^1.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
     "mocha": "^2.2.5",
     "mocha-better-spec-reporter": "^2.1.1",
     "should": "^7.0.2",
