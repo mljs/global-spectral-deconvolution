@@ -9,15 +9,9 @@ var spectrum=CC.analyseMF("Cl2.Br2", {isotopomers:'arrayXXYY', fwhm:0.01, gaussi
 var xy=spectrum.arrayXXYY;
 var x=xy[0];
 var y=xy[1];
-
-/*for(var i=0;i< 400;i++){
-    console.log(x[i]+" "+y[i]);
-}
-*/
 //console.log(y);
 var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
 
-//console.log(y);
 var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false});
 console.log("Before optmization");
 console.log(result);
@@ -28,7 +22,7 @@ console.log(result);
 describe.only('Check the peak picking of a simulated mass spectrum', function () {
 
     it('Check result', function () {
-
+        
     });
 });
 

@@ -43,6 +43,9 @@ function optimizePeaks(peakList,x,y,n, fnType){
     var i, j, lastIndex=[0];
     var groups = groupPeaks(peakList,n);
     var result = [];
+    var factor = 1;
+    if(fnType=="gaussian")
+        factor = 1.17741;//From https://en.wikipedia.org/wiki/Gaussian_function#Properties
     //console.log(x[0]+" "+x[1]);
     for(i=0;i<groups.length;i++){
         //console.log(peakList[i]);
@@ -66,7 +69,7 @@ function optimizePeaks(peakList,x,y,n, fnType){
                     }
                 }
                 for(j=0;j<optPeaks.length;j++){
-                    result.push({x:optPeaks[j][0],y:optPeaks[j][1],width:optPeaks[j][2]});
+                    result.push({x:optPeaks[j][0],y:optPeaks[j][1],width:optPeaks[j][2]*factor});
                 }
             }
         }
@@ -89,7 +92,7 @@ function optimizePeaks(peakList,x,y,n, fnType){
                         var optPeak = Opt.optimizeSingleLorentzian([sampling[0],sampling[1]], peaks,  opts);
                     }
                 }
-                result.push({x:optPeak[0],y:optPeak[1],width:optPeak[2]}); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+                result.push({x:optPeak[0],y:optPeak[1],width:optPeak[2]*factor}); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
             }
         }
 
