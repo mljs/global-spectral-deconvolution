@@ -32,11 +32,11 @@ describe('Global spectra deconvolution2', function () {
     console.log("Parsing + gsd + optimization time: "+(d.getTime()-n));
 
 
-    for(var i=0;i<result.length;i++){
+   /* for(var i=0;i<result.length;i++){
         //if(result[i].width<0.05)
         console.log(result[i].x+" "+result[i].y+" "+result[i].width);
     }
-    console.log(result.length);
+    console.log(result.length);*/
 
     // Test case obtained from Pag 443, Chap 8.
     it('Should provide the right result ...', function () {

@@ -22,7 +22,7 @@ console.log(result);
 describe.only('Check the peak picking of a simulated mass spectrum', function () {
 
     it('Check result', function () {
-        
+
     });
 });
 

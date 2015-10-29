@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Global Spectra Deconvolution",
   "main": "src/index.js",
   "directories": {
@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "gulp build",
+    "build": "cheminfo build",
     "test": "mocha --require should --reporter mocha-better-spec-reporter --recursive"
   },
   "repository": {
@@ -16,7 +16,11 @@
     "url": "https://github.com/mljs/global-spectra-deconvolution.git"
   },
   "keywords": [
-    "Global Spectra Deconvolution"
+    "Global Spectra Deconvolution",
+    "peak",
+    "picking",
+    "optimization",
+    "gsd"
   ],
   "author": "Andres Castillo",
   "license": "MIT",
@@ -39,10 +43,11 @@
     "should": "^7.0.2",
     "xy-parser": "^1.0.0",
     "chemcalc": "^3.0.1",
-    "ml-stat": "^1.0.1"
+    "ml-stat": "^1.0.1",
+    "cheminfo-tools": "^1.0.2"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "../optimize-lorentzian",
+    "ml-optimize-lorentzian": "0.0.2",
     "ml-stat": "^1.0.1",
     "xy-parser": "^1.1.0"
   }

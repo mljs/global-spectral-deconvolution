@@ -1,5 +1,4 @@
-
-var optimizePeaks = require("../src/optimize");
+var Opt = require("ml-optimize-lorentzian");
 
 function gsd(x, y, options){
     var options=Object.create(options || {});
@@ -174,9 +173,11 @@ function gsd(x, y, options){
                     }
                 }
                 else{
-                    var fitted =  optimizePeaks.optimizeSingleLorentzian(candidates);
+                    var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
+                        width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
+                        []);
                     //console.log(fitted);
-                    signals.push(fitted);
+                    signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
                 }
                 candidates = [];
                 max = 0;
