@@ -3,7 +3,7 @@
 Global Spectra Deconvolution + Peak optimizer
 
 ## Example
-``
+```
 var CC = require('chemcalc');
 var Stat = require('ml-stat');
 var peakPicking = require("../src/index");
