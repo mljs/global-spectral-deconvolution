@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Global Spectra Deconvolution",
   "main": "src/index.js",
   "directories": {
@@ -29,14 +29,13 @@
   },
   "homepage": "https://github.com/mljs/global-spectra-deconvolution",
   "devDependencies": {
-    "cheminfo-tools": "^1.0.1",
+    "cheminfo-tools": "^1.0.2",
     "mocha": "^2.2.5",
     "mocha-better-spec-reporter": "^2.1.1",
     "should": "^7.0.2",
     "xy-parser": "^1.0.0",
     "chemcalc": "^3.0.1",
-    "ml-stat": "^1.0.1",
-    "cheminfo-tools": "^1.0.2"
+    "ml-stat": "^1.0.1"
   },
   "dependencies": {
     "ml-optimize-lorentzian": "0.0.2",

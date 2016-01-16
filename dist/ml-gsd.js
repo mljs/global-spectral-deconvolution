@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["mlGsd"] = factory();
+		exports["GSD"] = factory();
 	else
-		root["mlGsd"] = factory();
+		root["GSD"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
