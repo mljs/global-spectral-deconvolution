@@ -20,7 +20,7 @@ describe('Global spectra deconvolution HR mass spectra', function () {
     //console.log("Parsing time: "+(d.getTime()-n));
     var noiseLevel=Stat.array.max(spectrum[1])*0.015;
 
-    var result = peakPicking.gsd(spectrum[0],spectrum[1], {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false});
+    var result = peakPicking.gsd(spectrum[0],spectrum[1], {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false,realTopDetection:true});
     //console.log(result);
     d = new Date();
     //console.log("Parsing + gsd time: "+(d.getTime()-n));

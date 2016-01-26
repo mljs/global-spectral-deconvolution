@@ -1,5 +1,5 @@
 var Opt = require("ml-optimize-lorentzian");
-
+var stats = require("ml-stat");
 function gsd(x, y, options){
     var options=Object.create(options || {});
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
@@ -7,17 +7,28 @@ function gsd(x, y, options){
     if (options.noiseLevel===undefined) options.noiseLevel=0;
     if (options.maxCriteria===undefined) options.maxCriteria=true;
     if (options.smoothY===undefined) options.smoothY=true;
+    if (options.realTopDetection===undefined) options.realTopDetection=false;
 
 
-    if (options.noiseLevel>0) {
+    //Transform y to use the standard algorithm.
+    var yCorrection = {m:1, b:0};
+    if(!options.maxCriteria||options.noiseLevel>0){
         y=[].concat(y);
-        for (var i=0; i<y.length; i++){
-            if(Math.abs(y[i])<options.noiseLevel) {
-                y[i]=0;
+        var yCorrection = {m:-1, b:stats.array.max(y)};
+        if(!options.maxCriteria){
+            for (var i=0; i<y.length; i++){
+                y[i]=-y[i]+yCorrection.b;
+            }
+            options.noiseLevel=-options.noiseLevel+yCorrection.b;
+        }
+        if (options.noiseLevel>0) {
+            for (var i=0; i<y.length; i++){
+                if(Math.abs(y[i])<options.noiseLevel) {
+                    y[i]=0;
+                }
             }
         }
     }
-
     // fill convolution frequency axis
     var X = [];//x[2:(x.length-2)];
 
@@ -78,34 +89,21 @@ function gsd(x, y, options){
                 intervals.push( [lastMax , lastMin] );
             }
         }
-
-        if(options.maxCriteria){
-            if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
-                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-                if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
-                    broadMask.push(false);
-                }
-                else{
-                    broadMask.push(true);
-                }
+        if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
+            minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
+                broadMask.push(false);
+            }
+            else{
+                broadMask.push(true);
             }
         }
-        else{
-            if ((ddY[i] > ddY[i-1]) && (ddY[i] > ddY[i+1])) {
-                minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-                if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
-                    broadMask.push(false);
-                }
-                else{
-                    broadMask.push(true);
-                }
-            }
-        }
-
     }
-    realTopDetection(minddY,X,Y);
+    if(options.realTopDetection){
+        realTopDetection(minddY,X,Y);
+    }
+    //
     //console.log(intervals);
-    //console.log(minddY);
     var signals = [];
 
     for (var j = 0; j < minddY.length; j++){
@@ -128,8 +126,9 @@ function gsd(x, y, options){
                 if (Math.abs(height) > options.minMaxRatio*maxY) {
                     signals.push({
                         x: frequency,
-                        y: height,
-                        width: linewidth//*widthCorrection
+                        y: (height-yCorrection.b)/yCorrection.m,
+                        width: linewidth,//*widthCorrection
+                        soft:broadMask[j]
                     })
                 }
             }
@@ -139,7 +138,7 @@ function gsd(x, y, options){
                 // console.log("Nested "+possible);
             }
     }
-    if(options.broadRatio>0){
+    /*if(options.broadRatio>0){
         var broadLines=[[Number.MAX_VALUE,0,0]];
         //Optimize the possible broad lines
         var max=0, maxI=0,count=0;
@@ -185,7 +184,7 @@ function gsd(x, y, options){
                 count = 0;
             }
         }
-    }
+    }*/
 
     signals.sort(function (a, b) {
         return a.x - b.x;

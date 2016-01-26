@@ -8,7 +8,7 @@ describe('Global spectra deconvolution simple simulated spectrum', function () {
     // Test case obtained from Pag 443, Chap 8.
     it('Should provide the right result ...', function () {
         var spectrum=JSON.parse(fs.readFileSync('./test//C2.json', 'utf-8'));
-        var result = peakPicking.gsd(spectrum[0],spectrum[1], {noiseLevel: 0.001, minMaxRatio:0});
+        var result = peakPicking.gsd(spectrum[0],spectrum[1], {noiseLevel: 0.001, minMaxRatio:0,realTopDetection:true});
 
         result[0].x.should.approximately(24,0.02);
         result[0].y.should.approximately(0.09394372786996513,0.0005);

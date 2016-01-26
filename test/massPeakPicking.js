@@ -24,7 +24,7 @@ var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
 describe('Check the peak picking of a simulated mass spectrum', function () {
 
     it('Check result', function () {
-        var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false});
+        var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false,realTopDetection:true});
         result = peakPicking.optimize(result,x,y,1,"gaussian");
 
         result[0].x.should.approximately(69.938,0.02);
