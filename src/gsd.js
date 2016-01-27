@@ -14,8 +14,8 @@ function gsd(x, y, options){
     var yCorrection = {m:1, b:0};
     if(!options.maxCriteria||options.noiseLevel>0){
         y=[].concat(y);
-        var yCorrection = {m:-1, b:stats.array.max(y)};
         if(!options.maxCriteria){
+            yCorrection = {m:-1, b:stats.array.max(y)};
             for (var i=0; i<y.length; i++){
                 y[i]=-y[i]+yCorrection.b;
             }
