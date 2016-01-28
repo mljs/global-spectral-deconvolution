@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "Global Spectra Deconvolution",
   "main": "src/index.js",
   "directories": {
@@ -41,7 +41,7 @@
     "ml-optimize-lorentzian": "0.0.2",
     "ml-stat": "^1.0.1",
     "xy-parser": "^1.1.0",
-    "ml-savitzky-golay-generalized":"1.0.0",
-    "extend":"3.0.0"
+    "ml-savitzky-golay-generalized": "1.0.0",
+    "extend": "3.0.0"
   }
 }

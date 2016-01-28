@@ -225,6 +225,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return groups;
 	}
 
+	/*if(options.broadRatio>0){
+	 var broadLines=[[Number.MAX_VALUE,0,0]];
+	 //Optimize the possible broad lines
+	 var max=0, maxI=0,count=0;
+	 var candidates = [],broadLinesS=[];
+	 var isPartOf = false;
+
+	 for(var i=broadLines.length-1;i>0;i--){
+	 //console.log(broadLines[i][0]+" "+rangeX+" "+Math.abs(broadLines[i-1][0]-broadLines[i][0]));
+	 if(Math.abs(broadLines[i-1][0]-broadLines[i][0])<rangeX){
+
+	 candidates.push(broadLines[i]);
+	 if(broadLines[i][1]>max){
+	 max = broadLines[i][1];
+	 maxI = i;
+	 }
+	 count++;
+	 }
+	 else{
+	 isPartOf = true;
+	 if(count>30){ // TODO, an options ?
+	 isPartOf = false;
+	 //for(var j=0;j<signals.length;j++){
+	 //    if(Math.abs(broadLines[maxI][0]-signals[j][0])<rangeX)
+	 //       isPartOf = true;
+	 //    }
+	 //console.log("Was part of "+isPartOf);
+	 }
+	 if(isPartOf){
+	 for(var j=0;j<candidates.length;j++){
+	 signals.push([candidates[j][0], candidates[j][1], dx]);
+	 }
+	 }
+	 else{
+	 var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
+	 width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
+	 []);
+	 //console.log(fitted);
+	 signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
+	 }
+	 candidates = [];
+	 max = 0;
+	 maxI = 0;
+	 count = 0;
+	 }
+	 }
+	 }*/
+
 	module.exports=optimizePeaks;
 
 
@@ -4621,7 +4669,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Opt = __webpack_require__(2);
 	var stats = __webpack_require__(16);
+	var extend = __webpack_require__(19);
+	var SG = __webpack_require__(20);
+
+	var sgDefOptions = {
+	    windowSize: 5,
+	    polynomial: 3,
+	};
+
+
 	function gsd(x, y, options){
+	    //options = extend({}, defaultOptions, options);
 	    var options=Object.create(options || {});
 	    if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
 	    if (options.broadRatio===undefined) options.broadRatio=0.00;
@@ -4630,6 +4688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.smoothY===undefined) options.smoothY=true;
 	    if (options.realTopDetection===undefined) options.realTopDetection=false;
 
+	    var sgOptions = extend({}, sgDefOptions, options.sgOptions);
 
 	    //Transform y to use the standard algorithm.
 	    var yCorrection = {m:1, b:0};
@@ -4650,28 +4709,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }
-	    // fill convolution frequency axis
-	    var X = [];//x[2:(x.length-2)];
 
-	    // fill Savitzky-Golay polynomes
-	    var size= x.length-4;
-	    var Y = new Array(size);
-	    var dY = new Array(size);
-	    var ddY = new Array(size);
-	    //var dX = new Array(size);
-	    var dx = x[1]-x[0];
-
-	    for (var j = 2; j < size+2; j++) {
-	        dx = x[j]-x[j-1];
-	        if(options.smoothY)
-	            Y[j-2]=(1/35.0)*(-3*y[j-2] + 12*y[j-1] + 17*y[j] + 12*y[j+1] - 3*y[j+2]);
-	        else
-	            Y[j-2]=y[j];
-	        X[j-2]=x[j];
-	        dY[j-2]=(1/(12*dx))*(y[j-2] - 8*y[j-1] + 8*y[j+1] - y[j+2]);
-	        ddY[j-2]=(1/(7*dx*dx))*(2*y[j-2] - y[j-1] - 2*y[j] - y[j+1] + 2*y[j+2]);
+	    //We have to know if x is equally spaced
+	    var maxDx=0, minDx=Number.MAX_VALUE,tmp;
+	    for(var i=0;i< x.length-1;i++){
+	        var tmp = Math.abs(x[i+1]-x[i]);
+	        if(tmp<minDx){
+	            minDx = tmp;
+	        }
+	        if(tmp>maxDx){
+	            maxDx = tmp;
+	        }
 	    }
-
+	    //If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
+	    if((maxDx-minDx)/maxDx<0.05){
+	        var Y = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+	        var dY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
+	        var ddY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
+	    }
+	    else{
+	        var Y = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+	        var dY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
+	        var ddY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
+	    }
+	    
+	    var X = x;
+	    var dx = x[1]-x[0];
 	    var maxDdy=0;
 	    var maxY = 0;
 	    //console.log(Y.length);
@@ -4759,53 +4822,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // console.log("Nested "+possible);
 	            }
 	    }
-	    /*if(options.broadRatio>0){
-	        var broadLines=[[Number.MAX_VALUE,0,0]];
-	        //Optimize the possible broad lines
-	        var max=0, maxI=0,count=0;
-	        var candidates = [],broadLinesS=[];
-	        var isPartOf = false;
-
-	        for(var i=broadLines.length-1;i>0;i--){
-	            //console.log(broadLines[i][0]+" "+rangeX+" "+Math.abs(broadLines[i-1][0]-broadLines[i][0]));
-	            if(Math.abs(broadLines[i-1][0]-broadLines[i][0])<rangeX){
-
-	                candidates.push(broadLines[i]);
-	                if(broadLines[i][1]>max){
-	                    max = broadLines[i][1];
-	                    maxI = i;
-	                }
-	                count++;
-	            }
-	            else{
-	                isPartOf = true;
-	                if(count>30){ // TODO, an options ?
-	                    isPartOf = false;
-	                    //for(var j=0;j<signals.length;j++){
-	                    //    if(Math.abs(broadLines[maxI][0]-signals[j][0])<rangeX)
-	                    //       isPartOf = true;
-	                    //    }
-	                    //console.log("Was part of "+isPartOf);
-	                }
-	                if(isPartOf){
-	                    for(var j=0;j<candidates.length;j++){
-	                        signals.push([candidates[j][0], candidates[j][1], dx]);
-	                    }
-	                }
-	                else{
-	                    var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
-	                        width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
-	                        []);
-	                    //console.log(fitted);
-	                    signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
-	                }
-	                candidates = [];
-	                max = 0;
-	                maxI = 0;
-	                count = 0;
-	            }
-	        }
-	    }*/
 
 	    signals.sort(function (a, b) {
 	        return a.x - b.x;
@@ -5854,6 +5870,273 @@ return /******/ (function(modules) { // webpackBootstrap
 	    weightedCovariance: weightedCovariance,
 	    weightedScatter: weightedScatter
 	};
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var hasOwn = Object.prototype.hasOwnProperty;
+	var toStr = Object.prototype.toString;
+
+	var isArray = function isArray(arr) {
+		if (typeof Array.isArray === 'function') {
+			return Array.isArray(arr);
+		}
+
+		return toStr.call(arr) === '[object Array]';
+	};
+
+	var isPlainObject = function isPlainObject(obj) {
+		if (!obj || toStr.call(obj) !== '[object Object]') {
+			return false;
+		}
+
+		var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+		var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+		// Not own constructor property must be Object
+		if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+			return false;
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) {/**/}
+
+		return typeof key === 'undefined' || hasOwn.call(obj, key);
+	};
+
+	module.exports = function extend() {
+		var options, name, src, copy, copyIsArray, clone,
+			target = arguments[0],
+			i = 1,
+			length = arguments.length,
+			deep = false;
+
+		// Handle a deep copy situation
+		if (typeof target === 'boolean') {
+			deep = target;
+			target = arguments[1] || {};
+			// skip the boolean and the target
+			i = 2;
+		} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+			target = {};
+		}
+
+		for (; i < length; ++i) {
+			options = arguments[i];
+			// Only deal with non-null/undefined values
+			if (options != null) {
+				// Extend the base object
+				for (name in options) {
+					src = target[name];
+					copy = options[name];
+
+					// Prevent never-ending loop
+					if (target !== copy) {
+						// Recurse if we're merging plain objects or arrays
+						if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+							if (copyIsArray) {
+								copyIsArray = false;
+								clone = src && isArray(src) ? src : [];
+							} else {
+								clone = src && isPlainObject(src) ? src : {};
+							}
+
+							// Never move original objects, clone them
+							target[name] = extend(deep, clone, copy);
+
+						// Don't bring in undefined values
+						} else if (typeof copy !== 'undefined') {
+							target[name] = copy;
+						}
+					}
+				}
+			}
+		}
+
+		// Return the modified object
+		return target;
+	};
+
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//Code translate from Pascal source in http://pubs.acs.org/doi/pdf/10.1021/ac00205a007
+	var extend = __webpack_require__(19);
+	var stat = __webpack_require__(16);
+
+	var defaultOptions = {
+	    windowSize: 11,
+	    derivative: 0,
+	    polynomial: 2,
+	};
+
+
+	function SavitzkyGolay(data, h, options) {
+	    options = extend({}, defaultOptions, options);
+
+	    if ((options.windowSize % 2 === 0) || (options.windowSize < 5) || !(Number.isInteger(options.windowSize)))
+	            throw new RangeError('Invalid window size (should be odd and at least 5 integer number)')
+
+
+	    if (options.windowSize>data.length)
+	        throw new RangeError('Window size is higher than the data length '+options.windowSize+">"+data.length);
+	    if ((options.derivative < 0) || !(Number.isInteger(options.derivative)))
+	        throw new RangeError('Derivative should be a positive integer');
+	    if ((options.polynomial < 1) || !(Number.isInteger(options.polynomial)))
+	        throw new RangeError('Polynomial should be a positive integer');
+	    if (options.polynomial >= 6)
+	        console.warn('You should not use polynomial grade higher than 5 if you are' +
+	            ' not sure that your data arises from such a model. Possible polynomial oscillation problems');
+
+	    var windowSize = options.windowSize;
+
+	    var half = Math.floor(windowSize/2);
+	    var np = data.length;
+	    var ans = new Array(np);
+	    var weights = fullWeights(windowSize,options.polynomial,options.derivative);
+	    var hs = 0;
+	    var constantH = true;
+	    if( Object.prototype.toString.call( h ) === '[object Array]' ) {
+	        constantH = false;
+	    }
+	    else{
+	        hs = Math.pow(h, options.derivative);
+	    }
+	    //console.log("Constant h: "+constantH);
+	    //For the borders
+	    for(var i=0;i<half;i++){
+	        var wg1=weights[half-i-1];
+	        var wg2=weights[half+i+1];
+	        var d1 = 0,d2=0;
+	        for (var l = 0; l < windowSize; l++){
+	            d1 += wg1[l] * data[l];
+	            d2 += wg2[l] * data[np-windowSize+l-1];
+	        }
+	        if(constantH){
+	            ans[half-i-1] = d1/hs;
+	            ans[np-half+i] = d2/hs;
+	        }
+	        else{
+	            hs = getHs(h,half-i-1,half, options.derivative);
+	            ans[half-i-1] = d1/hs;
+	            hs = getHs(h,np-half+i,half, options.derivative);
+	            ans[np-half+i] = d2/hs;
+	        }
+	    }
+	    //For the internal points
+	    var wg = weights[half];
+	    for(var i=windowSize;i<np+1;i++){
+	        var d = 0;
+	        for (var l = 0; l < windowSize; l++)
+	            d += wg[l] * data[l+i-windowSize];
+	        if(!constantH)
+	            hs = getHs(h,i-half-1,half, options.derivative);
+	        ans[i-half-1] = d/hs;
+	    }
+	    return ans;
+	}
+
+	function getHs(h,center,half,derivative){
+	    var hs = 0;
+	    var count = 0;
+	    for(var i=center-half;i<center+half;i++){
+	        if(i>=0 && i < h.length-1){
+	            hs+= (h[i+1]-h[i]);
+	            count++;
+	        }
+	    }
+	    return Math.pow(hs/count,derivative);
+	}
+
+	function GramPoly(i,m,k,s){
+	    var Grampoly = 0;
+	    if(k>0){
+	        Grampoly = (4*k-2)/(k*(2*m-k+1))*(i*GramPoly(i,m,k-1,s) +
+	            s*GramPoly(i,m,k-1,s-1)) - ((k-1)*(2*m+k))/(k*(2*m-k+1))*GramPoly(i,m,k-2,s);
+	    }
+	    else{
+	        if(k==0&&s==0){
+	            Grampoly=1;
+	        }
+	        else{
+	            Grampoly=0;
+	        }
+	    }
+	    //console.log(Grampoly);
+	    return Grampoly;
+	}
+
+	function GenFact(a,b){
+	    var gf=1;
+	    if(a>=b){
+	        for(var j=a-b+1;j<=a;j++){
+	            gf*=j;
+	        }
+	    }
+	    return gf;
+	}
+
+	function Weight(i,t,m,n,s){
+	    var sum=0;
+	    for(var k=0;k<=n;k++){
+	        //console.log(k);
+	        sum+=(2*k+1)*(GenFact(2*m,k)/GenFact(2*m+k+1,k+1))*GramPoly(i,m,k,0)*GramPoly(t,m,k,s)
+	    }
+	    return sum;
+	}
+
+	/**
+	 *
+	 * @param m  Number of points
+	 * @param n  Polynomial grade
+	 * @param s  Derivative
+	 */
+	function fullWeights(m,n,s){
+	    var weights = new Array(m);
+	    var np = Math.floor(m/2);
+	    for(var t=-np;t<=np;t++){
+	        weights[t+np] = new Array(m);
+	        for(var j=-np;j<=np;j++){
+	            weights[t+np][j+np]=Weight(j,t,np,n,s);
+	        }
+	    }
+	    return weights;
+	}
+
+	/*function entropy(data,h,options){
+	    var trend = SavitzkyGolay(data,h,trendOptions);
+	    var copy = new Array(data.length);
+	    var sum = 0;
+	    var max = 0;
+	    for(var i=0;i<data.length;i++){
+	        copy[i] = data[i]-trend[i];
+	    }
+
+	    sum/=data.length;
+	    console.log(sum+" "+max);
+	    console.log(stat.array.standardDeviation(copy));
+	    console.log(Math.abs(stat.array.mean(copy))/stat.array.standardDeviation(copy));
+	    return sum;
+
+	}
+
+
+
+	function guessWindowSize(data, h){
+	    console.log("entropy "+entropy(data,h,trendOptions));
+	    return 5;
+	}
+	*/
+	module.exports = SavitzkyGolay;
+	 
 
 
 /***/ }
