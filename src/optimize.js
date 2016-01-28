@@ -160,5 +160,53 @@ function groupPeaks(peakList,nL){
     return groups;
 }
 
+/*if(options.broadRatio>0){
+ var broadLines=[[Number.MAX_VALUE,0,0]];
+ //Optimize the possible broad lines
+ var max=0, maxI=0,count=0;
+ var candidates = [],broadLinesS=[];
+ var isPartOf = false;
+
+ for(var i=broadLines.length-1;i>0;i--){
+ //console.log(broadLines[i][0]+" "+rangeX+" "+Math.abs(broadLines[i-1][0]-broadLines[i][0]));
+ if(Math.abs(broadLines[i-1][0]-broadLines[i][0])<rangeX){
+
+ candidates.push(broadLines[i]);
+ if(broadLines[i][1]>max){
+ max = broadLines[i][1];
+ maxI = i;
+ }
+ count++;
+ }
+ else{
+ isPartOf = true;
+ if(count>30){ // TODO, an options ?
+ isPartOf = false;
+ //for(var j=0;j<signals.length;j++){
+ //    if(Math.abs(broadLines[maxI][0]-signals[j][0])<rangeX)
+ //       isPartOf = true;
+ //    }
+ //console.log("Was part of "+isPartOf);
+ }
+ if(isPartOf){
+ for(var j=0;j<candidates.length;j++){
+ signals.push([candidates[j][0], candidates[j][1], dx]);
+ }
+ }
+ else{
+ var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
+ width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
+ []);
+ //console.log(fitted);
+ signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
+ }
+ candidates = [];
+ max = 0;
+ maxI = 0;
+ count = 0;
+ }
+ }
+ }*/
+
 module.exports=optimizePeaks;
 

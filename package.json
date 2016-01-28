@@ -40,6 +40,8 @@
   "dependencies": {
     "ml-optimize-lorentzian": "0.0.2",
     "ml-stat": "^1.0.1",
-    "xy-parser": "^1.1.0"
+    "xy-parser": "^1.1.0",
+    "ml-savitzky-golay-generalized":"1.0.0",
+    "extend":"3.0.0"
   }
 }

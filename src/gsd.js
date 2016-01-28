@@ -1,6 +1,16 @@
 var Opt = require("ml-optimize-lorentzian");
 var stats = require("ml-stat");
+var extend = require('extend');
+var SG = require('ml-savitzky-golay-generalized');
+
+var sgDefOptions = {
+    windowSize: 5,
+    polynomial: 3,
+};
+
+
 function gsd(x, y, options){
+    //options = extend({}, defaultOptions, options);
     var options=Object.create(options || {});
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
     if (options.broadRatio===undefined) options.broadRatio=0.00;
@@ -9,6 +19,7 @@ function gsd(x, y, options){
     if (options.smoothY===undefined) options.smoothY=true;
     if (options.realTopDetection===undefined) options.realTopDetection=false;
 
+    var sgOptions = extend({}, sgDefOptions, options.sgOptions);
 
     //Transform y to use the standard algorithm.
     var yCorrection = {m:1, b:0};
@@ -29,28 +40,32 @@ function gsd(x, y, options){
             }
         }
     }
-    // fill convolution frequency axis
-    var X = [];//x[2:(x.length-2)];
 
-    // fill Savitzky-Golay polynomes
-    var size= x.length-4;
-    var Y = new Array(size);
-    var dY = new Array(size);
-    var ddY = new Array(size);
-    //var dX = new Array(size);
-    var dx = x[1]-x[0];
-
-    for (var j = 2; j < size+2; j++) {
-        dx = x[j]-x[j-1];
-        if(options.smoothY)
-            Y[j-2]=(1/35.0)*(-3*y[j-2] + 12*y[j-1] + 17*y[j] + 12*y[j+1] - 3*y[j+2]);
-        else
-            Y[j-2]=y[j];
-        X[j-2]=x[j];
-        dY[j-2]=(1/(12*dx))*(y[j-2] - 8*y[j-1] + 8*y[j+1] - y[j+2]);
-        ddY[j-2]=(1/(7*dx*dx))*(2*y[j-2] - y[j-1] - 2*y[j] - y[j+1] + 2*y[j+2]);
+    //We have to know if x is equally spaced
+    var maxDx=0, minDx=Number.MAX_VALUE,tmp;
+    for(var i=0;i< x.length-1;i++){
+        var tmp = Math.abs(x[i+1]-x[i]);
+        if(tmp<minDx){
+            minDx = tmp;
+        }
+        if(tmp>maxDx){
+            maxDx = tmp;
+        }
     }
-
+    //If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
+    if((maxDx-minDx)/maxDx<0.05){
+        var Y = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+        var dY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
+        var ddY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
+    }
+    else{
+        var Y = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+        var dY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
+        var ddY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
+    }
+    
+    var X = x;
+    var dx = x[1]-x[0];
     var maxDdy=0;
     var maxY = 0;
     //console.log(Y.length);
@@ -138,53 +153,6 @@ function gsd(x, y, options){
                 // console.log("Nested "+possible);
             }
     }
-    /*if(options.broadRatio>0){
-        var broadLines=[[Number.MAX_VALUE,0,0]];
-        //Optimize the possible broad lines
-        var max=0, maxI=0,count=0;
-        var candidates = [],broadLinesS=[];
-        var isPartOf = false;
-
-        for(var i=broadLines.length-1;i>0;i--){
-            //console.log(broadLines[i][0]+" "+rangeX+" "+Math.abs(broadLines[i-1][0]-broadLines[i][0]));
-            if(Math.abs(broadLines[i-1][0]-broadLines[i][0])<rangeX){
-
-                candidates.push(broadLines[i]);
-                if(broadLines[i][1]>max){
-                    max = broadLines[i][1];
-                    maxI = i;
-                }
-                count++;
-            }
-            else{
-                isPartOf = true;
-                if(count>30){ // TODO, an options ?
-                    isPartOf = false;
-                    //for(var j=0;j<signals.length;j++){
-                    //    if(Math.abs(broadLines[maxI][0]-signals[j][0])<rangeX)
-                    //       isPartOf = true;
-                    //    }
-                    //console.log("Was part of "+isPartOf);
-                }
-                if(isPartOf){
-                    for(var j=0;j<candidates.length;j++){
-                        signals.push([candidates[j][0], candidates[j][1], dx]);
-                    }
-                }
-                else{
-                    var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
-                        width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
-                        []);
-                    //console.log(fitted);
-                    signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
-                }
-                candidates = [];
-                max = 0;
-                maxI = 0;
-                count = 0;
-            }
-        }
-    }*/
 
     signals.sort(function (a, b) {
         return a.x - b.x;
