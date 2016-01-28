@@ -2,7 +2,7 @@
 
 Global Spectra Deconvolution + Peak optimizer
 
-##Paramters
+##Parameters
 
 #### minMaxRatio=0.00025 (0-1)
 Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the higest peak.
