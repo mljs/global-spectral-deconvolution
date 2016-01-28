@@ -5,7 +5,7 @@ var SG = require('ml-savitzky-golay-generalized');
 
 var sgDefOptions = {
     windowSize: 5,
-    polynomial: 3,
+    polynomial: 3
 };
 
 
