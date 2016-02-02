@@ -78,8 +78,10 @@ function gsd(x, y, options){
         }
     }
     //console.log(maxY+"x"+maxDy+"x"+maxDdy);
+
     var minddY = [];
-    var intervals = [];
+    var intervalL = [];
+    var intervalR = [];
     var lastMax = null;
     var lastMin = null;
     var broadMask = new Array();
@@ -92,7 +94,9 @@ function gsd(x, y, options){
             lastMin = X[i];
             //console.log("min "+lastMin);
             if(dx>0&&lastMax!=null){
-                intervals.push( [lastMax , lastMin] );
+                intervalL.push(lastMax);
+                intervalR.push(lastMin);
+
             }
         }
 
@@ -101,11 +105,12 @@ function gsd(x, y, options){
             lastMax = X[i];
             //console.log("max "+lastMax);
             if(dx<0&&lastMin!=null){
-                intervals.push( [lastMax , lastMin] );
+                intervalL.push(lastMax);
+                intervalR.push(lastMin);
             }
         }
         if ((ddY[i] < ddY[i-1]) && (ddY[i] < ddY[i+1])) {
-            minddY.push( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            minddY.push(i);//( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
             if(Math.abs(ddY[i])>options.broadRatio*maxDdy){ // TODO should this be a parameter =
                 broadMask.push(false);
             }
@@ -118,55 +123,58 @@ function gsd(x, y, options){
         realTopDetection(minddY,X,Y);
     }
     //
-    //console.log(intervals);
+    //console.log(intervalL.length+" "+minddY.length+" "+broadMask.length);
     var signals = [];
-
+    var lastK = 0,possible, k, f,frequency, distanceJ, minDistance, gettingCloser;
     for (var j = 0; j < minddY.length; j++){
-        var f = minddY[j];
-        var frequency = f[0];
-        var possible = [];
-        for (var k=0; k<intervals.length; k++){
-            var i = intervals[k];
-            if(Math.abs(frequency-(i[0]+i[1])/2)<Math.abs(i[0]-i[1])/2)
-                possible.push(i);
+        frequency = X[minddY[j]];//minddY[j][0];
+        possible = -1;
+        k=lastK+1;
+        minDistance = Number.MAX_VALUE;
+        distanceJ = 0;
+        gettingCloser=true;
+        while(possible==-1&&k<intervalL.length&&gettingCloser){
+            distanceJ = Math.abs(frequency-(intervalL[k]+intervalR[k])/2);
+            //Still getting closer?
+            if(distanceJ<minDistance){
+                minDistance = distanceJ;
+            }
+            else{
+                gettingCloser = false;
+            }
+            if( distanceJ <Math.abs(intervalL[k]-intervalR[k])/2){
+                possible=k;
+                lastK = k;
+            }
+            k++;
         }
-        //console.log("possible "+possible.length);
-        if (possible.length > 0)
-            if (possible.length == 1)
-            {
-                var inter = possible[0];
-                var linewidth = Math.abs(inter[1] - inter[0]);
-                var height = f[1];
-                //console.log(height);
-                if (Math.abs(height) > options.minMaxRatio*maxY) {
-                    signals.push({
-                        x: frequency,
-                        y: (height-yCorrection.b)/yCorrection.m,
-                        width: linewidth,//*widthCorrection
-                        soft:broadMask[j]
-                    })
-                }
+        //console.log(lastK+" "+intervalL.length+" possible "+k);
+        if (possible!=-1){
+            //console.log(height);
+            if (Math.abs(Y[minddY[j]]) > options.minMaxRatio*maxY) {
+                signals.push({
+                    x: frequency,
+                    y: (Y[minddY[j]]-yCorrection.b)/yCorrection.m,
+                    width:Math.abs(intervalR[possible] - intervalL[possible]),//widthCorrection
+                    soft:broadMask[j]
+                })
             }
-            else
-            {
-                //TODO: nested peaks
-                // console.log("Nested "+possible);
-            }
+        }
     }
 
     signals.sort(function (a, b) {
         return a.x - b.x;
     });
 
-
     return signals;
+
 }
 
 function realTopDetection(peakList, x, y){
     var listP = [];
     var alpha, beta, gamma, p,currentPoint;
     for(var j=0;j<peakList.length;j++){
-        currentPoint = peakList[j][2];
+        currentPoint = peakList[j];//peakList[j][2];
         //The detected peak could be moved 1 or 2 unit to left or right.
         if(y[currentPoint-1]>=y[currentPoint-2]
             &&y[currentPoint-1]>=y[currentPoint]) {
@@ -198,8 +206,8 @@ function realTopDetection(peakList, x, y){
             gamma = 20 * Math.log10(y[currentPoint + 1]);
             p = 0.5 * (alpha - gamma) / (alpha - 2 * beta + gamma);
 
-            peakList[j][0] = x[currentPoint] + (x[currentPoint]-x[currentPoint-1])*p;
-            peakList[j][1] = y[currentPoint] - 0.25 * (y[currentPoint - 1]
+            x[peakList[j]] = x[currentPoint] + (x[currentPoint]-x[currentPoint-1])*p;
+            y[peakList[j]] = y[currentPoint] - 0.25 * (y[currentPoint - 1]
                 - [currentPoint + 1]) * p;//signal.peaks[j].intensity);
         }
     }
