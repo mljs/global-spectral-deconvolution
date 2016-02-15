@@ -4,7 +4,7 @@ var extend = require('extend');
 var SG = require('ml-savitzky-golay-generalized');
 
 var sgDefOptions = {
-    windowSize: 5,
+    windowSize: 9,
     polynomial: 3
 };
 
@@ -53,13 +53,16 @@ function gsd(x, y, options){
         }
     }
     //If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
+    var Y = y;
     if((maxDx-minDx)/maxDx<0.05){
-        var Y = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+        if(options.smoothY)
+            Y = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
         var dY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
         var ddY = SG(y, x[1]-x[0], {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
     }
     else{
-        var Y = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
+        if(options.smoothY)
+            Y = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:0});
         var dY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
         var ddY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
     }
@@ -171,6 +174,9 @@ function gsd(x, y, options){
 }
 
 function realTopDetection(peakList, x, y){
+    //console.log(peakList);
+    //console.log(x);
+    //console.log(y);
     var listP = [];
     var alpha, beta, gamma, p,currentPoint;
     for(var j=0;j<peakList.length;j++){
