@@ -39,6 +39,6 @@ var y=xy[1];
 //Just a fake noiseLevel
 var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
 
-var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false});
-result = peakPicking.optimize(result,x,y,1,"gaussian");`
+var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false,realTopDetection:true});
+result = peakPicking.post.optimizePeaks(result,x,y,1,"gaussian");
 ```
