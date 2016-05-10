@@ -14,44 +14,55 @@ function gsd(x, y, options){
     var options=Object.create(options || {});
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
     if (options.broadRatio===undefined) options.broadRatio=0.00;
-    if (options.noiseLevel===undefined) options.noiseLevel=0;
+    if (options.noiseLevel===undefined) options.noiseLevel=undefined;
+    if (options.noiseFactor===undefined) options.noiseFactor=3;
     if (options.maxCriteria===undefined) options.maxCriteria=true;
     if (options.smoothY===undefined) options.smoothY=true;
     if (options.realTopDetection===undefined) options.realTopDetection=false;
 
     var sgOptions = extend({}, sgDefOptions, options.sgOptions);
 
-    //Transform y to use the standard algorithm.
-    var yCorrection = {m:1, b:0};
-    if(!options.maxCriteria||options.noiseLevel>0){
-        y=[].concat(y);
-        if(!options.maxCriteria){
-            yCorrection = {m:-1, b:stats.array.max(y)};
-            for (var i=0; i<y.length; i++){
-                y[i]=-y[i]+yCorrection.b;
+    //console.log(JSON.stringify(stats.array.minMax(y)));
+    if(options.noiseLevel===undefined){
+        //We have to know if x is equally spaced
+        var maxDx=0, minDx=Number.MAX_VALUE,tmp;
+        for(var i=0;i< x.length-1;i++){
+            var tmp = Math.abs(x[i+1]-x[i]);
+            if(tmp<minDx){
+                minDx = tmp;
             }
-            options.noiseLevel=-options.noiseLevel+yCorrection.b;
+            if(tmp>maxDx){
+                maxDx = tmp;
+            }
         }
-        if (options.noiseLevel>0) {
-            for (var i=0; i<y.length; i++){
-                if(Math.abs(y[i])<options.noiseLevel) {
-                    y[i]=0;
-                }
-            }
+
+        if((maxDx-minDx)/maxDx<0.05){
+
+            options.noiseLevel = getNoiseLevel(y);
+            //console.log(options.noiseLevel+" "+stats.array.median(y));
+        }
+        else{
+            options.noiseLevel = 0;
+        }
+    }
+    //console.log("options.noiseLevel "+options.noiseLevel);
+    y=[].concat(y);
+    var yCorrection = {m:1, b:options.noiseLevel};
+    if(!options.maxCriteria){
+        yCorrection.m =-1;
+        yCorrection.b*=-1;
+    }
+
+    for (var i=0; i<y.length; i++){
+        y[i]=yCorrection.m*y[i]-yCorrection.b;
+    }
+
+    for (var i=0; i<y.length; i++) {
+        if (y[i] < 0) {
+            y[i] = 0;
         }
     }
 
-    //We have to know if x is equally spaced
-    var maxDx=0, minDx=Number.MAX_VALUE,tmp;
-    for(var i=0;i< x.length-1;i++){
-        var tmp = Math.abs(x[i+1]-x[i]);
-        if(tmp<minDx){
-            minDx = tmp;
-        }
-        if(tmp>maxDx){
-            maxDx = tmp;
-        }
-    }
     //If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
     var Y = y;
     if((maxDx-minDx)/maxDx<0.05){
@@ -66,7 +77,7 @@ function gsd(x, y, options){
         var dY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:1});
         var ddY = SG(y, x, {windowSize:sgOptions.windowSize, polynomial:sgOptions.polynomial,derivative:2});
     }
-    
+
     var X = x;
     var dx = x[1]-x[0];
     var maxDdy=0;
@@ -122,9 +133,6 @@ function gsd(x, y, options){
             }
         }
     }
-    if(options.realTopDetection){
-        realTopDetection(minddY,X,Y);
-    }
     //
     //console.log(intervalL.length+" "+minddY.length+" "+broadMask.length);
     var signals = [];
@@ -156,6 +164,7 @@ function gsd(x, y, options){
             //console.log(height);
             if (Math.abs(Y[minddY[j]]) > options.minMaxRatio*maxY) {
                 signals.push({
+                    i:minddY[j],
                     x: frequency,
                     y: (Y[minddY[j]]-yCorrection.b)/yCorrection.m,
                     width:Math.abs(intervalR[possible] - intervalL[possible]),//widthCorrection
@@ -163,6 +172,16 @@ function gsd(x, y, options){
                 })
             }
         }
+    }
+
+
+    if(options.realTopDetection){
+        realTopDetection(signals,X,Y);
+    }
+
+    //Correct the values to fit the original spectra data
+    for(var j=0;j<signals.length;j++){
+        signals[j].base=options.noiseLevel;
     }
 
     signals.sort(function (a, b) {
@@ -173,6 +192,26 @@ function gsd(x, y, options){
 
 }
 
+function getNoiseLevel(y){
+    var mean = 0,stddev=0;
+    var length = y.length,i=0;
+    for(i = 0; i < length; i++){
+        mean+=y[i];
+    }
+    mean/=length;
+    var averageDeviations = new Array(length);
+    for (i = 0; i < length; i++)
+        averageDeviations[i] = Math.abs(y[i] - mean);
+    averageDeviations.sort();
+    if (length % 2 == 1) {
+        stddev = averageDeviations[(length-1)/2] / 0.6745;
+    } else {
+        stddev = 0.5*(averageDeviations[length/2]+averageDeviations[length/2-1]) / 0.6745;
+    }
+
+    return stddev;
+}
+
 function realTopDetection(peakList, x, y){
     //console.log(peakList);
     //console.log(x);
@@ -180,7 +219,8 @@ function realTopDetection(peakList, x, y){
     var listP = [];
     var alpha, beta, gamma, p,currentPoint;
     for(var j=0;j<peakList.length;j++){
-        currentPoint = peakList[j];//peakList[j][2];
+        currentPoint = peakList[j].i;//peakList[j][2];
+        var tmp = currentPoint;
         //The detected peak could be moved 1 or 2 unit to left or right.
         if(y[currentPoint-1]>=y[currentPoint-2]
             &&y[currentPoint-1]>=y[currentPoint]) {
@@ -211,10 +251,12 @@ function realTopDetection(peakList, x, y){
             beta = 20 * Math.log10(y[currentPoint]);
             gamma = 20 * Math.log10(y[currentPoint + 1]);
             p = 0.5 * (alpha - gamma) / (alpha - 2 * beta + gamma);
-
-            x[peakList[j]] = x[currentPoint] + (x[currentPoint]-x[currentPoint-1])*p;
-            y[peakList[j]] = y[currentPoint] - 0.25 * (y[currentPoint - 1]
-                - [currentPoint + 1]) * p;//signal.peaks[j].intensity);
+            //console.log("p: "+p);
+            //console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
+            peakList[j].x = x[currentPoint] + (x[currentPoint]-x[currentPoint-1])*p;
+            peakList[j].y = y[currentPoint] - 0.25 * (y[currentPoint - 1]
+                - y[currentPoint + 1]) * p;//signal.peaks[j].intensity);
+            //console.log(y[tmp]+" "+peakList[j].y);
         }
     }
 }
