@@ -197,7 +197,6 @@ function joinBroadPeaks(peakList, options){
             if(count>2){
                 var fitted =  Opt.optimizeSingleLorentzian(candidates,
                     {x: broadLines[maxI].x, y:max, width: Math.abs(candidates[0][0]-candidates[candidates.length-1][0])});
-                //console.log(fitted)
                 peakList.push({x:fitted[0][0],y:fitted[1][0],width:fitted[2][0],soft:false});
 
             }

@@ -36,7 +36,7 @@
     "chemcalc": "^3.0.6"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "0.0.2",
+    "ml-optimize-lorentzian": "0.1.1",
     "ml-stat": "^1.1.0",
     "xy-parser": "^1.2.0",
     "ml-savitzky-golay-generalized": "1.1.0",

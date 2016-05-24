@@ -7,6 +7,9 @@ var peakPicking = require("../src/index");
 //var optimizePeaks = require("../src/optimize");
 var parser = require('xy-parser');
 var Stat = require('ml-stat');
+var Opt = require("ml-optimize-lorentzian");
+
+
 
 
 describe('Global spectra deconvolution HR mass spectra', function () {
@@ -18,14 +21,21 @@ describe('Global spectra deconvolution HR mass spectra', function () {
     //var spectrum=parser.parse(fs.readFileSync('./ubiquitin.txt', 'utf-8'), {arrayType: 'xxyy'});
     d = new Date();
     //console.log("Parsing time: "+(d.getTime()-n));
-    var noiseLevel=Stat.array.max(spectrum[1])*0.015;
+    var noiseLevel=0;//Stat.array.max(spectrum[1])*0.015;
 
-    var result = peakPicking.gsd(spectrum[0],spectrum[1], {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false,realTopDetection:true});
+    var result = peakPicking.gsd(spectrum[0], spectrum[1], {noiseLevel: noiseLevel,
+        minMaxRatio:0.0,
+        broadRatio:0,
+        smoothY:false,
+        realTopDetection:true,
+        sgOptions:{windowSize: 7,polynomial: 3}});
+    
     //console.log(result);
     d = new Date();
     //console.log("Parsing + gsd time: "+(d.getTime()-n));
-
-    //result = peakPicking.optimize(result,spectrum[0],spectrum[1],1,"gaussian");
+    var newResult = Opt.optimizeGaussianTrain(spectrum,result,{percentage:0.2});
+    newResult[0].opt.should.equal(true);
+    newResult.length.should.equal(result.length);
     //d = new Date();
     //console.log("Parsing + gsd + optimization time: "+(d.getTime()-n));
 
@@ -40,7 +50,6 @@ describe('Global spectra deconvolution HR mass spectra', function () {
     it('Should provide the right result ...', function () {
         //var result = gsd(spectrum[0],spectrum[1], 0.001, 0.1);
         //console.log(result);
-
     });
 });
 

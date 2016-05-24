@@ -15,6 +15,7 @@ describe('Global spectra deconvolution NMR spectra', function () {
                 realTopDetection:true,
                 sgOptions:{windowSize:5, polynomial:3}
             });
+        //console.log(spectrum[1][13223]);
         //console.log(result);
         result.length.should.equal(21);
     });
