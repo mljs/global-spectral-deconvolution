@@ -262,7 +262,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if(count>2){
 	                var fitted =  Opt.optimizeSingleLorentzian(candidates,
 	                    {x: broadLines[maxI].x, y:max, width: Math.abs(candidates[0][0]-candidates[candidates.length-1][0])});
-	                //console.log(fitted)
 	                peakList.push({x:fitted[0][0],y:fitted[1][0],width:fitted[2][0],soft:false});
 
 	            }
@@ -430,15 +429,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {*[]}
 	 */
 	function optimizeSingleLorentzian(xy, peak, opts) {
-	    var xy2 = parseData(xy);
+	    opts = opts || {};
+	    var xy2 = parseData(xy, opts.percentage||0);
+
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
 	    var t = xy2[0];
 	    var y_data = xy2[1];
 	    var maxY = xy2[2];
-	    var nbPoints = t.columns, i;
+	    var nbPoints = t.rows, i;
 
 	    var weight = [nbPoints / Math.sqrt(y_data.dot(y_data))];
 
-	    var opts=Object.create(opts || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ]);
+	    var opts=Object.create(opts.LMOptions || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ]);
 	    //var opts = [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ];
 	    var consts = [ ];
 	    var dt = Math.abs(t[0][0]-t[1][0]);// optional vector of constants
@@ -461,16 +466,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {*[]}
 	 */
 	function optimizeSingleGaussian(xy, peak, opts) {
-	    var xy2 = parseData(xy);
+	    opts = opts || {};
+	    var xy2 = parseData(xy, opts.percentage||0);
+
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
 	    var t = xy2[0];
 	    var y_data = xy2[1];
 	    var maxY = xy2[2];
 
-	    var nbPoints = t.columns, i;
+	    var nbPoints = t.rows, i;
+
+
 
 	    var weight = [nbPoints / Math.sqrt(y_data.dot(y_data))];
 
-	    var opts=Object.create(opts || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ]);
+	    var opts=Object.create(opts.LMOptions || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ]);
 	    //var opts = [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ];
 	    var consts = [ ];                         // optional vector of constants
 	    var dt = Math.abs(t[0][0]-t[1][0]);
@@ -488,6 +501,91 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return [p_fit[0],[p_fit[1][0]*maxY],p_fit[2]];
 	}
 
+	/*
+	 peaks on group should sorted
+	 */
+	function optimizeLorentzianTrain(xy, group, opts){
+	    var xy2 = parseData(xy);
+	    //console.log(xy2[0].rows);
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
+	    var t = xy2[0];
+	    var y_data = xy2[1];
+	    var maxY = xy2[2];
+	    var currentIndex = 0;
+	    var nbPoints = t.length;
+	    var nextX;
+	    var tI, yI, maxY;
+	    var result=[], current;
+	    for(var i=0; i<group.length;i++){
+	        nextX = group[i].x-group[i].width*4;
+	        //console.log(group[i]);
+	        while(t[currentIndex++]<nextX&&currentIndex<nbPoints);
+	        nextX = group[i].x+group[i].width*4;
+	        tI = [];
+	        yI = [];
+	        while(t[currentIndex]<=nextX&&currentIndex<nbPoints){
+	            tI.push(t[currentIndex][0]);
+	            yI.push(y_data[currentIndex][0]*maxY);
+	            currentIndex++;
+	        }
+
+	        current=optimizeSingleLorentzian([tI, yI], group[i], opts);
+	        if(current){
+	            result.push({"x":current[0][0],"y":current[1][0],"width":current[2][0],"opt":true});
+	        }
+	        else{
+	            result.push({"x":group[i].x,"y":group[i].y,"width":group[i].width,"opt":false});
+	        }
+	    }
+
+	    return result;
+
+	}
+
+	function optimizeGaussianTrain(xy, group, opts){
+	    var xy2 = parseData(xy);
+	    //console.log(xy2[0].rows);
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
+	    var t = xy2[0];
+	    var y_data = xy2[1];
+	    var maxY = xy2[2];
+	    var currentIndex = 0;
+	    var nbPoints = t.length;
+	    var nextX;
+	    var tI, yI, maxY;
+	    var result=[], current;
+	    for(var i=0; i<group.length;i++){
+	        nextX = group[i].x-group[i].width*4;
+	        //console.log(group[i]);
+	        while(t[currentIndex++]<nextX&&currentIndex<nbPoints);
+	        nextX = group[i].x+group[i].width*4;
+	        tI = [];
+	        yI = [];
+	        while(t[currentIndex]<=nextX&&currentIndex<nbPoints){
+	            tI.push(t[currentIndex][0]);
+	            yI.push(y_data[currentIndex][0]*maxY);
+	            currentIndex++;
+	        }
+
+	        current=optimizeSingleGaussian([tI, yI], group[i], opts);
+	        if(current){
+	            result.push({"x":current[0][0],"y":current[1][0],"width":current[2][0],"opt":true});
+	        }
+	        else{
+	            result.push({"x":group[i].x,"y":group[i].y,"width":group[i].width,"opt":false});
+	        }
+	    }
+
+	    return result;
+	}
+
+
 
 	/**
 	 *
@@ -497,13 +595,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function optimizeLorentzianSum(xy, group, opts){
 	    var xy2 = parseData(xy);
+
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
 	    var t = xy2[0];
 	    var y_data = xy2[1];
 	    var maxY = xy2[2];
-	    var nbPoints = t.columns, i;
+	    var nbPoints = t.rows, i;
 
 	    var weight = [nbPoints / math.sqrt(y_data.dot(y_data))];
-	    var opts=Object.create(opts || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2,    11,    9,        1 ]);
+	    var opts=Object.create(opts || [  3,    100, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 11, 9, 1 ]);
 	    var consts = [ ];// optional vector of constants
 
 	    var nL = group.length;
@@ -551,6 +654,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function optimizeGaussianSum(xy, group, opts){
 	    var xy2 = parseData(xy);
+
+	    if(xy2===null||xy2[0].rows<3){
+	        return null; //Cannot run an optimization with less than 3 points
+	    }
+
 	    var t = xy2[0];
 	    var y_data = xy2[1];
 	    var maxY = xy2[2];
@@ -608,7 +716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param xy
 	 * @returns {*[]}
 	 */
-	function parseData(xy){
+	function parseData(xy, threshold){
 	    var nbSeries = xy.length;
 	    var t = null;
 	    var y_data = null, x,y;
@@ -617,56 +725,66 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if(nbSeries==2){
 	        //Looks like row wise matrix [x,y]
 	        var nbPoints = xy[0].length;
-	        if(nbPoints<3)
-	            throw new SizeException(nbPoints);
-	        else{
-	            t = new Matrix(nbPoints,1);
-	            y_data = new Matrix(nbPoints,1);
-	            x = xy[0];
-	            y = xy[1];
-	            if(typeof x[0] === "number"){
-	                for(i=0;i<nbPoints;i++){
-	                    t[i][0]=x[i];
-	                    y_data[i][0]=y[i];
-	                    if(y[i]>maxY)
-	                        maxY = y[i];
-	                }
+	        //if(nbPoints<3)
+	        //    throw new Exception(nbPoints);
+	        //else{
+	        t = new Array(nbPoints);//new Matrix(nbPoints,1);
+	        y_data = new Array(nbPoints);//new Matrix(nbPoints,1);
+	        x = xy[0];
+	        y = xy[1];
+	        if(typeof x[0] === "number"){
+	            for(i=0;i<nbPoints;i++){
+	                t[i]=x[i];
+	                y_data[i]=y[i];
+	                if(y[i]>maxY)
+	                    maxY = y[i];
 	            }
-	            else{
-	                //It is a colum matrix
-	                if(typeof x[0] === "object"){
-	                    for(i=0;i<nbPoints;i++){
-	                        t[i][0]=x[i][0];
-	                        y_data[i][0]=y[i][0];
-	                        if(y[i][0]>maxY)
-	                            maxY = y[i][0];
-	                    }
+	        }
+	        else{
+	            //It is a colum matrix
+	            if(typeof x[0] === "object"){
+	                for(i=0;i<nbPoints;i++){
+	                    t[i]=x[i][0];
+	                    y_data[i]=y[i][0];
+	                    if(y[i][0]>maxY)
+	                        maxY = y[i][0];
 	                }
-
 	            }
 
 	        }
+
+	        //}
 	    }
 	    else{
 	        //Looks like a column wise matrix [[x],[y]]
 	        var nbPoints = nbSeries;
-	        if(nbPoints<3)
-	            throw new SizeException(nbPoints);
-	        else {
-	            t = new Matrix(nbPoints, 1);
-	            y_data = new Matrix(nbPoints, 1);
-	            for (i = 0; i < nbPoints; i++) {
-	                t[i][0] = xy[i][0];
-	                y_data[i][0] = xy[i][1];
-	                if(y_data[i][0]>maxY)
-	                    maxY = y_data[i][0];
+	        //if(nbPoints<3)
+	        //    throw new SizeException(nbPoints);
+	        //else {
+	        t = new Array(nbPoints);//new Matrix(nbPoints, 1);
+	        y_data = new Array(nbPoints);//new Matrix(nbPoints, 1);
+	        for (i = 0; i < nbPoints; i++) {
+	            t[i] = xy[i][0];
+	            y_data[i] = xy[i][1];
+	            if(y_data[i]>maxY)
+	                maxY = y_data[i];
+	        }
+	        //}
+	    }
+	    for (i = 0; i < nbPoints; i++) {
+	        y_data[i]/=maxY;
+	    }
+	    if(threshold){
+	        for (i = nbPoints-1; i >=0; i--) {
+	            if(y_data[i]<threshold) {
+	                y_data.splice(i,1);
+	                t.splice(i,1);
 	            }
 	        }
 	    }
-	    for (i = 0; i < nbPoints; i++) {
-	        y_data[i][0]/=maxY;
-	    }
-	    return [t,y_data,maxY];
+	    if(t.length>0)
+	        return [(new Matrix([t])).transpose(),(new Matrix([y_data])).transpose(),maxY];
+	    return null;
 	}
 
 	function sizeException(nbPoints) {
@@ -679,6 +797,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports.optimizeGaussianSum = optimizeGaussianSum;
 	module.exports.singleGaussian = singleGaussian;
 	module.exports.singleLorentzian = singleLorentzian;
+	module.exports.optimizeGaussianTrain = optimizeGaussianTrain;
+	module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 /***/ },
 /* 3 */
