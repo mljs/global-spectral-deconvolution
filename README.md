@@ -1,5 +1,10 @@
 # global-spectral-deconvolution
 
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![David deps][david-image]][david-url]
+[![npm download][download-image]][download-url]
+
 Global Spectra Deconvolution + Peak optimizer
 
 ##Parameters
@@ -26,19 +31,39 @@ Use a cuadratic optmizations with the peak and its 3 closest neighbors to determ
 Savitzky-Golay paramters. windowSize should be odd; polynomial is the degree of the polinomial to use in the approximations. > 2
 
 ## Example
-```
+```js
 var CC = require('chemcalc');
 var Stat = require('ml-stat');
-var peakPicking = require("../src/index");
+var peakPicking = require('ml-gsd');
 
 
-var spectrum=CC.analyseMF("Cl2.Br2", {isotopomers:'arrayXXYY', fwhm:0.01, gaussianWidth: 11});
-var xy=spectrum.arrayXXYY;
-var x=xy[0];
-var y=xy[1];
+var spectrum = CC.analyseMF("Cl2.Br2", {isotopomers:'arrayXXYY', fwhm:0.01, gaussianWidth: 11});
+var xy = spectrum.arrayXXYY;
+var x = xy[0];
+var y = xy[1];
 //Just a fake noiseLevel
-var noiseLevel=Stat.array.median(y.filter(function(a) {return (a>0)}))*3;
+var noiseLevel = Stat.array.median(y.filter(function(a) {return (a > 0)})) * 3;
 
-var result=peakPicking.gsd(x, y,  {noiseLevel: noiseLevel, minMaxRatio:0, broadRatio:0,smoothY:false,realTopDetection:true});
-result = peakPicking.post.optimizePeaks(result,x,y,1,"gaussian");
+var options = {
+  noiseLevel: noiseLevel,
+  minMaxRatio:0,
+  broadRatio:0,
+  smoothY:false,
+  realTopDetection:true
+};
+var result = peakPicking.gsd(x, y, options);
+result = peakPicking.post.optimizePeaks(result, x, y, 1, "gaussian");
 ```
+
+## License
+
+[MIT](./LICENSE)
+
+[npm-image]: https://img.shields.io/npm/v/ml-gsd.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/ml-gsd
+[travis-image]: https://img.shields.io/travis/mljs/global-spectral-deconvolution/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/mljs/global-spectral-deconvolution
+[david-image]: https://img.shields.io/david/mljs/global-spectral-deconvolution.svg?style=flat-square
+[david-url]: https://david-dm.org/mljs/global-spectral-deconvolution
+[download-image]: https://img.shields.io/npm/dm/ml-gsd.svg?style=flat-square
+[download-url]: https://npmjs.org/package/ml-gsd
