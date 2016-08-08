@@ -13,7 +13,7 @@ Global Spectra Deconvolution + Peak optimizer
 Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the higest peak.
 
 #### broadRatio=0.00  (0-1)
-If broadRatio is higher than 0, then all the peaks which second derivative smaller than broadRatio*maxAbsSecondDerivative will be marked with the soft mask equal to true.
+If `broadRatio` is higher than 0, then all the peaks which second derivative smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
 
 #### noiseLevel=0 (-inf, inf)
 Noise threshold in spectrum units
@@ -28,7 +28,7 @@ Select the peak intensities from a smoothed version of the independent variables
 Use a cuadratic optmizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak?
 
 #### sgOptions={windowSize: 5, polynomial: 3}
-Savitzky-Golay paramters. windowSize should be odd; polynomial is the degree of the polinomial to use in the approximations. > 2
+Savitzky-Golay paramters. windowSize should be odd; polynomial is the degree of the polinomial to use in the approximations. It should be bigger than 2.
 
 ## Example
 ```js
