@@ -9,7 +9,7 @@ var sgDefOptions = {
 };
 
 
-function gsd(x, y, options){
+function gsd(xIn, yIn, options){
     //options = extend({}, defaultOptions, options);
     var options=Object.create(options || {});
     if (options.minMaxRatio===undefined) options.minMaxRatio=0.00025;
@@ -46,7 +46,7 @@ function gsd(x, y, options){
         }
     }
     //console.log("options.noiseLevel "+options.noiseLevel);
-    y=[].concat(y);
+    var y=[].concat(yIn);
     var yCorrection = {m:1, b:options.noiseLevel};
     if(!options.maxCriteria){
         yCorrection.m =-1;
@@ -166,7 +166,7 @@ function gsd(x, y, options){
                 signals.push({
                     i:minddY[j],
                     x: frequency,
-                    y: (Y[minddY[j]]-yCorrection.b)/yCorrection.m,
+                    y: (Y[minddY[j]]+yCorrection.b)/yCorrection.m,
                     width:Math.abs(intervalR[possible] - intervalL[possible]),//widthCorrection
                     soft:broadMask[j]
                 })
