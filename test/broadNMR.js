@@ -16,11 +16,10 @@ describe('Global spectra deconvolution NMR spectra', function () {
             }
         );
         var last = peakPicking.post.joinBroadPeaks(result,{width:0.25});
-        //console.log(last.length);
         result.length.should.approximately(15,1);
         result.map(function(peak){
             if(Math.abs(peak.x-4.31)<0.01){
-                peak.width.should.approximately(0.37,0.02);
+                peak.width.should.approximately(0.39,0.02);
             }
         });
     });
