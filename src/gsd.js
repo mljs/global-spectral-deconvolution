@@ -15,7 +15,8 @@ let defaultOptions = {
     smoothY: true,
     realTopDetection: false,
     approximateHeight: false,
-    boundaries: false
+    boundaries: false,
+    derivativeThreshold: 0
 };
 
 function gsd(x, yIn, options) {
@@ -100,8 +101,8 @@ function gsd(x, yIn, options) {
     // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
     for (let i = 1; i < Y.length - 1; ++i) {
         // Minimum in first derivative
-        if ((dY[i] < dY[i - 1]) && (dY[i] <= dY[i + 1]) ||
-            (dY[i] <= dY[i - 1]) && (dY[i] < dY[i + 1])) {
+        if ((dY[i] - dY[i - 1] <  -options.derivativeThreshold) && (dY[i] - dY[i + 1] <= -options.derivativeThreshold) ||
+            (dY[i] - dY[i - 1] <= -options.derivativeThreshold) && (dY[i] - dY[i + 1] <  -options.derivativeThreshold)) {
             lastMin = {
                 val: X[i],
                 pos: i
@@ -113,8 +114,8 @@ function gsd(x, yIn, options) {
         }
 
         // Maximum in first derivative
-        if ((dY[i] >= dY[i - 1]) && (dY[i] > dY[i + 1]) ||
-            (dY[i] > dY[i - 1]) && (dY[i] >= dY[i + 1])) {
+        if ((dY[i] - dY[i - 1] >= options.derivativeThreshold) && (dY[i] - dY[i + 1] >  options.derivativeThreshold) ||
+            (dY[i] - dY[i - 1] >  options.derivativeThreshold) && (dY[i] - dY[i + 1] >= options.derivativeThreshold)) {
             lastMax = {
                 val: X[i],
                 pos: i
