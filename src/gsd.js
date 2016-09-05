@@ -13,17 +13,18 @@ let defaultOptions = {
     noiseFactor: 3,
     maxCriteria: true,
     smoothY: true,
-    realTopDetection: false
+    realTopDetection: false,
+    approximateHeight: false,
+    boundaries: false
 };
 
 function gsd(x, yIn, options) {
     options = extend({}, defaultOptions, options);
-    //noinspection JSUnresolvedVariable
     let sgOptions = options.sgOptions;
     const y = [].concat(yIn);
 
     if (!('noiseLevel' in options)) {
-        //We have to know if x is equally spaced
+        // We have to know if x is equally spaced
         var maxDx = 0,
             minDx = Number.MAX_VALUE,
             tmp;
@@ -58,7 +59,7 @@ function gsd(x, yIn, options) {
             y[i] = 0;
         }
     }
-    //If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
+    // If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
     let Y = y;
     let dY, ddY;
     if ((maxDx - minDx) / maxDx < 0.05) {
@@ -96,27 +97,38 @@ function gsd(x, yIn, options) {
     var intervalLLen = 0;
     var intervalRLen = 0;
     var broadMaskLen = 0;
-    //By the intermediate value theorem We cannot find 2 consecutive maxima or minima
+    // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
     for (let i = 1; i < Y.length - 1; ++i) {
+        // Minimum in first derivative
         if ((dY[i] < dY[i - 1]) && (dY[i] <= dY[i + 1]) ||
             (dY[i] <= dY[i - 1]) && (dY[i] < dY[i + 1])) {
-            lastMin = X[i];
+            lastMin = {
+                val: X[i],
+                pos: i
+            };
             if (dx > 0 && lastMax !== null) {
                 intervalL[intervalLLen++] = lastMax;
                 intervalR[intervalRLen++] = lastMin;
             }
         }
 
+        // Maximum in first derivative
         if ((dY[i] >= dY[i - 1]) && (dY[i] > dY[i + 1]) ||
             (dY[i] > dY[i - 1]) && (dY[i] >= dY[i + 1])) {
-            lastMax = X[i];
+            lastMax = {
+                val: X[i],
+                pos: i
+            };
             if (dx < 0 && lastMin !== null) {
                 intervalL[intervalLLen++] = lastMax;
                 intervalR[intervalRLen++] = lastMin;
             }
         }
+
+        // Minimum in second derivative
         if ((ddY[i] < ddY[i - 1]) && (ddY[i] < ddY[i + 1])) {
-            minddY[minddYLen++] = i; //( [X[i], Y[i], i] );  // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+            minddY[minddYLen++] = i; //( [X[i], Y[i], i] );
             broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= options.broadRatio * maxDdy;
         }
     }
@@ -125,10 +137,10 @@ function gsd(x, yIn, options) {
     intervalR.length = intervalRLen;
     broadMask.length = broadMaskLen;
 
-    var signals = new Array(minddY.length);
-    var signalsLen = 0;
-    var lastK = 0;
-    var possible, frequency, distanceJ, minDistance, gettingCloser;
+    let signals = new Array(minddY.length);
+    let signalsLen = 0;
+    let lastK = 0;
+    let possible, frequency, distanceJ, minDistance, gettingCloser;
     for (let j = 0; j < minddY.length; ++j) {
         frequency = X[minddY[j]];
         possible = -1;
@@ -136,29 +148,40 @@ function gsd(x, yIn, options) {
         minDistance = Number.MAX_VALUE;
         distanceJ = 0;
         gettingCloser = true;
-        while (possible === -1 && k < intervalL.length && gettingCloser) {
-            distanceJ = Math.abs(frequency - (intervalL[k] + intervalR[k]) / 2);
+        while (possible === -1 && (k < intervalL.length) && gettingCloser) {
+            distanceJ = Math.abs(frequency - (intervalL[k].val + intervalR[k].val) / 2);
+
             //Still getting closer?
             if (distanceJ < minDistance) {
                 minDistance = distanceJ;
             } else {
                 gettingCloser = false;
             }
-            if (distanceJ < Math.abs(intervalL[k] - intervalR[k]) / 2) {
+            if (distanceJ < Math.abs(intervalL[k].val - intervalR[k].val) / 2) {
                 possible = k;
                 lastK = k;
             }
-            k++;
+            ++k;
         }
+
         if (possible !== -1) {
             if (Math.abs(Y[minddY[j]]) > options.minMaxRatio * maxY) {
                 signals[signalsLen++] = {
                     i: minddY[j],
                     x: frequency,
                     y: (Y[minddY[j]] + yCorrection.b) / yCorrection.m,
-                    width: Math.abs(intervalR[possible] - intervalL[possible]), //widthCorrection
+                    width: Math.abs(intervalR[possible].val - intervalL[possible].val), //widthCorrection
                     soft: broadMask[j]
                 };
+                if (options.boundaries) {
+                    signals[signalsLen - 1].left = intervalL[possible];
+                    signals[signalsLen - 1].right = intervalR[possible];
+                }
+                if (options.approximateHeight) {
+                    let yLeft = Y[intervalL[possible].pos];
+                    let yRight = Y[intervalR[possible].pos];
+                    signals[signalsLen - 1].height = 2 * (signals[signalsLen - 1].y - ((yLeft + yRight) / 2));
+                }
             }
         }
     }
