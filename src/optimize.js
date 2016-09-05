@@ -1,6 +1,8 @@
 /**
  * Created by acastillo on 9/6/15.
  */
+'use strict';
+
 var Opt = require('ml-optimize-lorentzian');
 
 function sampleFunction(from, to, x, y, lastIndex) {
@@ -80,7 +82,7 @@ function optimizePeaks(peakList, x, y, n, fnType) {
             //console.log(groups[i].limits);
             if (sampling[0].length > 5) {
                 error = peaks.width / 1000;
-                opts = [  3,    100, error, error, error, error * 10, error * 10,    11,    9,        1 ];
+                opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1];
                 //var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
                 //var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
                 var optPeak = [];
@@ -189,7 +191,7 @@ function joinBroadPeaks(peakList, options) {
             count++;
         } else {
             if (count > 2) {
-                var fitted =  Opt.optimizeSingleLorentzian(candidates,
+                var fitted = Opt.optimizeSingleLorentzian(candidates,
                     {x: broadLines[maxI].x, y: max, width: Math.abs(candidates[0][0] - candidates[candidates.length - 1][0])});
                 peakList.push({x: fitted[0][0], y: fitted[1][0], width: fitted[2][0], soft: false});
 
