@@ -14,7 +14,7 @@ let defaultOptions = {
     maxCriteria: true,
     smoothY: true,
     realTopDetection: false,
-    approximateHeight: false,
+    heightFactor: 0,
     boundaries: false,
     derivativeThreshold: 0
 };
@@ -104,8 +104,8 @@ function gsd(x, yIn, options) {
         if ((dY[i] - dY[i - 1] <  -options.derivativeThreshold) && (dY[i] - dY[i + 1] <= -options.derivativeThreshold) ||
             (dY[i] - dY[i - 1] <= -options.derivativeThreshold) && (dY[i] - dY[i + 1] <  -options.derivativeThreshold)) {
             lastMin = {
-                val: X[i],
-                pos: i
+                x: X[i],
+                index: i
             };
             if (dx > 0 && lastMax !== null) {
                 intervalL[intervalLLen++] = lastMax;
@@ -117,8 +117,8 @@ function gsd(x, yIn, options) {
         if ((dY[i] - dY[i - 1] >= options.derivativeThreshold) && (dY[i] - dY[i + 1] >  options.derivativeThreshold) ||
             (dY[i] - dY[i - 1] >  options.derivativeThreshold) && (dY[i] - dY[i + 1] >= options.derivativeThreshold)) {
             lastMax = {
-                val: X[i],
-                pos: i
+                x: X[i],
+                index: i
             };
             if (dx < 0 && lastMin !== null) {
                 intervalL[intervalLLen++] = lastMax;
@@ -150,7 +150,7 @@ function gsd(x, yIn, options) {
         distanceJ = 0;
         gettingCloser = true;
         while (possible === -1 && (k < intervalL.length) && gettingCloser) {
-            distanceJ = Math.abs(frequency - (intervalL[k].val + intervalR[k].val) / 2);
+            distanceJ = Math.abs(frequency - (intervalL[k].x + intervalR[k].x) / 2);
 
             //Still getting closer?
             if (distanceJ < minDistance) {
@@ -158,7 +158,7 @@ function gsd(x, yIn, options) {
             } else {
                 gettingCloser = false;
             }
-            if (distanceJ < Math.abs(intervalL[k].val - intervalR[k].val) / 2) {
+            if (distanceJ < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
                 possible = k;
                 lastK = k;
             }
@@ -168,20 +168,20 @@ function gsd(x, yIn, options) {
         if (possible !== -1) {
             if (Math.abs(Y[minddY[j]]) > options.minMaxRatio * maxY) {
                 signals[signalsLen++] = {
-                    i: minddY[j],
+                    index: minddY[j],
                     x: frequency,
                     y: (Y[minddY[j]] + yCorrection.b) / yCorrection.m,
-                    width: Math.abs(intervalR[possible].val - intervalL[possible].val), //widthCorrection
+                    width: Math.abs(intervalR[possible].x - intervalL[possible].x), //widthCorrection
                     soft: broadMask[j]
                 };
                 if (options.boundaries) {
                     signals[signalsLen - 1].left = intervalL[possible];
                     signals[signalsLen - 1].right = intervalR[possible];
                 }
-                if (options.approximateHeight) {
-                    let yLeft = Y[intervalL[possible].pos];
-                    let yRight = Y[intervalR[possible].pos];
-                    signals[signalsLen - 1].height = 2 * (signals[signalsLen - 1].y - ((yLeft + yRight) / 2));
+                if (options.heightFactor) {
+                    let yLeft = Y[intervalL[possible].index];
+                    let yRight = Y[intervalR[possible].index];
+                    signals[signalsLen - 1].height = options.heightFactor * (signals[signalsLen - 1].y - ((yLeft + yRight) / 2));
                 }
             }
         }
