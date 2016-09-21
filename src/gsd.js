@@ -10,7 +10,6 @@ const defaultOptions = {
     },
     minMaxRatio: 0.00025,
     broadRatio: 0.00,
-    noiseFactor: 3,
     maxCriteria: true,
     smoothY: true,
     realTopDetection: false,
@@ -30,7 +29,7 @@ const defaultOptions = {
  * @param {Number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
  * @param {Number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
  * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
- * @param {Number} [options.noiseLevel = 3] - Noise threshold in spectrum units
+ * @param {Number} [options.noiseLevel = 0] - Noise threshold in spectrum units
  * @param {Boolean} [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
  * @param {Boolean} [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
  * @param {Boolean} [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors

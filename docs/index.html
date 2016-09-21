@@ -71,7 +71,7 @@
       
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/optimize.js#L4-L4'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/5c0026dc063541ab4679f92125a02f933dd1bea7/src/optimize.js#L4-L4'>
       <span>src/optimize.js</span>
       </a>
     
@@ -119,7 +119,7 @@
       joinBroadPeaks
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/optimize.js#L165-L218'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/5c0026dc063541ab4679f92125a02f933dd1bea7/src/optimize.js#L165-L218'>
       <span>src/optimize.js</span>
       </a>
     
@@ -129,7 +129,7 @@
   <p>This function try to join the peaks that seems to belong to a broad signal in a single broad peak.</p>
 
 
-  <div class='pre p1 fill-light mt0'>joinBroadPeaks(peakList: Any, options: Any)</div>
+  <div class='pre p1 fill-light mt0'>joinBroadPeaks(peakList: any, options: any)</div>
 
   
 
@@ -145,14 +145,14 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>peakList</span> <code class='quiet'>(Any)</code> 
+            <span class='code bold'>peakList</span> <code class='quiet'>(any)</code> 
           </div>
           
         </div>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(Any)</code> 
+            <span class='code bold'>options</span> <code class='quiet'>(any)</code> 
           </div>
           
         </div>
@@ -186,7 +186,7 @@
       gsd
     </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/gsd.js#L37-L220'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/5c0026dc063541ab4679f92125a02f933dd1bea7/src/gsd.js#L42-L225'>
       <span>src/gsd.js</span>
       </a>
     
@@ -196,7 +196,7 @@
   <p>Global spectra deconvolution</p>
 
 
-  <div class='pre p1 fill-light mt0'>gsd(x: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;, yIn: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;, options: [<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>]): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&gt;</div>
+  <div class='pre p1 fill-light mt0'>gsd(x: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;, options.derivativeThreshold: [<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>], options: [<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>], yIn: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&gt;</div>
 
   
 
@@ -220,7 +220,9 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>yIn</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;)</code> Dependent variable
+            <span class='code bold'>options.derivativeThreshold</span> <code class='quiet'>([<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]
+            (default <code>0</code>)
+            )</code> Filters based on the amplitude of the first derivative
 
           </div>
           
@@ -263,23 +265,9 @@
                 </tr>
               
                 <tr>
-                  <td class='break-word'><span class='code bold'>options.broadRatio</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
-                  
-                    (default <code>0.00</code>)
-                  </td>
-                  <td class='break-word'><span>If 
-<code>broadRatio</code>
- is higher than 0, then all the peaks which second derivative
-smaller than 
-<code>broadRatio * maxAbsSecondDerivative</code>
- will be marked with the soft mask equal to true.
-</span></td>
-                </tr>
-              
-                <tr>
                   <td class='break-word'><span class='code bold'>options.noiseLevel</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
                   
-                    (default <code>3</code>)
+                    (default <code>0</code>)
                   </td>
                   <td class='break-word'><span>Noise threshold in spectrum units
 </span></td>
@@ -294,8 +282,67 @@ smaller than
 </span></td>
                 </tr>
               
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.smoothY</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>]</code>
+                  
+                    (default <code>true</code>)
+                  </td>
+                  <td class='break-word'><span>Select the peak intensities from a smoothed version of the independent variables
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.realTopDetection</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>]</code>
+                  
+                    (default <code>false</code>)
+                  </td>
+                  <td class='break-word'><span>Use a quadratic optimizations with the peak and its 3 closest neighbors
+to determine the true x,y values of the peak?
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.heightFactor</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
+                  
+                    (default <code>0</code>)
+                  </td>
+                  <td class='break-word'><span>Factor to multiply the calculated height (usually 2)
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.boundaries</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>]</code>
+                  
+                    (default <code>false</code>)
+                  </td>
+                  <td class='break-word'><span>Return also the inflection points of the peaks
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.broadRatio</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
+                  
+                    (default <code>0.00</code>)
+                  </td>
+                  <td class='break-word'><span>If 
+<code>broadRatio</code>
+ is higher than 0, then all the peaks which second derivative
+smaller than 
+<code>broadRatio * maxAbsSecondDerivative</code>
+ will be marked with the soft mask equal to true.
+</span></td>
+                </tr>
+              
             </tbody>
           </table>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>yIn</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;)</code> Dependent variable
+
+          </div>
           
         </div>
       
