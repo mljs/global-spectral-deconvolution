@@ -24,7 +24,7 @@ const defaultOptions = {
  * @param {Array<Number>} x - Independent variable
  * @param {Array<Number>} yIn - Dependent variable
  * @param {Object} [options] - Options object
- * @param {Object} [options.sgOptions] - Options object for Savitzky-Golay filter
+ * @param {Object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
  * @param {Number} [options.sgOptions.windowSize = 9] - points to use in the approximations
  * @param {Number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
  * @param {Number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise

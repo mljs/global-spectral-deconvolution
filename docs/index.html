@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>ml-gsd 1.1.6 | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github.css' type='text/css' rel='stylesheet' />
+</head>
+<body class='documentation'>
+  <div class='max-width-4 mx-auto'>
+    <div class='clearfix md-mxn2'>
+      <div class='fixed xs-hide fix-3 overflow-auto max-height-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'>ml-gsd</h3>
+          <div class='mb1'><code>1.1.6</code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#undefined'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#joinbroadpeaks'
+                  class="">
+                  joinBroadPeaks
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#gsd'
+                  class="">
+                  gsd
+                  
+                </a>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div class='fix-margin-3'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    <h3 class='fl m0' id='undefined'>
+      
+    </h3>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/optimize.js#L4-L4'>
+      <span>src/optimize.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Created by acastillo on 9/6/15.</p>
+
+
+  <div class='pre p1 fill-light mt0'></div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    <h3 class='fl m0' id='joinbroadpeaks'>
+      joinBroadPeaks
+    </h3>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/optimize.js#L165-L218'>
+      <span>src/optimize.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>This function try to join the peaks that seems to belong to a broad signal in a single broad peak.</p>
+
+
+  <div class='pre p1 fill-light mt0'>joinBroadPeaks(peakList: Any, options: Any)</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>peakList</span> <code class='quiet'>(Any)</code> 
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(Any)</code> 
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    <h3 class='fl m0' id='gsd'>
+      gsd
+    </h3>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/042b0e3fd53bb39f33dd4c2162d2bd829ad95592/src/gsd.js#L37-L220'>
+      <span>src/gsd.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Global spectra deconvolution</p>
+
+
+  <div class='pre p1 fill-light mt0'>gsd(x: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;, yIn: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;, options: [<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>]): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&gt;</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>x</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;)</code> Independent variable
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>yIn</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>&gt;)</code> Dependent variable
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>([<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>])</code> Options object
+
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.sgOptions</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>]</code>
+                  </td>
+                  <td class='break-word'><span>Options object for Savitzky-Golay filter. See 
+<a href="https://github.com/mljs/savitzky-golay-generalized#options">https://github.com/mljs/savitzky-golay-generalized#options</a>
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.minMaxRatio</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
+                  
+                    (default <code>0.00025</code>)
+                  </td>
+                  <td class='break-word'><span>Threshold to determine if a given peak should be considered as a noise
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.broadRatio</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
+                  
+                    (default <code>0.00</code>)
+                  </td>
+                  <td class='break-word'><span>If 
+<code>broadRatio</code>
+ is higher than 0, then all the peaks which second derivative
+smaller than 
+<code>broadRatio * maxAbsSecondDerivative</code>
+ will be marked with the soft mask equal to true.
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.noiseLevel</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>]</code>
+                  
+                    (default <code>3</code>)
+                  </td>
+                  <td class='break-word'><span>Noise threshold in spectrum units
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>options.maxCriteria</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>]</code>
+                  
+                    (default <code>true</code>)
+                  </td>
+                  <td class='break-word'><span>Peaks are local maximum(true) or minimum(false)
+</span></td>
+                </tr>
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&lt;<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&gt;</code>:
+        
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+      </div>
+    </div>
+  </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>
