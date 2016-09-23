@@ -15,7 +15,7 @@ const defaultOptions = {
     realTopDetection: false,
     heightFactor: 0,
     boundaries: false,
-    derivativeThreshold: 0
+    derivativeThreshold: -1
 };
 
 /**
@@ -36,7 +36,7 @@ const defaultOptions = {
  * to determine the true x,y values of the peak?
  * @param {Number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
  * @param {Boolean} [options.boundaries = false] - Return also the inflection points of the peaks
- * @param {Number} [options.derivativeThreshold = 0] - Filters based on the amplitude of the first derivative
+ * @param {Number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<Object>}
  */
 function gsd(x, yIn, options) {
@@ -120,29 +120,34 @@ function gsd(x, yIn, options) {
     var broadMaskLen = 0;
     // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
     for (let i = 1; i < Y.length - 1; ++i) {
-        // Minimum in first derivative
-        if ((dY[i] - dY[i - 1] <  -options.derivativeThreshold) && (dY[i] - dY[i + 1] <= -options.derivativeThreshold) ||
-            (dY[i] - dY[i - 1] <= -options.derivativeThreshold) && (dY[i] - dY[i + 1] <  -options.derivativeThreshold)) {
-            lastMin = {
-                x: X[i],
-                index: i
-            };
-            if (dx > 0 && lastMax !== null) {
-                intervalL[intervalLLen++] = lastMax;
-                intervalR[intervalRLen++] = lastMin;
-            }
-        }
 
-        // Maximum in first derivative
-        if ((dY[i] - dY[i - 1] >= options.derivativeThreshold) && (dY[i] - dY[i + 1] >  options.derivativeThreshold) ||
-            (dY[i] - dY[i - 1] >  options.derivativeThreshold) && (dY[i] - dY[i + 1] >= options.derivativeThreshold)) {
-            lastMax = {
-                x: X[i],
-                index: i
-            };
-            if (dx < 0 && lastMin !== null) {
-                intervalL[intervalLLen++] = lastMax;
-                intervalR[intervalRLen++] = lastMin;
+        // filter based on derivativeThreshold
+        if (Math.abs(dY[i]) > options.derivativeThreshold) {
+
+            // Minimum in first derivative
+            if ((dY[i] < dY[i - 1]) && (dY[i] <= dY[i + 1]) ||
+                (dY[i] <= dY[i - 1]) && (dY[i] < dY[i + 1])) {
+                lastMin = {
+                    x: X[i],
+                    index: i
+                };
+                if (dx > 0 && lastMax !== null) {
+                    intervalL[intervalLLen++] = lastMax;
+                    intervalR[intervalRLen++] = lastMin;
+                }
+            }
+
+            // Maximum in first derivative
+            if ((dY[i] >= dY[i - 1]) && (dY[i] > dY[i + 1]) ||
+                (dY[i] > dY[i - 1]) && (dY[i] >= dY[i + 1])) {
+                lastMax = {
+                    x: X[i],
+                    index: i
+                };
+                if (dx < 0 && lastMin !== null) {
+                    intervalL[intervalLLen++] = lastMax;
+                    intervalR[intervalRLen++] = lastMin;
+                }
             }
         }
 
