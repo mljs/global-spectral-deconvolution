@@ -10,7 +10,7 @@ Global Spectra Deconvolution + Peak optimizer
 ##Parameters
 
 #### minMaxRatio=0.00025 (0-1)
-Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the higest peak.
+Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
 
 #### broadRatio=0.00  (0-1)
 If `broadRatio` is higher than 0, then all the peaks which second derivative smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
@@ -25,10 +25,19 @@ Peaks are local maximum(true) or minimum(false)
 Select the peak intensities from a smoothed version of the independent variables?
 
 #### realTopDetection=false [true||false]
-Use a cuadratic optmizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak?
+Use a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak?
 
 #### sgOptions={windowSize: 5, polynomial: 3}
-Savitzky-Golay paramters. windowSize should be odd; polynomial is the degree of the polinomial to use in the approximations. It should be bigger than 2.
+Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of the polynomial to use in the approximations. It should be bigger than 2.
+
+#### heightFactor=0
+Factor to multiply the calculated height (usually 2).
+
+#### boundaries=false
+Return also the inflection points of the peaks
+
+#### derivativeThreshold=0
+Filters based on the amplitude of the first derivative
 
 ## Example
 ```js
