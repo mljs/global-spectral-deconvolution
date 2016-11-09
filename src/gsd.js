@@ -165,7 +165,7 @@ function gsd(x, yIn, options) {
 
     let signals = new Array(minddY.length);
     let signalsLen = 0;
-    let lastK = 0;
+    let lastK = -1;
     let possible, frequency, distanceJ, minDistance, gettingCloser;
     for (let j = 0; j < minddY.length; ++j) {
         frequency = X[minddY[j]];
