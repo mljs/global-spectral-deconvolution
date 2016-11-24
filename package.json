@@ -38,14 +38,14 @@
     "eslint": "^3.4.0",
     "eslint-config-cheminfo": "^1.1.2",
     "eslint-plugin-no-only-tests": "^1.1.0",
-    "mocha": "^2.2.5",
-    "mocha-better-spec-reporter": "^2.1.1",
-    "should": "^7.0.2",
+    "mocha": "^3.1.2",
+    "mocha-better-spec-reporter": "^3.0.2",
+    "should": "^11.1.1",
     "ml-stat": "^1.1.0",
     "chemcalc": "^3.0.6"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "0.1.1",
+    "ml-optimize-lorentzian": "0.1.4",
     "xy-parser": "^1.2.0",
     "ml-savitzky-golay-generalized": "1.1.0",
     "extend": "3.0.0"
