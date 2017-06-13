@@ -7,6 +7,8 @@
 
 Global Spectra Deconvolution + Peak optimizer
 
+## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
+
 ## Parameters
 
 #### minMaxRatio=0.00025 (0-1)
