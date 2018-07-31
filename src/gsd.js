@@ -273,6 +273,7 @@ function realTopDetection(peakList, x, y) {
                 }
             }
         }
+        // interpolation to a sin() function 
         if (y[currentPoint - 1] > 0 && y[currentPoint + 1] > 0
             && y[currentPoint] >= y[currentPoint - 1]
             && y[currentPoint] >= y[currentPoint + 1]) {
