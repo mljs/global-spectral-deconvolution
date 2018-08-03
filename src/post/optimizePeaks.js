@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Opt = require('ml-optimize-lorentzian');
+var optimize = require('ml-optimize-lorentzian');
 
 function sampleFunction(from, to, x, y, lastIndex) {
   var nbPoints = x.length;
@@ -72,10 +72,10 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
         var optPeaks = [];
         if (fnType === 'gaussian') {
-          optPeaks = Opt.optimizeGaussianSum(sampling, peaks, opts);
+          optPeaks = optimize.optimizeGaussianSum(sampling, peaks, opts);
         } else {
           if (fnType === 'lorentzian') {
-            optPeaks = Opt.optimizeLorentzianSum(sampling, peaks, opts);
+            optPeaks = optimize.optimizeLorentzianSum(sampling, peaks, opts);
           }
         }
         // console.log(optPeak);
@@ -106,14 +106,14 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         // var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
         var optPeak = [];
         if (fnType === 'gaussian') {
-          optPeak = Opt.optimizeSingleGaussian(
+          optPeak = optimize.optimizeSingleGaussian(
             [sampling[0], sampling[1]],
             peaks,
             opts
           );
         } else {
           if (fnType === 'lorentzian') {
-            optPeak = Opt.optimizeSingleLorentzian(
+            optPeak = optimize.optimizeSingleLorentzian(
               [sampling[0], sampling[1]],
               peaks,
               opts
