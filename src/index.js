@@ -1,4 +1,8 @@
 'use strict';
 
-module.exports.post = require('../src/optimize');
-module.exports.gsd = require('../src/gsd');
+module.exports.gsd = require('./gsd');
+
+module.exports.post = {
+  optimizePeaks: require('./post/optimizePeaks'),
+  joinBroadPeaks: require('./post/joinBroadPeaks')
+};

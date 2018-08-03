@@ -50,6 +50,7 @@
     "jest": "^22.4.4",
     "ml-optimize-lorentzian": "0.1.4",
     "ml-savitzky-golay-generalized": "1.1.0",
+    "spectrum-generator": "^2.0.1",
     "xy-parser": "^1.2.0"
   },
   "jest": {

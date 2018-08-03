@@ -39,7 +39,7 @@ function sampleFunction(from, to, x, y, lastIndex) {
   return [sampleX, sampleY];
 }
 
-function optimizePeaks(peakList, x, y, n, fnType) {
+module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
   var i;
   var j;
 
@@ -130,7 +130,7 @@ function optimizePeaks(peakList, x, y, n, fnType) {
     }
   }
   return result;
-}
+};
 
 function groupPeaks(peakList, nL) {
   var group = [];
@@ -197,128 +197,3 @@ function groupPeaks(peakList, nL) {
   }
   return groups;
 }
-/**
- * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
- * @param peakList
- * @param options
- */
-function joinBroadPeaks(peakList, options) {
-  var width = options.width;
-  var broadLines = [];
-  // Optimize the possible broad lines
-  var max = 0;
-
-  var maxI = 0;
-
-  var count = 1;
-  for (let i = peakList.length - 1; i >= 0; i--) {
-    if (peakList[i].soft) {
-      broadLines.push(peakList.splice(i, 1)[0]);
-    }
-  }
-  // Push a feak peak
-  broadLines.push({ x: Number.MAX_VALUE });
-
-  var candidates = [[broadLines[0].x, broadLines[0].y]];
-  var indexes = [0];
-
-  for (let i = 1; i < broadLines.length; i++) {
-    // console.log(broadLines[i-1].x+" "+broadLines[i].x);
-    if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
-      candidates.push([broadLines[i].x, broadLines[i].y]);
-      if (broadLines[i].y > max) {
-        max = broadLines[i].y;
-        maxI = i;
-      }
-      indexes.push(i);
-      count++;
-    } else {
-      if (count > 2) {
-        var fitted = Opt.optimizeSingleLorentzian(candidates, {
-          x: broadLines[maxI].x,
-          y: max,
-          width: Math.abs(
-            candidates[0][0] - candidates[candidates.length - 1][0]
-          )
-        });
-        peakList.push({
-          x: fitted[0][0],
-          y: fitted[1][0],
-          width: fitted[2][0],
-          soft: false
-        });
-      } else {
-        // Put back the candidates to the signals list
-        indexes.forEach((index) => {
-          peakList.push(broadLines[index]);
-        });
-      }
-      candidates = [[broadLines[i].x, broadLines[i].y]];
-      indexes = [i];
-      max = broadLines[i].y;
-      maxI = i;
-      count = 1;
-    }
-  }
-
-  peakList.sort(function (a, b) {
-    return a.x - b.x;
-  });
-
-  return peakList;
-}
-
-/*
- var isPartOf = true
-if(options.broadRatio>0){
- var broadLines=[[Number.MAX_VALUE,0,0]];
- //Optimize the possible broad lines
- var max=0, maxI=0,count=0;
- var candidates = [],broadLinesS=[];
- var isPartOf = false;
-
- for(var i=broadLines.length-1;i>0;i--){
- //console.log(broadLines[i][0]+" "+rangeX+" "+Math.abs(broadLines[i-1][0]-broadLines[i][0]));
- if(Math.abs(broadLines[i-1][0]-broadLines[i][0])<rangeX){
-
- candidates.push(broadLines[i]);
- if(broadLines[i][1]>max){
- max = broadLines[i][1];
- maxI = i;
- }
- count++;
- }
- else{
- isPartOf = true;
- if(count>30){ // TODO, an options ?
- isPartOf = false;
- //for(var j=0;j<signals.length;j++){
- //    if(Math.abs(broadLines[maxI][0]-signals[j][0])<rangeX)
- //       isPartOf = true;
- //    }
- //console.log("Was part of "+isPartOf);
- }
- if(isPartOf){
- for(var j=0;j<candidates.length;j++){
- signals.push([candidates[j][0], candidates[j][1], dx]);
- }
- }
- else{
- var fitted =  Opt.optimizeSingleLorentzian(candidates,{x:candidates[maxI][0],
- width:Math.abs(candidates[0][0]-candidates[candidates.length-1][0])},
- []);
- //console.log(fitted);
- signals.push([fitted[0][0],fitted[0][1],fitted[0][2]]);
- }
- candidates = [];
- max = 0;
- maxI = 0;
- count = 0;
- }
- }
- }*/
-
-module.exports = {
-  optimizePeaks: optimizePeaks,
-  joinBroadPeaks: joinBroadPeaks
-};
