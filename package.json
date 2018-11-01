@@ -38,16 +38,16 @@
   "homepage": "https://github.com/mljs/global-spectral-deconvolution",
   "devDependencies": {
     "chemcalc": "^3.0.6",
-    "cheminfo-tools": "^1.20.2",
+    "cheminfo-tools": "^1.21.1",
     "eslint": "^5.2.0",
     "eslint-config-cheminfo": "^1.18.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jest": "^21.18.0",
+    "jest": "^22.4.4",
     "ml-stat": "^1.1.0"
   },
   "dependencies": {
     "extend": "3.0.0",
-    "jest": "^22.4.4",
     "ml-optimize-lorentzian": "0.1.4",
     "ml-savitzky-golay-generalized": "1.1.0",
     "spectrum-generator": "^2.0.1",
