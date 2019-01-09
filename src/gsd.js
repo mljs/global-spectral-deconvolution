@@ -1,6 +1,5 @@
 'use strict';
 
-const extend = require('extend');
 const SG = require('ml-savitzky-golay-generalized');
 
 const defaultOptions = {
@@ -40,7 +39,7 @@ const defaultOptions = {
  * @return {Array<object>}
  */
 function gsd(x, yIn, options) {
-  options = extend({}, defaultOptions, options);
+  options = Object.assign({}, defaultOptions, options);
   let sgOptions = options.sgOptions;
   const y = [].concat(yIn);
 
