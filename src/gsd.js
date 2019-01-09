@@ -8,7 +8,7 @@ const defaultOptions = {
     polynomial: 3
   },
   minMaxRatio: 0.00025,
-  broadRatio: 0.00,
+  broadRatio: 0.0,
   maxCriteria: true,
   smoothY: true,
   realTopDetection: false,
@@ -47,9 +47,7 @@ function gsd(x, yIn, options) {
     // We have to know if x is equally spaced
     var maxDx = 0;
 
-
     var minDx = Number.MAX_VALUE;
-
 
     var tmp;
     for (let i = 0; i < x.length - 1; ++i) {
@@ -88,16 +86,40 @@ function gsd(x, yIn, options) {
   let dY, ddY;
   if ((maxDx - minDx) / maxDx < 0.05) {
     if (options.smoothY) {
-      Y = SG(y, x[1] - x[0], { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 0 });
+      Y = SG(y, x[1] - x[0], {
+        windowSize: sgOptions.windowSize,
+        polynomial: sgOptions.polynomial,
+        derivative: 0
+      });
     }
-    dY = SG(y, x[1] - x[0], { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 1 });
-    ddY = SG(y, x[1] - x[0], { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 2 });
+    dY = SG(y, x[1] - x[0], {
+      windowSize: sgOptions.windowSize,
+      polynomial: sgOptions.polynomial,
+      derivative: 1
+    });
+    ddY = SG(y, x[1] - x[0], {
+      windowSize: sgOptions.windowSize,
+      polynomial: sgOptions.polynomial,
+      derivative: 2
+    });
   } else {
     if (options.smoothY) {
-      Y = SG(y, x, { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 0 });
+      Y = SG(y, x, {
+        windowSize: sgOptions.windowSize,
+        polynomial: sgOptions.polynomial,
+        derivative: 0
+      });
     }
-    dY = SG(y, x, { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 1 });
-    ddY = SG(y, x, { windowSize: sgOptions.windowSize, polynomial: sgOptions.polynomial, derivative: 2 });
+    dY = SG(y, x, {
+      windowSize: sgOptions.windowSize,
+      polynomial: sgOptions.polynomial,
+      derivative: 1
+    });
+    ddY = SG(y, x, {
+      windowSize: sgOptions.windowSize,
+      polynomial: sgOptions.polynomial,
+      derivative: 2
+    });
   }
 
   const X = x;
@@ -128,8 +150,10 @@ function gsd(x, yIn, options) {
     // filter based on derivativeThreshold
     if (Math.abs(dY[i]) > options.derivativeThreshold) {
       // Minimum in first derivative
-      if ((dY[i] < dY[i - 1]) && (dY[i] <= dY[i + 1]) ||
-                (dY[i] <= dY[i - 1]) && (dY[i] < dY[i + 1])) {
+      if (
+        (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
+        (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
+      ) {
         lastMin = {
           x: X[i],
           index: i
@@ -141,8 +165,10 @@ function gsd(x, yIn, options) {
       }
 
       // Maximum in first derivative
-      if ((dY[i] >= dY[i - 1]) && (dY[i] > dY[i + 1]) ||
-                (dY[i] > dY[i - 1]) && (dY[i] >= dY[i + 1])) {
+      if (
+        (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1]) ||
+        (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
+      ) {
         lastMax = {
           x: X[i],
           index: i
@@ -155,10 +181,11 @@ function gsd(x, yIn, options) {
     }
 
     // Minimum in second derivative
-    if ((ddY[i] < ddY[i - 1]) && (ddY[i] < ddY[i + 1])) {
+    if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
       // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
       minddY[minddYLen++] = i; // ( [X[i], Y[i], i] );
-      broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= options.broadRatio * maxDdy;
+      broadMask[broadMaskLen++] =
+        Math.abs(ddY[i]) <= options.broadRatio * maxDdy;
     }
   }
   minddY.length = minddYLen;
@@ -177,7 +204,7 @@ function gsd(x, yIn, options) {
     minDistance = Number.MAX_VALUE;
     distanceJ = 0;
     gettingCloser = true;
-    while (possible === -1 && (k < intervalL.length) && gettingCloser) {
+    while (possible === -1 && k < intervalL.length && gettingCloser) {
       distanceJ = Math.abs(frequency - (intervalL[k].x + intervalR[k].x) / 2);
 
       // Still getting closer?
@@ -209,7 +236,9 @@ function gsd(x, yIn, options) {
         if (options.heightFactor) {
           let yLeft = Y[intervalL[possible].index];
           let yRight = Y[intervalR[possible].index];
-          signals[signalsLen - 1].height = options.heightFactor * (signals[signalsLen - 1].y - ((yLeft + yRight) / 2));
+          signals[signalsLen - 1].height =
+            options.heightFactor *
+            (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
         }
       }
     }
@@ -235,7 +264,6 @@ function gsd(x, yIn, options) {
 function getNoiseLevel(y) {
   var mean = 0;
 
-
   var stddev = 0;
   var length = y.length;
   for (let i = 0; i < length; ++i) {
@@ -250,7 +278,10 @@ function getNoiseLevel(y) {
   if (length % 2 === 1) {
     stddev = averageDeviations[(length - 1) / 2] / 0.6745;
   } else {
-    stddev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
+    stddev =
+      (0.5 *
+        (averageDeviations[length / 2] + averageDeviations[length / 2 - 1])) /
+      0.6745;
   }
 
   return stddev;
@@ -259,39 +290,53 @@ function getNoiseLevel(y) {
 function realTopDetection(peakList, x, y) {
   var alpha, beta, gamma, p, currentPoint;
   for (var j = 0; j < peakList.length; j++) {
-    currentPoint = peakList[j].i;// peakList[j][2];
+    currentPoint = peakList[j].index; // peakList[j][2];
     // The detected peak could be moved 1 or 2 unit to left or right.
-    if (y[currentPoint - 1] >= y[currentPoint - 2]
-            && y[currentPoint - 1] >= y[currentPoint]) {
+    if (
+      y[currentPoint - 1] >= y[currentPoint - 2] &&
+      y[currentPoint - 1] >= y[currentPoint]
+    ) {
       currentPoint--;
     } else {
-      if (y[currentPoint + 1] >= y[currentPoint]
-                && y[currentPoint + 1] >= y[currentPoint + 2]) {
+      if (
+        y[currentPoint + 1] >= y[currentPoint] &&
+        y[currentPoint + 1] >= y[currentPoint + 2]
+      ) {
         currentPoint++;
       } else {
-        if (y[currentPoint - 2] >= y[currentPoint - 3]
-                    && y[currentPoint - 2] >= y[currentPoint - 1]) {
+        if (
+          y[currentPoint - 2] >= y[currentPoint - 3] &&
+          y[currentPoint - 2] >= y[currentPoint - 1]
+        ) {
           currentPoint -= 2;
         } else {
-          if (y[currentPoint + 2] >= y[currentPoint + 1]
-                        && y[currentPoint + 2] >= y[currentPoint + 3]) {
+          if (
+            y[currentPoint + 2] >= y[currentPoint + 1] &&
+            y[currentPoint + 2] >= y[currentPoint + 3]
+          ) {
             currentPoint += 2;
           }
         }
       }
     }
     // interpolation to a sin() function
-    if (y[currentPoint - 1] > 0 && y[currentPoint + 1] > 0
-            && y[currentPoint] >= y[currentPoint - 1]
-            && y[currentPoint] >= y[currentPoint + 1]) {
+    if (
+      y[currentPoint - 1] > 0 &&
+      y[currentPoint + 1] > 0 &&
+      y[currentPoint] >= y[currentPoint - 1] &&
+      y[currentPoint] >= y[currentPoint + 1]
+    ) {
       alpha = 20 * Math.log10(y[currentPoint - 1]);
       beta = 20 * Math.log10(y[currentPoint]);
       gamma = 20 * Math.log10(y[currentPoint + 1]);
-      p = 0.5 * (alpha - gamma) / (alpha - 2 * beta + gamma);
-      // console.log("p: "+p);
+      p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
+      // console.log(alpha, beta, gamma, `p: ${p}`);
       // console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
-      peakList[j].x = x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
-      peakList[j].y = y[currentPoint] - 0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
+      peakList[j].x =
+        x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
+      peakList[j].y =
+        y[currentPoint] -
+        0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
     }
   }
 }
