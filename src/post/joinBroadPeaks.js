@@ -21,7 +21,7 @@ module.exports = function joinBroadPeaks(peakList, options = {}) {
       broadLines.push(peakList.splice(i, 1)[0]);
     }
   }
-  // Push a feak peak
+  // Push a feke peak
   broadLines.push({ x: Number.MAX_VALUE });
 
   var candidates = [[broadLines[0].x, broadLines[0].y]];
