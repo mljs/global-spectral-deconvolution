@@ -2,12 +2,12 @@
 
 const gsd = require('..').gsd;
 
-const SG = require('spectrum-generator').default;
+const { SpectrumGenerator } = require('spectrum-generator');
 
 describe('Global spectra deconvolution with simulated spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   test('Should provide the right result ...', () => {
-    const sg = new SG({ start: 0, end: 100, pointsPerUnit: 10 });
+    const sg = new SpectrumGenerator({ start: 0, end: 100, pointsPerUnit: 10 });
 
     sg.addPeak([20, 100], { width: 5 });
     sg.addPeak([50, 50], { width: 5 });

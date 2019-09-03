@@ -6,11 +6,11 @@ var peakPicking = require('..');
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
-var parser = require('xy-parser');
+var { parseXY } = require('xy-parser');
 var Opt = require('ml-optimize-lorentzian');
 
 describe('Global spectra deconvolution HR mass spectra', () => {
-  var spectrum = parser.parse(
+  var spectrum = parseXY(
     fs.readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
     { arrayType: 'xxyy' }
   );
