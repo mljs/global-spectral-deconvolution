@@ -274,7 +274,7 @@ function getNoiseLevel(y) {
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
   }
-  averageDeviations.sort();
+  averageDeviations.sort((a, b) => a - b);
   if (length % 2 === 1) {
     stddev = averageDeviations[(length - 1) / 2] / 0.6745;
   } else {
