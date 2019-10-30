@@ -5,7 +5,7 @@ const SG = require('ml-savitzky-golay-generalized');
 const defaultOptions = {
   sgOptions: {
     windowSize: 9,
-    polynomial: 3
+    polynomial: 3,
   },
   minMaxRatio: 0.00025,
   broadRatio: 0.0,
@@ -14,7 +14,7 @@ const defaultOptions = {
   realTopDetection: false,
   heightFactor: 0,
   boundaries: false,
-  derivativeThreshold: -1
+  derivativeThreshold: -1,
 };
 
 /**
@@ -43,13 +43,12 @@ function gsd(x, yIn, options) {
   let sgOptions = options.sgOptions;
   const y = [].concat(yIn);
 
+  let maxDx = 0;
+  let minDx = Number.MAX_VALUE;
   if (!('noiseLevel' in options)) {
     // We have to know if x is equally spaced
-    var maxDx = 0;
 
-    var minDx = Number.MAX_VALUE;
-
-    var tmp;
+    let tmp;
     for (let i = 0; i < x.length - 1; ++i) {
       tmp = Math.abs(x[i + 1] - x[i]);
       if (tmp < minDx) {
@@ -89,43 +88,43 @@ function gsd(x, yIn, options) {
       Y = SG(y, x[1] - x[0], {
         windowSize: sgOptions.windowSize,
         polynomial: sgOptions.polynomial,
-        derivative: 0
+        derivative: 0,
       });
     }
     dY = SG(y, x[1] - x[0], {
       windowSize: sgOptions.windowSize,
       polynomial: sgOptions.polynomial,
-      derivative: 1
+      derivative: 1,
     });
     ddY = SG(y, x[1] - x[0], {
       windowSize: sgOptions.windowSize,
       polynomial: sgOptions.polynomial,
-      derivative: 2
+      derivative: 2,
     });
   } else {
     if (options.smoothY) {
       Y = SG(y, x, {
         windowSize: sgOptions.windowSize,
         polynomial: sgOptions.polynomial,
-        derivative: 0
+        derivative: 0,
       });
     }
     dY = SG(y, x, {
       windowSize: sgOptions.windowSize,
       polynomial: sgOptions.polynomial,
-      derivative: 1
+      derivative: 1,
     });
     ddY = SG(y, x, {
       windowSize: sgOptions.windowSize,
       polynomial: sgOptions.polynomial,
-      derivative: 2
+      derivative: 2,
     });
   }
 
   const X = x;
   const dx = x[1] - x[0];
-  var maxDdy = 0;
-  var maxY = 0;
+  let maxDdy = 0;
+  let maxY = 0;
   for (let i = 0; i < Y.length; i++) {
     if (Math.abs(ddY[i]) > maxDdy) {
       maxDdy = Math.abs(ddY[i]);
@@ -135,16 +134,16 @@ function gsd(x, yIn, options) {
     }
   }
 
-  var lastMax = null;
-  var lastMin = null;
-  var minddY = new Array(Y.length - 2);
-  var intervalL = new Array(Y.length);
-  var intervalR = new Array(Y.length);
-  var broadMask = new Array(Y.length - 2);
-  var minddYLen = 0;
-  var intervalLLen = 0;
-  var intervalRLen = 0;
-  var broadMaskLen = 0;
+  let lastMax = null;
+  let lastMin = null;
+  let minddY = new Array(Y.length - 2);
+  let intervalL = new Array(Y.length);
+  let intervalR = new Array(Y.length);
+  let broadMask = new Array(Y.length - 2);
+  let minddYLen = 0;
+  let intervalLLen = 0;
+  let intervalRLen = 0;
+  let broadMaskLen = 0;
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < Y.length - 1; ++i) {
     // filter based on derivativeThreshold
@@ -156,7 +155,7 @@ function gsd(x, yIn, options) {
       ) {
         lastMin = {
           x: X[i],
-          index: i
+          index: i,
         };
         if (dx > 0 && lastMax !== null) {
           intervalL[intervalLLen++] = lastMax;
@@ -171,7 +170,7 @@ function gsd(x, yIn, options) {
       ) {
         lastMax = {
           x: X[i],
-          index: i
+          index: i,
         };
         if (dx < 0 && lastMin !== null) {
           intervalL[intervalLLen++] = lastMax;
@@ -227,7 +226,7 @@ function gsd(x, yIn, options) {
           x: frequency,
           y: (Y[minddY[j]] + yCorrection.b) / yCorrection.m,
           width: Math.abs(intervalR[possible].x - intervalL[possible].x), // widthCorrection
-          soft: broadMask[j]
+          soft: broadMask[j],
         };
         if (options.boundaries) {
           signals[signalsLen - 1].left = intervalL[possible];
@@ -254,7 +253,7 @@ function gsd(x, yIn, options) {
     signals[j].base = options.noiseLevel;
   }
 
-  signals.sort(function (a, b) {
+  signals.sort(function(a, b) {
     return a.x - b.x;
   });
 
@@ -262,15 +261,15 @@ function gsd(x, yIn, options) {
 }
 
 function getNoiseLevel(y) {
-  var mean = 0;
+  let mean = 0;
 
-  var stddev = 0;
-  var length = y.length;
+  let stddev = 0;
+  let length = y.length;
   for (let i = 0; i < length; ++i) {
     mean += y[i];
   }
   mean /= length;
-  var averageDeviations = new Array(length);
+  let averageDeviations = new Array(length);
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
   }
@@ -288,8 +287,8 @@ function getNoiseLevel(y) {
 }
 
 function realTopDetection(peakList, x, y) {
-  var alpha, beta, gamma, p, currentPoint;
-  for (var j = 0; j < peakList.length; j++) {
+  let alpha, beta, gamma, p, currentPoint;
+  for (let j = 0; j < peakList.length; j++) {
     currentPoint = peakList[j].index; // peakList[j][2];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
@@ -324,8 +323,9 @@ function realTopDetection(peakList, x, y) {
       y[currentPoint - 1] > 0 &&
       y[currentPoint + 1] > 0 &&
       y[currentPoint] >= y[currentPoint - 1] &&
-      y[currentPoint] >= y[currentPoint + 1] && 
-      ( y[currentPoint] != y[currentPoint - 1] ||  y[currentPoint] != y[currentPoint + 1])
+      y[currentPoint] >= y[currentPoint + 1] &&
+      (y[currentPoint] !== y[currentPoint - 1] ||
+        y[currentPoint] !== y[currentPoint + 1])
     ) {
       alpha = 20 * Math.log10(y[currentPoint - 1]);
       beta = 20 * Math.log10(y[currentPoint]);

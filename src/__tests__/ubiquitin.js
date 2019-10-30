@@ -1,40 +1,40 @@
 'use strict';
 
-var fs = require('fs');
-
-var peakPicking = require('..');
+let fs = require('fs');
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
-var { parseXY } = require('xy-parser');
-var Opt = require('ml-optimize-lorentzian');
+let { parseXY } = require('xy-parser');
+let Opt = require('ml-optimize-lorentzian');
+
+let peakPicking = require('..');
 
 describe('Global spectra deconvolution HR mass spectra', () => {
-  var spectrum = parseXY(
+  let spectrum = parseXY(
     fs.readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
-    { arrayType: 'xxyy' }
+    { arrayType: 'xxyy' },
   );
   // var d = new Date();
   // var n = d.getTime();
   // var spectrum=parser.parse(fs.readFileSync('./ubiquitin.txt', 'utf-8'), {arrayType: 'xxyy'});
   // d = new Date();
   // console.log("Parsing time: "+(d.getTime()-n));
-  var noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
+  let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
 
-  var result = peakPicking.gsd(spectrum[0], spectrum[1], {
+  let result = peakPicking.gsd(spectrum[0], spectrum[1], {
     noiseLevel: noiseLevel,
     minMaxRatio: 0.0,
     broadRatio: 0,
     smoothY: false,
     realTopDetection: true,
-    sgOptions: { windowSize: 7, polynomial: 3 }
+    sgOptions: { windowSize: 7, polynomial: 3 },
   });
 
   // console.log(result);
   // d = new Date();
   // console.log("Parsing + gsd time: "+(d.getTime()-n));
-  var newResult = Opt.optimizeGaussianTrain(spectrum, result, {
-    percentage: 0.2
+  let newResult = Opt.optimizeGaussianTrain(spectrum, result, {
+    percentage: 0.2,
   });
   expect(newResult[0].opt).toBe(true);
   expect(newResult).toHaveLength(result.length);
@@ -48,8 +48,5 @@ describe('Global spectra deconvolution HR mass spectra', () => {
   // console.log(result.length);*/
 
   // Test case obtained from Pag 443, Chap 8.
-  test('Should provide the right result ...', () => {
-    // var result = gsd(spectrum[0],spectrum[1], 0.001, 0.1);
-    // console.log(result);
-  });
+  it.todo('Should provide the right result ...');
 });

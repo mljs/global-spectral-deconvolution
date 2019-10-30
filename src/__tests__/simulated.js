@@ -6,19 +6,19 @@ const { SpectrumGenerator } = require('spectrum-generator');
 
 describe('Global spectra deconvolution with simulated spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
-  test('Should provide the right result ...', () => {
+  it('Should provide the right result ...', () => {
     const sg = new SpectrumGenerator({ start: 0, end: 100, pointsPerUnit: 10 });
 
     sg.addPeak([20, 100], { width: 5 });
     sg.addPeak([50, 50], { width: 5 });
     sg.addPeak([70, 20], { width: 5 });
 
-    var spectrum = sg.getSpectrum();
+    let spectrum = sg.getSpectrum();
 
-    var result = gsd(spectrum.x, spectrum.y, {
+    let result = gsd(spectrum.x, spectrum.y, {
       minMaxRatio: 0,
       realTopDetection: false,
-      smoothY: false
+      smoothY: false,
     });
 
     expect(result[0]).toMatchObject({ x: 20, y: 100 });

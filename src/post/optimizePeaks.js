@@ -3,21 +3,21 @@
  */
 'use strict';
 
-var optimize = require('ml-optimize-lorentzian');
+let optimize = require('ml-optimize-lorentzian');
 
 function sampleFunction(from, to, x, y, lastIndex) {
-  var nbPoints = x.length;
-  var sampleX = [];
-  var sampleY = [];
-  var direction = Math.sign(x[1] - x[0]); // Direction of the derivative
+  let nbPoints = x.length;
+  let sampleX = [];
+  let sampleY = [];
+  let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
   if (direction === -1) {
     lastIndex[0] = x.length - 1;
   }
 
-  var delta = Math.abs(to - from) / 2;
-  var mid = (from + to) / 2;
-  var stop = false;
-  var index = lastIndex[0];
+  let delta = Math.abs(to - from) / 2;
+  let mid = (from + to) / 2;
+  let stop = false;
+  let index = lastIndex[0];
   while (!stop && index < nbPoints && index >= 0) {
     if (Math.abs(x[index] - mid) <= delta) {
       sampleX.push(x[index]);
@@ -40,19 +40,19 @@ function sampleFunction(from, to, x, y, lastIndex) {
 }
 
 module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
-  var i;
-  var j;
+  let i;
+  let j;
 
-  var lastIndex = [0];
-  var groups = groupPeaks(peakList, n);
-  var result = [];
-  var factor = 1;
+  let lastIndex = [0];
+  let groups = groupPeaks(peakList, n);
+  let result = [];
+  let factor = 1;
   if (fnType === 'gaussian') {
     factor = 1.17741;
   } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
-  var sampling, error, opts;
+  let sampling, error, opts;
   for (i = 0; i < groups.length; i++) {
-    var peaks = groups[i].group;
+    let peaks = groups[i].group;
     if (peaks.length > 1) {
       // Multiple peaks
       // console.log("Pending group of overlaped peaks "+peaks.length);
@@ -63,14 +63,14 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         groups[i].limits[0] + groups[i].limits[1],
         x,
         y,
-        lastIndex
+        lastIndex,
       );
       // console.log(sampling);
       if (sampling[0].length > 5) {
         error = peaks[0].width / 1000;
         opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1];
         // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
-        var optPeaks = [];
+        let optPeaks = [];
         if (fnType === 'gaussian') {
           optPeaks = optimize.optimizeGaussianSum(sampling, peaks, opts);
         } else {
@@ -83,7 +83,7 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
           result.push({
             x: optPeaks[j][0][0],
             y: optPeaks[j][1][0],
-            width: optPeaks[j][2][0] * factor
+            width: optPeaks[j][2][0] * factor,
           });
         }
       }
@@ -95,7 +95,7 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         peaks.x + n * peaks.width,
         x,
         y,
-        lastIndex
+        lastIndex,
       );
       // console.log("here2");
       // console.log(groups[i].limits);
@@ -104,19 +104,19 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1];
         // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
         // var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
-        var optPeak = [];
+        let optPeak = [];
         if (fnType === 'gaussian') {
           optPeak = optimize.optimizeSingleGaussian(
             [sampling[0], sampling[1]],
             peaks,
-            opts
+            opts,
           );
         } else {
           if (fnType === 'lorentzian') {
             optPeak = optimize.optimizeSingleLorentzian(
               [sampling[0], sampling[1]],
               peaks,
-              opts
+              opts,
             );
           }
         }
@@ -124,7 +124,7 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
         result.push({
           x: optPeak[0][0],
           y: optPeak[1][0],
-          width: optPeak[2][0] * factor
+          width: optPeak[2][0] * factor,
         }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
       }
     }
@@ -133,11 +133,11 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
 };
 
 function groupPeaks(peakList, nL) {
-  var group = [];
-  var groups = [];
-  var i, j;
-  var limits = [peakList[0].x, nL * peakList[0].width];
-  var upperLimit, lowerLimit;
+  let group = [];
+  let groups = [];
+  let i, j;
+  let limits = [peakList[0].x, nL * peakList[0].width];
+  let upperLimit, lowerLimit;
   // Merge forward
   for (i = 0; i < peakList.length; i++) {
     // If the 2 things overlaps
@@ -158,7 +158,7 @@ function groupPeaks(peakList, nL) {
       }
       limits = [
         (upperLimit + lowerLimit) / 2,
-        Math.abs(upperLimit - lowerLimit) / 2
+        Math.abs(upperLimit - lowerLimit) / 2,
       ];
     } else {
       groups.push({ limits: limits, group: group });
@@ -189,7 +189,7 @@ function groupPeaks(peakList, nL) {
       // console.log(limits);
       groups[i].limits = [
         (upperLimit + lowerLimit) / 2,
-        Math.abs(upperLimit - lowerLimit) / 2
+        Math.abs(upperLimit - lowerLimit) / 2,
       ];
 
       groups.splice(i + 1, 1);

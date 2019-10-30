@@ -1,6 +1,6 @@
 'use strict';
 
-var gsd = require('../gsd');
+let gsd = require('../gsd');
 
 describe('Simple test cases', () => {
   let X = [];
@@ -24,8 +24,8 @@ describe('Simple test cases', () => {
       smoothY: true,
       sgOptions: {
         windowSize: 5,
-        polynomial: 3
-      }
+        polynomial: 3,
+      },
     });
 
     expect(peaks).toStrictEqual([
@@ -35,8 +35,8 @@ describe('Simple test cases', () => {
         soft: false,
         width: 2,
         x: 15,
-        y: 4.657142857142857
-      }
+        y: 4.657142857142857,
+      },
     ]);
   });
 
@@ -48,8 +48,8 @@ describe('Simple test cases', () => {
       smoothY: true,
       sgOptions: {
         windowSize: 5,
-        polynomial: 3
-      }
+        polynomial: 3,
+      },
     });
 
     expect(peaks).toStrictEqual([
@@ -59,8 +59,8 @@ describe('Simple test cases', () => {
         soft: false,
         width: 3,
         x: 15,
-        y: 5
-      }
+        y: 5,
+      },
     ]);
   });
 
@@ -72,8 +72,8 @@ describe('Simple test cases', () => {
       smoothY: true,
       sgOptions: {
         windowSize: 5,
-        polynomial: 3
-      }
+        polynomial: 3,
+      },
     });
 
     expect(peaks).toStrictEqual([
@@ -83,8 +83,8 @@ describe('Simple test cases', () => {
         soft: false,
         width: 3,
         x: 14.755485084898725,
-        y: 3.7914767697342637
-      }
+        y: 3.7914767697342637,
+      },
     ]);
   });
 });

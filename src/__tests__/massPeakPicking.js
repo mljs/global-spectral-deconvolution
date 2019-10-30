@@ -1,20 +1,20 @@
 'use strict';
 
-var CC = require('chemcalc');
-var Stat = require('ml-stat');
+let CC = require('chemcalc');
+let Stat = require('ml-stat');
 
-var peakPicking = require('..');
+let peakPicking = require('..');
 
-var spectrum = CC.analyseMF('Cl2.Br2', {
+let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
   fwhm: 0.01,
-  gaussianWidth: 11
+  gaussianWidth: 11,
 });
-var xy = spectrum.arrayXXYY;
-var x = xy[0];
-var y = xy[1];
-var max = Stat.array.max(y);
-var noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
+let xy = spectrum.arrayXXYY;
+let x = xy[0];
+let y = xy[1];
+let max = Stat.array.max(y);
+let noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
 /*
 69.938 100
 71.935 63.99155
@@ -26,13 +26,13 @@ var noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
 */
 
 describe('Check the peak picking of a simulated mass spectrum', () => {
-  test('Check result', () => {
-    var result = peakPicking.gsd(x, y, {
+  it('Check result', () => {
+    let result = peakPicking.gsd(x, y, {
       noiseLevel: noiseLevel,
       minMaxRatio: 0,
       broadRatio: 0,
       smoothY: false,
-      realTopDetection: true
+      realTopDetection: true,
     });
     result = peakPicking.post.optimizePeaks(result, x, y, 1, 'gaussian');
 
