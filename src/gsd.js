@@ -291,7 +291,7 @@ function realTopDetection(peakList, x, y) {
   var alpha, beta, gamma, p, currentPoint;
   for (var j = 0; j < peakList.length; j++) {
     currentPoint = peakList[j].index; // peakList[j][2];
-    // The detected peak could be moved 1 or 2 unit to left or right.
+    // The detected peak could be moved 1 or 2 units to left or right.
     if (
       y[currentPoint - 1] >= y[currentPoint - 2] &&
       y[currentPoint - 1] >= y[currentPoint]
@@ -324,7 +324,8 @@ function realTopDetection(peakList, x, y) {
       y[currentPoint - 1] > 0 &&
       y[currentPoint + 1] > 0 &&
       y[currentPoint] >= y[currentPoint - 1] &&
-      y[currentPoint] >= y[currentPoint + 1]
+      y[currentPoint] >= y[currentPoint + 1] && 
+      ( y[currentPoint] != y[currentPoint - 1] ||  y[currentPoint] != y[currentPoint + 1])
     ) {
       alpha = 20 * Math.log10(y[currentPoint - 1]);
       beta = 20 * Math.log10(y[currentPoint]);
