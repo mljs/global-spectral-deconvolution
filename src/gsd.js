@@ -41,7 +41,7 @@ const defaultOptions = {
 function gsd(x, yIn, options) {
   options = Object.assign({}, defaultOptions, options);
   let sgOptions = options.sgOptions;
-  const y = [].concat(yIn);
+  const y = yIn.slice();
 
   let maxDx = 0;
   let minDx = Number.MAX_VALUE;
