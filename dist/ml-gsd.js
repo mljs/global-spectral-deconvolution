@@ -1,6 +1,6 @@
 /**
  * ml-gsd - Global Spectra Deconvolution
- * @version v2.0.6
+ * @version v2.0.7
  * @link https://github.com/mljs/global-spectral-deconvolution
  * @license MIT
  */
@@ -97,7 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -107,9 +107,9 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-__webpack_require__(22);
+__webpack_require__(20);
 
-var abstractMatrix = __webpack_require__(7);
+var abstractMatrix = __webpack_require__(8);
 
 var util = __webpack_require__(3);
 
@@ -283,7 +283,7 @@ Matrix.abstractMatrix = abstractMatrix;
 "use strict";
 
 
-var abstractMatrix = __webpack_require__(7);
+var abstractMatrix = __webpack_require__(8);
 
 var Matrix = __webpack_require__(0);
 
@@ -311,7 +311,7 @@ module.exports = BaseView;
 
 
 module.exports = __webpack_require__(0).Matrix;
-module.exports.Decompositions = module.exports.DC = __webpack_require__(35);
+module.exports.Decompositions = module.exports.DC = __webpack_require__(32);
 
 /***/ }),
 /* 3 */
@@ -485,6 +485,16 @@ exports.sumAll = function sumAll(matrix) {
 "use strict";
 
 
+exports.array = __webpack_require__(6);
+exports.matrix = __webpack_require__(16);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 exports.hypotenuse = function hypotenuse(a, b) {
   var r;
 
@@ -530,7 +540,7 @@ exports.getFilled2DArray = function (rows, columns, value) {
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -563,10 +573,10 @@ exports.sum = function sum(values) {
 
 
 exports.max = function max(values) {
-  var max = -Infinity;
+  var max = values[0];
   var l = values.length;
 
-  for (var i = 0; i < l; i++) {
+  for (var i = 1; i < l; i++) {
     if (values[i] > max) max = values[i];
   }
 
@@ -580,10 +590,10 @@ exports.max = function max(values) {
 
 
 exports.min = function min(values) {
-  var min = Infinity;
+  var min = values[0];
   var l = values.length;
 
-  for (var i = 0; i < l; i++) {
+  for (var i = 1; i < l; i++) {
     if (values[i] < min) min = values[i];
   }
 
@@ -597,11 +607,11 @@ exports.min = function min(values) {
 
 
 exports.minMax = function minMax(values) {
-  var min = Infinity;
-  var max = -Infinity;
+  var min = values[0];
+  var max = values[0];
   var l = values.length;
 
-  for (var i = 0; i < l; i++) {
+  for (var i = 1; i < l; i++) {
     if (values[i] < min) min = values[i];
     if (values[i] > max) max = values[i];
   }
@@ -702,7 +712,7 @@ exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
   if (alreadySorted === undefined) alreadySorted = false;
 
   if (!alreadySorted) {
-    values = values.slice().sort(compareNumbers);
+    values = [].concat(values).sort(compareNumbers);
   }
 
   var l = values.length;
@@ -771,7 +781,7 @@ exports.median = function median(values, alreadySorted) {
   if (alreadySorted === undefined) alreadySorted = false;
 
   if (!alreadySorted) {
-    values = values.slice().sort(compareNumbers);
+    values = [].concat(values).sort(compareNumbers);
   }
 
   var l = values.length;
@@ -823,13 +833,48 @@ exports.standardDeviation = function standardDeviation(values, unbiased) {
 exports.standardError = function standardError(values) {
   return exports.standardDeviation(values) / Math.sqrt(values.length);
 };
+/**
+ * IEEE Transactions on biomedical engineering, vol. 52, no. 1, january 2005, p. 76-
+ * Calculate the standard deviation via the Median of the absolute deviation
+ *  The formula for the standard deviation only holds for Gaussian random variables.
+ * @returns {{mean: number, stdev: number}}
+ */
+
+
+exports.robustMeanAndStdev = function robustMeanAndStdev(y) {
+  var mean = 0,
+      stdev = 0;
+  var length = y.length,
+      i = 0;
+
+  for (i = 0; i < length; i++) {
+    mean += y[i];
+  }
+
+  mean /= length;
+  var averageDeviations = new Array(length);
+
+  for (i = 0; i < length; i++) averageDeviations[i] = Math.abs(y[i] - mean);
+
+  averageDeviations.sort(compareNumbers);
+
+  if (length % 2 === 1) {
+    stdev = averageDeviations[(length - 1) / 2] / 0.6745;
+  } else {
+    stdev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
+  }
+
+  return {
+    mean: mean,
+    stdev: stdev
+  };
+};
 
 exports.quartiles = function quartiles(values, alreadySorted) {
   if (typeof alreadySorted === 'undefined') alreadySorted = false;
 
   if (!alreadySorted) {
-    values = values.slice();
-    values.sort(compareNumbers);
+    values = [].concat(values).sort(compareNumbers);
   }
 
   var quart = values.length / 4;
@@ -901,7 +946,7 @@ exports.covariance = function covariance(vector1, vector2, unbiased) {
   if (typeof unbiased === 'undefined') unbiased = true;
   var mean1 = exports.mean(vector1);
   var mean2 = exports.mean(vector2);
-  if (vector1.length !== vector2.length) throw "Vectors do not have the same dimensions";
+  if (vector1.length !== vector2.length) throw 'Vectors do not have the same dimensions';
   var cov = 0,
       l = vector1.length;
 
@@ -1011,7 +1056,7 @@ exports.weightedVariance = function weightedVariance(values, weights) {
 exports.center = function center(values, inPlace) {
   if (typeof inPlace === 'undefined') inPlace = false;
   var result = values;
-  if (!inPlace) result = values.slice();
+  if (!inPlace) result = [].concat(values);
   var theMean = exports.mean(result),
       l = result.length;
 
@@ -1040,13 +1085,13 @@ exports.cumulativeSum = function cumulativeSum(array) {
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var LM = __webpack_require__(20);
+var LM = __webpack_require__(18);
 
 var math = LM.Matrix.algebra;
 
@@ -1558,7 +1603,7 @@ module.exports.optimizeGaussianTrain = optimizeGaussianTrain;
 module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1566,27 +1611,27 @@ module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 module.exports = abstractMatrix;
 
-var LuDecomposition = __webpack_require__(8);
+var LuDecomposition = __webpack_require__(9);
 
-var SvDecomposition = __webpack_require__(9);
+var SvDecomposition = __webpack_require__(10);
 
-var arrayUtils = __webpack_require__(23);
+var arrayUtils = __webpack_require__(21);
 
 var util = __webpack_require__(3);
 
-var MatrixTransposeView = __webpack_require__(28);
+var MatrixTransposeView = __webpack_require__(25);
 
-var MatrixRowView = __webpack_require__(29);
+var MatrixRowView = __webpack_require__(26);
 
-var MatrixSubView = __webpack_require__(30);
+var MatrixSubView = __webpack_require__(27);
 
-var MatrixSelectionView = __webpack_require__(31);
+var MatrixSelectionView = __webpack_require__(28);
 
-var MatrixColumnView = __webpack_require__(32);
+var MatrixColumnView = __webpack_require__(29);
 
-var MatrixFlipRowView = __webpack_require__(33);
+var MatrixFlipRowView = __webpack_require__(30);
 
-var MatrixFlipColumnView = __webpack_require__(34);
+var MatrixFlipColumnView = __webpack_require__(31);
 
 function abstractMatrix(superCtor) {
   if (superCtor === undefined) superCtor = Object;
@@ -3510,7 +3555,7 @@ function abstractMatrix(superCtor) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3716,7 +3761,7 @@ LuDecomposition.prototype = {
 module.exports = LuDecomposition;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3724,7 +3769,7 @@ module.exports = LuDecomposition;
 
 var Matrix = __webpack_require__(0);
 
-var util = __webpack_require__(4);
+var util = __webpack_require__(5);
 
 var hypotenuse = util.hypotenuse;
 var getFilled2DArray = util.getFilled2DArray; // https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
@@ -4324,562 +4369,7 @@ SingularValueDecomposition.prototype = {
 module.exports = SingularValueDecomposition;
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.array = __webpack_require__(11);
-exports.matrix = __webpack_require__(25);
-
-/***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function compareNumbers(a, b) {
-  return a - b;
-}
-/**
- * Computes the sum of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.sum = function sum(values) {
-  var sum = 0;
-
-  for (var i = 0; i < values.length; i++) {
-    sum += values[i];
-  }
-
-  return sum;
-};
-/**
- * Computes the maximum of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.max = function max(values) {
-  var max = values[0];
-  var l = values.length;
-
-  for (var i = 1; i < l; i++) {
-    if (values[i] > max) max = values[i];
-  }
-
-  return max;
-};
-/**
- * Computes the minimum of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.min = function min(values) {
-  var min = values[0];
-  var l = values.length;
-
-  for (var i = 1; i < l; i++) {
-    if (values[i] < min) min = values[i];
-  }
-
-  return min;
-};
-/**
- * Computes the min and max of the given values
- * @param {Array} values
- * @returns {{min: number, max: number}}
- */
-
-
-exports.minMax = function minMax(values) {
-  var min = values[0];
-  var max = values[0];
-  var l = values.length;
-
-  for (var i = 1; i < l; i++) {
-    if (values[i] < min) min = values[i];
-    if (values[i] > max) max = values[i];
-  }
-
-  return {
-    min: min,
-    max: max
-  };
-};
-/**
- * Computes the arithmetic mean of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.arithmeticMean = function arithmeticMean(values) {
-  var sum = 0;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    sum += values[i];
-  }
-
-  return sum / l;
-};
-/**
- * {@link arithmeticMean}
- */
-
-
-exports.mean = exports.arithmeticMean;
-/**
- * Computes the geometric mean of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-exports.geometricMean = function geometricMean(values) {
-  var mul = 1;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    mul *= values[i];
-  }
-
-  return Math.pow(mul, 1 / l);
-};
-/**
- * Computes the mean of the log of the given values
- * If the return value is exponentiated, it gives the same result as the
- * geometric mean.
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.logMean = function logMean(values) {
-  var lnsum = 0;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    lnsum += Math.log(values[i]);
-  }
-
-  return lnsum / l;
-};
-/**
- * Computes the weighted grand mean for a list of means and sample sizes
- * @param {Array} means - Mean values for each set of samples
- * @param {Array} samples - Number of original values for each set of samples
- * @returns {number}
- */
-
-
-exports.grandMean = function grandMean(means, samples) {
-  var sum = 0;
-  var n = 0;
-  var l = means.length;
-
-  for (var i = 0; i < l; i++) {
-    sum += samples[i] * means[i];
-    n += samples[i];
-  }
-
-  return sum / n;
-};
-/**
- * Computes the truncated mean of the given values using a given percentage
- * @param {Array} values
- * @param {number} percent - The percentage of values to keep (range: [0,1])
- * @param {boolean} [alreadySorted=false]
- * @returns {number}
- */
-
-
-exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
-  if (alreadySorted === undefined) alreadySorted = false;
-
-  if (!alreadySorted) {
-    values = [].concat(values).sort(compareNumbers);
-  }
-
-  var l = values.length;
-  var k = Math.floor(l * percent);
-  var sum = 0;
-
-  for (var i = k; i < l - k; i++) {
-    sum += values[i];
-  }
-
-  return sum / (l - 2 * k);
-};
-/**
- * Computes the harmonic mean of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.harmonicMean = function harmonicMean(values) {
-  var sum = 0;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    if (values[i] === 0) {
-      throw new RangeError('value at index ' + i + 'is zero');
-    }
-
-    sum += 1 / values[i];
-  }
-
-  return l / sum;
-};
-/**
- * Computes the contraharmonic mean of the given values
- * @param {Array} values
- * @returns {number}
- */
-
-
-exports.contraHarmonicMean = function contraHarmonicMean(values) {
-  var r1 = 0;
-  var r2 = 0;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    r1 += values[i] * values[i];
-    r2 += values[i];
-  }
-
-  if (r2 < 0) {
-    throw new RangeError('sum of values is negative');
-  }
-
-  return r1 / r2;
-};
-/**
- * Computes the median of the given values
- * @param {Array} values
- * @param {boolean} [alreadySorted=false]
- * @returns {number}
- */
-
-
-exports.median = function median(values, alreadySorted) {
-  if (alreadySorted === undefined) alreadySorted = false;
-
-  if (!alreadySorted) {
-    values = [].concat(values).sort(compareNumbers);
-  }
-
-  var l = values.length;
-  var half = Math.floor(l / 2);
-
-  if (l % 2 === 0) {
-    return (values[half - 1] + values[half]) * 0.5;
-  } else {
-    return values[half];
-  }
-};
-/**
- * Computes the variance of the given values
- * @param {Array} values
- * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
- * @returns {number}
- */
-
-
-exports.variance = function variance(values, unbiased) {
-  if (unbiased === undefined) unbiased = true;
-  var theMean = exports.mean(values);
-  var theVariance = 0;
-  var l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    var x = values[i] - theMean;
-    theVariance += x * x;
-  }
-
-  if (unbiased) {
-    return theVariance / (l - 1);
-  } else {
-    return theVariance / l;
-  }
-};
-/**
- * Computes the standard deviation of the given values
- * @param {Array} values
- * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
- * @returns {number}
- */
-
-
-exports.standardDeviation = function standardDeviation(values, unbiased) {
-  return Math.sqrt(exports.variance(values, unbiased));
-};
-
-exports.standardError = function standardError(values) {
-  return exports.standardDeviation(values) / Math.sqrt(values.length);
-};
-/**
- * IEEE Transactions on biomedical engineering, vol. 52, no. 1, january 2005, p. 76-
- * Calculate the standard deviation via the Median of the absolute deviation
- *  The formula for the standard deviation only holds for Gaussian random variables.
- * @returns {{mean: number, stdev: number}}
- */
-
-
-exports.robustMeanAndStdev = function robustMeanAndStdev(y) {
-  var mean = 0,
-      stdev = 0;
-  var length = y.length,
-      i = 0;
-
-  for (i = 0; i < length; i++) {
-    mean += y[i];
-  }
-
-  mean /= length;
-  var averageDeviations = new Array(length);
-
-  for (i = 0; i < length; i++) averageDeviations[i] = Math.abs(y[i] - mean);
-
-  averageDeviations.sort(compareNumbers);
-
-  if (length % 2 === 1) {
-    stdev = averageDeviations[(length - 1) / 2] / 0.6745;
-  } else {
-    stdev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
-  }
-
-  return {
-    mean: mean,
-    stdev: stdev
-  };
-};
-
-exports.quartiles = function quartiles(values, alreadySorted) {
-  if (typeof alreadySorted === 'undefined') alreadySorted = false;
-
-  if (!alreadySorted) {
-    values = [].concat(values).sort(compareNumbers);
-  }
-
-  var quart = values.length / 4;
-  var q1 = values[Math.ceil(quart) - 1];
-  var q2 = exports.median(values, true);
-  var q3 = values[Math.ceil(quart * 3) - 1];
-  return {
-    q1: q1,
-    q2: q2,
-    q3: q3
-  };
-};
-
-exports.pooledStandardDeviation = function pooledStandardDeviation(samples, unbiased) {
-  return Math.sqrt(exports.pooledVariance(samples, unbiased));
-};
-
-exports.pooledVariance = function pooledVariance(samples, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var sum = 0;
-  var length = 0,
-      l = samples.length;
-
-  for (var i = 0; i < l; i++) {
-    var values = samples[i];
-    var vari = exports.variance(values);
-    sum += (values.length - 1) * vari;
-    if (unbiased) length += values.length - 1;else length += values.length;
-  }
-
-  return sum / length;
-};
-
-exports.mode = function mode(values) {
-  var l = values.length,
-      itemCount = new Array(l),
-      i;
-
-  for (i = 0; i < l; i++) {
-    itemCount[i] = 0;
-  }
-
-  var itemArray = new Array(l);
-  var count = 0;
-
-  for (i = 0; i < l; i++) {
-    var index = itemArray.indexOf(values[i]);
-    if (index >= 0) itemCount[index]++;else {
-      itemArray[count] = values[i];
-      itemCount[count] = 1;
-      count++;
-    }
-  }
-
-  var maxValue = 0,
-      maxIndex = 0;
-
-  for (i = 0; i < count; i++) {
-    if (itemCount[i] > maxValue) {
-      maxValue = itemCount[i];
-      maxIndex = i;
-    }
-  }
-
-  return itemArray[maxIndex];
-};
-
-exports.covariance = function covariance(vector1, vector2, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var mean1 = exports.mean(vector1);
-  var mean2 = exports.mean(vector2);
-  if (vector1.length !== vector2.length) throw 'Vectors do not have the same dimensions';
-  var cov = 0,
-      l = vector1.length;
-
-  for (var i = 0; i < l; i++) {
-    var x = vector1[i] - mean1;
-    var y = vector2[i] - mean2;
-    cov += x * y;
-  }
-
-  if (unbiased) return cov / (l - 1);else return cov / l;
-};
-
-exports.skewness = function skewness(values, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var theMean = exports.mean(values);
-  var s2 = 0,
-      s3 = 0,
-      l = values.length;
-
-  for (var i = 0; i < l; i++) {
-    var dev = values[i] - theMean;
-    s2 += dev * dev;
-    s3 += dev * dev * dev;
-  }
-
-  var m2 = s2 / l;
-  var m3 = s3 / l;
-  var g = m3 / Math.pow(m2, 3 / 2.0);
-
-  if (unbiased) {
-    var a = Math.sqrt(l * (l - 1));
-    var b = l - 2;
-    return a / b * g;
-  } else {
-    return g;
-  }
-};
-
-exports.kurtosis = function kurtosis(values, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var theMean = exports.mean(values);
-  var n = values.length,
-      s2 = 0,
-      s4 = 0;
-
-  for (var i = 0; i < n; i++) {
-    var dev = values[i] - theMean;
-    s2 += dev * dev;
-    s4 += dev * dev * dev * dev;
-  }
-
-  var m2 = s2 / n;
-  var m4 = s4 / n;
-
-  if (unbiased) {
-    var v = s2 / (n - 1);
-    var a = n * (n + 1) / ((n - 1) * (n - 2) * (n - 3));
-    var b = s4 / (v * v);
-    var c = (n - 1) * (n - 1) / ((n - 2) * (n - 3));
-    return a * b - 3 * c;
-  } else {
-    return m4 / (m2 * m2) - 3;
-  }
-};
-
-exports.entropy = function entropy(values, eps) {
-  if (typeof eps === 'undefined') eps = 0;
-  var sum = 0,
-      l = values.length;
-
-  for (var i = 0; i < l; i++) sum += values[i] * Math.log(values[i] + eps);
-
-  return -sum;
-};
-
-exports.weightedMean = function weightedMean(values, weights) {
-  var sum = 0,
-      l = values.length;
-
-  for (var i = 0; i < l; i++) sum += values[i] * weights[i];
-
-  return sum;
-};
-
-exports.weightedStandardDeviation = function weightedStandardDeviation(values, weights) {
-  return Math.sqrt(exports.weightedVariance(values, weights));
-};
-
-exports.weightedVariance = function weightedVariance(values, weights) {
-  var theMean = exports.weightedMean(values, weights);
-  var vari = 0,
-      l = values.length;
-  var a = 0,
-      b = 0;
-
-  for (var i = 0; i < l; i++) {
-    var z = values[i] - theMean;
-    var w = weights[i];
-    vari += w * (z * z);
-    b += w;
-    a += w * w;
-  }
-
-  return vari * (b / (b * b - a));
-};
-
-exports.center = function center(values, inPlace) {
-  if (typeof inPlace === 'undefined') inPlace = false;
-  var result = values;
-  if (!inPlace) result = [].concat(values);
-  var theMean = exports.mean(result),
-      l = result.length;
-
-  for (var i = 0; i < l; i++) result[i] -= theMean;
-};
-
-exports.standardize = function standardize(values, standardDev, inPlace) {
-  if (typeof standardDev === 'undefined') standardDev = exports.standardDeviation(values);
-  if (typeof inPlace === 'undefined') inPlace = false;
-  var l = values.length;
-  var result = inPlace ? values : new Array(l);
-
-  for (var i = 0; i < l; i++) result[i] = values[i] / standardDev;
-
-  return result;
-};
-
-exports.cumulativeSum = function cumulativeSum(array) {
-  var l = array.length;
-  var result = new Array(l);
-  result[0] = array[0];
-
-  for (var i = 1; i < l; i++) result[i] = result[i - 1] + array[i];
-
-  return result;
-};
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5131,27 +4621,27 @@ module.exports = {
 };
 
 /***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports.gsd = __webpack_require__(13);
+module.exports.post = {
+  optimizePeaks: __webpack_require__(17),
+  joinBroadPeaks: __webpack_require__(36),
+  broadenPeaks: __webpack_require__(37)
+};
+
+/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports.gsd = __webpack_require__(14);
-module.exports.post = {
-  optimizePeaks: __webpack_require__(19),
-  joinBroadPeaks: __webpack_require__(39),
-  broadenPeaks: __webpack_require__(40)
-};
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const SG = __webpack_require__(15);
+const SG = __webpack_require__(14);
 
 const defaultOptions = {
   sgOptions: {
@@ -5192,13 +4682,13 @@ const defaultOptions = {
 function gsd(x, yIn, options) {
   options = Object.assign({}, defaultOptions, options);
   let sgOptions = options.sgOptions;
-  const y = [].concat(yIn);
+  const y = yIn.slice();
+  let maxDx = 0;
+  let minDx = Number.MAX_VALUE;
 
   if (!('noiseLevel' in options)) {
     // We have to know if x is equally spaced
-    var maxDx = 0;
-    var minDx = Number.MAX_VALUE;
-    var tmp;
+    let tmp;
 
     for (let i = 0; i < x.length - 1; ++i) {
       tmp = Math.abs(x[i + 1] - x[i]);
@@ -5285,8 +4775,8 @@ function gsd(x, yIn, options) {
 
   const X = x;
   const dx = x[1] - x[0];
-  var maxDdy = 0;
-  var maxY = 0;
+  let maxDdy = 0;
+  let maxY = 0;
 
   for (let i = 0; i < Y.length; i++) {
     if (Math.abs(ddY[i]) > maxDdy) {
@@ -5298,16 +4788,16 @@ function gsd(x, yIn, options) {
     }
   }
 
-  var lastMax = null;
-  var lastMin = null;
-  var minddY = new Array(Y.length - 2);
-  var intervalL = new Array(Y.length);
-  var intervalR = new Array(Y.length);
-  var broadMask = new Array(Y.length - 2);
-  var minddYLen = 0;
-  var intervalLLen = 0;
-  var intervalRLen = 0;
-  var broadMaskLen = 0; // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
+  let lastMax = null;
+  let lastMin = null;
+  let minddY = new Array(Y.length - 2);
+  let intervalL = new Array(Y.length);
+  let intervalR = new Array(Y.length);
+  let broadMask = new Array(Y.length - 2);
+  let minddYLen = 0;
+  let intervalLLen = 0;
+  let intervalRLen = 0;
+  let broadMaskLen = 0; // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
 
   for (let i = 1; i < Y.length - 1; ++i) {
     // filter based on derivativeThreshold
@@ -5425,16 +4915,16 @@ function gsd(x, yIn, options) {
 }
 
 function getNoiseLevel(y) {
-  var mean = 0;
-  var stddev = 0;
-  var length = y.length;
+  let mean = 0;
+  let stddev = 0;
+  let length = y.length;
 
   for (let i = 0; i < length; ++i) {
     mean += y[i];
   }
 
   mean /= length;
-  var averageDeviations = new Array(length);
+  let averageDeviations = new Array(length);
 
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
@@ -5452,11 +4942,11 @@ function getNoiseLevel(y) {
 }
 
 function realTopDetection(peakList, x, y) {
-  var alpha, beta, gamma, p, currentPoint;
+  let alpha, beta, gamma, p, currentPoint;
 
-  for (var j = 0; j < peakList.length; j++) {
+  for (let j = 0; j < peakList.length; j++) {
     currentPoint = peakList[j].index; // peakList[j][2];
-    // The detected peak could be moved 1 or 2 unit to left or right.
+    // The detected peak could be moved 1 or 2 units to left or right.
 
     if (y[currentPoint - 1] >= y[currentPoint - 2] && y[currentPoint - 1] >= y[currentPoint]) {
       currentPoint--;
@@ -5475,7 +4965,7 @@ function realTopDetection(peakList, x, y) {
     } // interpolation to a sin() function
 
 
-    if (y[currentPoint - 1] > 0 && y[currentPoint + 1] > 0 && y[currentPoint] >= y[currentPoint - 1] && y[currentPoint] >= y[currentPoint + 1]) {
+    if (y[currentPoint - 1] > 0 && y[currentPoint + 1] > 0 && y[currentPoint] >= y[currentPoint - 1] && y[currentPoint] >= y[currentPoint + 1] && (y[currentPoint] !== y[currentPoint - 1] || y[currentPoint] !== y[currentPoint + 1])) {
       alpha = 20 * Math.log10(y[currentPoint - 1]);
       beta = 20 * Math.log10(y[currentPoint]);
       gamma = 20 * Math.log10(y[currentPoint + 1]);
@@ -5491,13 +4981,13 @@ function realTopDetection(peakList, x, y) {
 module.exports = gsd;
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //Code translate from Pascal source in http://pubs.acs.org/doi/pdf/10.1021/ac00205a007
-var extend = __webpack_require__(16);
+var extend = __webpack_require__(15);
 
-var stat = __webpack_require__(17);
+var stat = __webpack_require__(4);
 
 var defaultOptions = {
   windowSize: 9,
@@ -5669,7 +5159,7 @@ function guessWindowSize(data, h){
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5798,1700 +5288,13 @@ module.exports = function extend() {
 };
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.array = __webpack_require__(5);
-exports.matrix = __webpack_require__(18);
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var arrayStat = __webpack_require__(5); // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
-
-
-function entropy(matrix, eps) {
-  if (typeof eps === 'undefined') {
-    eps = 0;
-  }
-
-  var sum = 0,
-      l1 = matrix.length,
-      l2 = matrix[0].length;
-
-  for (var i = 0; i < l1; i++) {
-    for (var j = 0; j < l2; j++) {
-      sum += matrix[i][j] * Math.log(matrix[i][j] + eps);
-    }
-  }
-
-  return -sum;
-}
-
-function mean(matrix, dimension) {
-  if (typeof dimension === 'undefined') {
-    dimension = 0;
-  }
-
-  var rows = matrix.length,
-      cols = matrix[0].length,
-      theMean,
-      N,
-      i,
-      j;
-
-  if (dimension === -1) {
-    theMean = [0];
-    N = rows * cols;
-
-    for (i = 0; i < rows; i++) {
-      for (j = 0; j < cols; j++) {
-        theMean[0] += matrix[i][j];
-      }
-    }
-
-    theMean[0] /= N;
-  } else if (dimension === 0) {
-    theMean = new Array(cols);
-    N = rows;
-
-    for (j = 0; j < cols; j++) {
-      theMean[j] = 0;
-
-      for (i = 0; i < rows; i++) {
-        theMean[j] += matrix[i][j];
-      }
-
-      theMean[j] /= N;
-    }
-  } else if (dimension === 1) {
-    theMean = new Array(rows);
-    N = cols;
-
-    for (j = 0; j < rows; j++) {
-      theMean[j] = 0;
-
-      for (i = 0; i < cols; i++) {
-        theMean[j] += matrix[j][i];
-      }
-
-      theMean[j] /= N;
-    }
-  } else {
-    throw new Error('Invalid dimension');
-  }
-
-  return theMean;
-}
-
-function standardDeviation(matrix, means, unbiased) {
-  var vari = variance(matrix, means, unbiased),
-      l = vari.length;
-
-  for (var i = 0; i < l; i++) {
-    vari[i] = Math.sqrt(vari[i]);
-  }
-
-  return vari;
-}
-
-function variance(matrix, means, unbiased) {
-  if (typeof unbiased === 'undefined') {
-    unbiased = true;
-  }
-
-  means = means || mean(matrix);
-  var rows = matrix.length;
-  if (rows === 0) return [];
-  var cols = matrix[0].length;
-  var vari = new Array(cols);
-
-  for (var j = 0; j < cols; j++) {
-    var sum1 = 0,
-        sum2 = 0,
-        x = 0;
-
-    for (var i = 0; i < rows; i++) {
-      x = matrix[i][j] - means[j];
-      sum1 += x;
-      sum2 += x * x;
-    }
-
-    if (unbiased) {
-      vari[j] = (sum2 - sum1 * sum1 / rows) / (rows - 1);
-    } else {
-      vari[j] = (sum2 - sum1 * sum1 / rows) / rows;
-    }
-  }
-
-  return vari;
-}
-
-function median(matrix) {
-  var rows = matrix.length,
-      cols = matrix[0].length;
-  var medians = new Array(cols);
-
-  for (var i = 0; i < cols; i++) {
-    var data = new Array(rows);
-
-    for (var j = 0; j < rows; j++) {
-      data[j] = matrix[j][i];
-    }
-
-    data.sort();
-    var N = data.length;
-
-    if (N % 2 === 0) {
-      medians[i] = (data[N / 2] + data[N / 2 - 1]) * 0.5;
-    } else {
-      medians[i] = data[Math.floor(N / 2)];
-    }
-  }
-
-  return medians;
-}
-
-function mode(matrix) {
-  var rows = matrix.length,
-      cols = matrix[0].length,
-      modes = new Array(cols),
-      i,
-      j;
-
-  for (i = 0; i < cols; i++) {
-    var itemCount = new Array(rows);
-
-    for (var k = 0; k < rows; k++) {
-      itemCount[k] = 0;
-    }
-
-    var itemArray = new Array(rows);
-    var count = 0;
-
-    for (j = 0; j < rows; j++) {
-      var index = itemArray.indexOf(matrix[j][i]);
-
-      if (index >= 0) {
-        itemCount[index]++;
-      } else {
-        itemArray[count] = matrix[j][i];
-        itemCount[count] = 1;
-        count++;
-      }
-    }
-
-    var maxValue = 0,
-        maxIndex = 0;
-
-    for (j = 0; j < count; j++) {
-      if (itemCount[j] > maxValue) {
-        maxValue = itemCount[j];
-        maxIndex = j;
-      }
-    }
-
-    modes[i] = itemArray[maxIndex];
-  }
-
-  return modes;
-}
-
-function skewness(matrix, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var means = mean(matrix);
-  var n = matrix.length,
-      l = means.length;
-  var skew = new Array(l);
-
-  for (var j = 0; j < l; j++) {
-    var s2 = 0,
-        s3 = 0;
-
-    for (var i = 0; i < n; i++) {
-      var dev = matrix[i][j] - means[j];
-      s2 += dev * dev;
-      s3 += dev * dev * dev;
-    }
-
-    var m2 = s2 / n;
-    var m3 = s3 / n;
-    var g = m3 / Math.pow(m2, 3 / 2);
-
-    if (unbiased) {
-      var a = Math.sqrt(n * (n - 1));
-      var b = n - 2;
-      skew[j] = a / b * g;
-    } else {
-      skew[j] = g;
-    }
-  }
-
-  return skew;
-}
-
-function kurtosis(matrix, unbiased) {
-  if (typeof unbiased === 'undefined') unbiased = true;
-  var means = mean(matrix);
-  var n = matrix.length,
-      m = matrix[0].length;
-  var kurt = new Array(m);
-
-  for (var j = 0; j < m; j++) {
-    var s2 = 0,
-        s4 = 0;
-
-    for (var i = 0; i < n; i++) {
-      var dev = matrix[i][j] - means[j];
-      s2 += dev * dev;
-      s4 += dev * dev * dev * dev;
-    }
-
-    var m2 = s2 / n;
-    var m4 = s4 / n;
-
-    if (unbiased) {
-      var v = s2 / (n - 1);
-      var a = n * (n + 1) / ((n - 1) * (n - 2) * (n - 3));
-      var b = s4 / (v * v);
-      var c = (n - 1) * (n - 1) / ((n - 2) * (n - 3));
-      kurt[j] = a * b - 3 * c;
-    } else {
-      kurt[j] = m4 / (m2 * m2) - 3;
-    }
-  }
-
-  return kurt;
-}
-
-function standardError(matrix) {
-  var samples = matrix.length;
-  var standardDeviations = standardDeviation(matrix),
-      l = standardDeviations.length;
-  var standardErrors = new Array(l);
-  var sqrtN = Math.sqrt(samples);
-
-  for (var i = 0; i < l; i++) {
-    standardErrors[i] = standardDeviations[i] / sqrtN;
-  }
-
-  return standardErrors;
-}
-
-function covariance(matrix, dimension) {
-  return scatter(matrix, undefined, dimension);
-}
-
-function scatter(matrix, divisor, dimension) {
-  if (typeof dimension === 'undefined') {
-    dimension = 0;
-  }
-
-  if (typeof divisor === 'undefined') {
-    if (dimension === 0) {
-      divisor = matrix.length - 1;
-    } else if (dimension === 1) {
-      divisor = matrix[0].length - 1;
-    }
-  }
-
-  var means = mean(matrix, dimension),
-      rows = matrix.length;
-
-  if (rows === 0) {
-    return [[]];
-  }
-
-  var cols = matrix[0].length,
-      cov,
-      i,
-      j,
-      s,
-      k;
-
-  if (dimension === 0) {
-    cov = new Array(cols);
-
-    for (i = 0; i < cols; i++) {
-      cov[i] = new Array(cols);
-    }
-
-    for (i = 0; i < cols; i++) {
-      for (j = i; j < cols; j++) {
-        s = 0;
-
-        for (k = 0; k < rows; k++) {
-          s += (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-        }
-
-        s /= divisor;
-        cov[i][j] = s;
-        cov[j][i] = s;
-      }
-    }
-  } else if (dimension === 1) {
-    cov = new Array(rows);
-
-    for (i = 0; i < rows; i++) {
-      cov[i] = new Array(rows);
-    }
-
-    for (i = 0; i < rows; i++) {
-      for (j = i; j < rows; j++) {
-        s = 0;
-
-        for (k = 0; k < cols; k++) {
-          s += (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-        }
-
-        s /= divisor;
-        cov[i][j] = s;
-        cov[j][i] = s;
-      }
-    }
-  } else {
-    throw new Error('Invalid dimension');
-  }
-
-  return cov;
-}
-
-function correlation(matrix) {
-  var means = mean(matrix),
-      standardDeviations = standardDeviation(matrix, true, means),
-      scores = zScores(matrix, means, standardDeviations),
-      rows = matrix.length,
-      cols = matrix[0].length,
-      i,
-      j;
-  var cor = new Array(cols);
-
-  for (i = 0; i < cols; i++) {
-    cor[i] = new Array(cols);
-  }
-
-  for (i = 0; i < cols; i++) {
-    for (j = i; j < cols; j++) {
-      var c = 0;
-
-      for (var k = 0, l = scores.length; k < l; k++) {
-        c += scores[k][j] * scores[k][i];
-      }
-
-      c /= rows - 1;
-      cor[i][j] = c;
-      cor[j][i] = c;
-    }
-  }
-
-  return cor;
-}
-
-function zScores(matrix, means, standardDeviations) {
-  means = means || mean(matrix);
-  if (typeof standardDeviations === 'undefined') standardDeviations = standardDeviation(matrix, true, means);
-  return standardize(center(matrix, means, false), standardDeviations, true);
-}
-
-function center(matrix, means, inPlace) {
-  means = means || mean(matrix);
-  var result = matrix,
-      l = matrix.length,
-      i,
-      j,
-      jj;
-
-  if (!inPlace) {
-    result = new Array(l);
-
-    for (i = 0; i < l; i++) {
-      result[i] = new Array(matrix[i].length);
-    }
-  }
-
-  for (i = 0; i < l; i++) {
-    var row = result[i];
-
-    for (j = 0, jj = row.length; j < jj; j++) {
-      row[j] = matrix[i][j] - means[j];
-    }
-  }
-
-  return result;
-}
-
-function standardize(matrix, standardDeviations, inPlace) {
-  if (typeof standardDeviations === 'undefined') standardDeviations = standardDeviation(matrix);
-  var result = matrix,
-      l = matrix.length,
-      i,
-      j,
-      jj;
-
-  if (!inPlace) {
-    result = new Array(l);
-
-    for (i = 0; i < l; i++) {
-      result[i] = new Array(matrix[i].length);
-    }
-  }
-
-  for (i = 0; i < l; i++) {
-    var resultRow = result[i];
-    var sourceRow = matrix[i];
-
-    for (j = 0, jj = resultRow.length; j < jj; j++) {
-      if (standardDeviations[j] !== 0 && !isNaN(standardDeviations[j])) {
-        resultRow[j] = sourceRow[j] / standardDeviations[j];
-      }
-    }
-  }
-
-  return result;
-}
-
-function weightedVariance(matrix, weights) {
-  var means = mean(matrix);
-  var rows = matrix.length;
-  if (rows === 0) return [];
-  var cols = matrix[0].length;
-  var vari = new Array(cols);
-
-  for (var j = 0; j < cols; j++) {
-    var sum = 0;
-    var a = 0,
-        b = 0;
-
-    for (var i = 0; i < rows; i++) {
-      var z = matrix[i][j] - means[j];
-      var w = weights[i];
-      sum += w * (z * z);
-      b += w;
-      a += w * w;
-    }
-
-    vari[j] = sum * (b / (b * b - a));
-  }
-
-  return vari;
-}
-
-function weightedMean(matrix, weights, dimension) {
-  if (typeof dimension === 'undefined') {
-    dimension = 0;
-  }
-
-  var rows = matrix.length;
-  if (rows === 0) return [];
-  var cols = matrix[0].length,
-      means,
-      i,
-      ii,
-      j,
-      w,
-      row;
-
-  if (dimension === 0) {
-    means = new Array(cols);
-
-    for (i = 0; i < cols; i++) {
-      means[i] = 0;
-    }
-
-    for (i = 0; i < rows; i++) {
-      row = matrix[i];
-      w = weights[i];
-
-      for (j = 0; j < cols; j++) {
-        means[j] += row[j] * w;
-      }
-    }
-  } else if (dimension === 1) {
-    means = new Array(rows);
-
-    for (i = 0; i < rows; i++) {
-      means[i] = 0;
-    }
-
-    for (j = 0; j < rows; j++) {
-      row = matrix[j];
-      w = weights[j];
-
-      for (i = 0; i < cols; i++) {
-        means[j] += row[i] * w;
-      }
-    }
-  } else {
-    throw new Error('Invalid dimension');
-  }
-
-  var weightSum = arrayStat.sum(weights);
-
-  if (weightSum !== 0) {
-    for (i = 0, ii = means.length; i < ii; i++) {
-      means[i] /= weightSum;
-    }
-  }
-
-  return means;
-}
-
-function weightedCovariance(matrix, weights, means, dimension) {
-  dimension = dimension || 0;
-  means = means || weightedMean(matrix, weights, dimension);
-  var s1 = 0,
-      s2 = 0;
-
-  for (var i = 0, ii = weights.length; i < ii; i++) {
-    s1 += weights[i];
-    s2 += weights[i] * weights[i];
-  }
-
-  var factor = s1 / (s1 * s1 - s2);
-  return weightedScatter(matrix, weights, means, factor, dimension);
-}
-
-function weightedScatter(matrix, weights, means, factor, dimension) {
-  dimension = dimension || 0;
-  means = means || weightedMean(matrix, weights, dimension);
-
-  if (typeof factor === 'undefined') {
-    factor = 1;
-  }
-
-  var rows = matrix.length;
-
-  if (rows === 0) {
-    return [[]];
-  }
-
-  var cols = matrix[0].length,
-      cov,
-      i,
-      j,
-      k,
-      s;
-
-  if (dimension === 0) {
-    cov = new Array(cols);
-
-    for (i = 0; i < cols; i++) {
-      cov[i] = new Array(cols);
-    }
-
-    for (i = 0; i < cols; i++) {
-      for (j = i; j < cols; j++) {
-        s = 0;
-
-        for (k = 0; k < rows; k++) {
-          s += weights[k] * (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-        }
-
-        cov[i][j] = s * factor;
-        cov[j][i] = s * factor;
-      }
-    }
-  } else if (dimension === 1) {
-    cov = new Array(rows);
-
-    for (i = 0; i < rows; i++) {
-      cov[i] = new Array(rows);
-    }
-
-    for (i = 0; i < rows; i++) {
-      for (j = i; j < rows; j++) {
-        s = 0;
-
-        for (k = 0; k < cols; k++) {
-          s += weights[k] * (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-        }
-
-        cov[i][j] = s * factor;
-        cov[j][i] = s * factor;
-      }
-    }
-  } else {
-    throw new Error('Invalid dimension');
-  }
-
-  return cov;
-}
-
-module.exports = {
-  entropy: entropy,
-  mean: mean,
-  standardDeviation: standardDeviation,
-  variance: variance,
-  median: median,
-  mode: mode,
-  skewness: skewness,
-  kurtosis: kurtosis,
-  standardError: standardError,
-  covariance: covariance,
-  scatter: scatter,
-  correlation: correlation,
-  zScores: zScores,
-  center: center,
-  standardize: standardize,
-  weightedVariance: weightedVariance,
-  weightedMean: weightedMean,
-  weightedCovariance: weightedCovariance,
-  weightedScatter: weightedScatter
-};
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Created by acastillo on 9/6/15.
- */
-
-
-var optimize = __webpack_require__(6);
-
-function sampleFunction(from, to, x, y, lastIndex) {
-  var nbPoints = x.length;
-  var sampleX = [];
-  var sampleY = [];
-  var direction = Math.sign(x[1] - x[0]); // Direction of the derivative
-
-  if (direction === -1) {
-    lastIndex[0] = x.length - 1;
-  }
-
-  var delta = Math.abs(to - from) / 2;
-  var mid = (from + to) / 2;
-  var stop = false;
-  var index = lastIndex[0];
-
-  while (!stop && index < nbPoints && index >= 0) {
-    if (Math.abs(x[index] - mid) <= delta) {
-      sampleX.push(x[index]);
-      sampleY.push(y[index]);
-      index += direction;
-    } else {
-      // It is outside the range.
-      if (Math.sign(mid - x[index]) === 1) {
-        // We'll reach the mid going in the current direction
-        index += direction;
-      } else {
-        // There is not more peaks in the current range
-        stop = true;
-      }
-    } // console.log(sampleX);
-
-  }
-
-  lastIndex[0] = index;
-  return [sampleX, sampleY];
-}
-
-module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
-  var i;
-  var j;
-  var lastIndex = [0];
-  var groups = groupPeaks(peakList, n);
-  var result = [];
-  var factor = 1;
-
-  if (fnType === 'gaussian') {
-    factor = 1.17741;
-  } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
-
-
-  var sampling, error, opts;
-
-  for (i = 0; i < groups.length; i++) {
-    var peaks = groups[i].group;
-
-    if (peaks.length > 1) {
-      // Multiple peaks
-      // console.log("Pending group of overlaped peaks "+peaks.length);
-      // console.log("here1");
-      // console.log(groups[i].limits);
-      sampling = sampleFunction(groups[i].limits[0] - groups[i].limits[1], groups[i].limits[0] + groups[i].limits[1], x, y, lastIndex); // console.log(sampling);
-
-      if (sampling[0].length > 5) {
-        error = peaks[0].width / 1000;
-        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1]; // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
-
-        var optPeaks = [];
-
-        if (fnType === 'gaussian') {
-          optPeaks = optimize.optimizeGaussianSum(sampling, peaks, opts);
-        } else {
-          if (fnType === 'lorentzian') {
-            optPeaks = optimize.optimizeLorentzianSum(sampling, peaks, opts);
-          }
-        } // console.log(optPeak);
-
-
-        for (j = 0; j < optPeaks.length; j++) {
-          result.push({
-            x: optPeaks[j][0][0],
-            y: optPeaks[j][1][0],
-            width: optPeaks[j][2][0] * factor
-          });
-        }
-      }
-    } else {
-      // Single peak
-      peaks = peaks[0];
-      sampling = sampleFunction(peaks.x - n * peaks.width, peaks.x + n * peaks.width, x, y, lastIndex); // console.log("here2");
-      // console.log(groups[i].limits);
-
-      if (sampling[0].length > 5) {
-        error = peaks.width / 1000;
-        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1]; // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
-        // var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
-
-        var optPeak = [];
-
-        if (fnType === 'gaussian') {
-          optPeak = optimize.optimizeSingleGaussian([sampling[0], sampling[1]], peaks, opts);
-        } else {
-          if (fnType === 'lorentzian') {
-            optPeak = optimize.optimizeSingleLorentzian([sampling[0], sampling[1]], peaks, opts);
-          }
-        } // console.log(optPeak);
-
-
-        result.push({
-          x: optPeak[0][0],
-          y: optPeak[1][0],
-          width: optPeak[2][0] * factor
-        }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
-      }
-    }
-  }
-
-  return result;
-};
-
-function groupPeaks(peakList, nL) {
-  var group = [];
-  var groups = [];
-  var i, j;
-  var limits = [peakList[0].x, nL * peakList[0].width];
-  var upperLimit, lowerLimit; // Merge forward
-
-  for (i = 0; i < peakList.length; i++) {
-    // If the 2 things overlaps
-    if (Math.abs(peakList[i].x - limits[0]) < nL * peakList[i].width + limits[1]) {
-      // Add the peak to the group
-      group.push(peakList[i]); // Update the group limits
-
-      upperLimit = limits[0] + limits[1];
-
-      if (peakList[i].x + nL * peakList[i].width > upperLimit) {
-        upperLimit = peakList[i].x + nL * peakList[i].width;
-      }
-
-      lowerLimit = limits[0] - limits[1];
-
-      if (peakList[i].x - nL * peakList[i].width < lowerLimit) {
-        lowerLimit = peakList[i].x - nL * peakList[i].width;
-      }
-
-      limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
-    } else {
-      groups.push({
-        limits: limits,
-        group: group
-      }); // var optmimalPeak = fitSpectrum(group,limits,spectrum);
-
-      group = [peakList[i]];
-      limits = [peakList[i].x, nL * peakList[i].width];
-    }
-  }
-
-  groups.push({
-    limits: limits,
-    group: group
-  }); // Merge backward
-
-  for (i = groups.length - 2; i >= 0; i--) {
-    // The groups overlaps
-    if (Math.abs(groups[i].limits[0] - groups[i + 1].limits[0]) < (groups[i].limits[1] + groups[i + 1].limits[1]) / 2) {
-      for (j = 0; j < groups[i + 1].group.length; j++) {
-        groups[i].group.push(groups[i + 1].group[j]);
-      }
-
-      upperLimit = groups[i].limits[0] + groups[i].limits[1];
-
-      if (groups[i + 1].limits[0] + groups[i + 1].limits[1] > upperLimit) {
-        upperLimit = groups[i + 1].limits[0] + groups[i + 1].limits[1];
-      }
-
-      lowerLimit = groups[i].limits[0] - groups[i].limits[1];
-
-      if (groups[i + 1].limits[0] - groups[i + 1].limits[1] < lowerLimit) {
-        lowerLimit = groups[i + 1].limits[0] - groups[i + 1].limits[1];
-      } // console.log(limits);
-
-
-      groups[i].limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
-      groups.splice(i + 1, 1);
-    }
-  }
-
-  return groups;
-}
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(21);
-module.exports.Matrix = __webpack_require__(2);
-module.exports.Matrix.algebra = __webpack_require__(12);
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Created by acastillo on 8/5/15.
- */
-var Matrix = __webpack_require__(2);
-
-var math = __webpack_require__(12);
-
-var DEBUG = false;
-/** Levenberg Marquardt curve-fitting: minimize sum of weighted squared residuals
- ----------  INPUT  VARIABLES  -----------
- func   = function of n independent variables, 't', and m parameters, 'p',
- returning the simulated model: y_hat = func(t,p,c)
- p      = n-vector of initial guess of parameter values
- t      = m-vectors or matrix of independent variables (used as arg to func)
- y_dat  = m-vectors or matrix of data to be fit by func(t,p)
- weight = weighting vector for least squares fit ( weight >= 0 ) ...
- inverse of the standard measurement errors
- Default:  sqrt(d.o.f. / ( y_dat' * y_dat ))
- dp     = fractional increment of 'p' for numerical derivatives
- dp(j)>0 central differences calculated
- dp(j)<0 one sided 'backwards' differences calculated
- dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
- Default:  0.001;
- p_min  = n-vector of lower bounds for parameter values
- p_max  = n-vector of upper bounds for parameter values
- c      = an optional matrix of values passed to func(t,p,c)
- opts   = vector of algorithmic parameters
- parameter    defaults    meaning
- opts(1)  =  prnt            3        >1 intermediate results; >2 plots
- opts(2)  =  MaxIter      10*Npar     maximum number of iterations
- opts(3)  =  epsilon_1       1e-3     convergence tolerance for gradient
- opts(4)  =  epsilon_2       1e-3     convergence tolerance for parameters
- opts(5)  =  epsilon_3       1e-3     convergence tolerance for Chi-square
- opts(6)  =  epsilon_4       1e-2     determines acceptance of a L-M step
- opts(7)  =  lambda_0        1e-2     initial value of L-M paramter
- opts(8)  =  lambda_UP_fac   11       factor for increasing lambda
- opts(9)  =  lambda_DN_fac    9       factor for decreasing lambda
- opts(10) =  Update_Type      1       1: Levenberg-Marquardt lambda update
- 2: Quadratic update
- 3: Nielsen's lambda update equations
-
- ----------  OUTPUT  VARIABLES  -----------
- p       = least-squares optimal estimate of the parameter values
- X2      = Chi squared criteria
- sigma_p = asymptotic standard error of the parameters
- sigma_y = asymptotic standard error of the curve-fit
- corr    = correlation matrix of the parameters
- R_sq    = R-squared cofficient of multiple determination
- cvg_hst = convergence history
-
- Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. 22 Sep 2013
- modified from: http://octave.sourceforge.net/optim/function/leasqr.html
- using references by
- Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
- Sam Roweis       http://www.cs.toronto.edu/~roweis/notes/lm.pdf
- Manolis Lourakis http://www.ics.forth.gr/~lourakis/levmar/levmar.pdf
- Hans Nielson     http://www2.imm.dtu.dk/~hbn/publ/TR9905.ps
- Mathworks        optimization toolbox reference manual
- K. Madsen, H.B., Nielsen, and O. Tingleff
- http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/3215/pdf/imm3215.pdf
- */
-
-var LM = {
-  optimize: function optimize(func, p, t, y_dat, weight, dp, p_min, p_max, c, opts) {
-    var tensor_parameter = 0; // set to 1 of parameter is a tensor
-
-    var iteration = 0; // iteration counter
-    //func_calls = 0;			// running count of function evaluations
-
-    if (typeof p[0] != "object") {
-      for (var i = 0; i < p.length; i++) {
-        p[i] = [p[i]];
-      }
-    } //p = p(:); y_dat = y_dat(:); 		// make column vectors
-
-
-    var i, k;
-    var eps = 2 ^ -52;
-    var Npar = p.length; //length(p); 			// number of parameters
-
-    var Npnt = y_dat.length; //length(y_dat);		// number of data points
-
-    var p_old = Matrix.zeros(Npar, 1); // previous set of parameters
-
-    var y_old = Matrix.zeros(Npnt, 1); // previous model, y_old = y_hat(t;p_old)
-
-    var X2 = 1e-2 / eps; // a really big initial Chi-sq value
-
-    var X2_old = 1e-2 / eps; // a really big initial Chi-sq value
-
-    var J = Matrix.zeros(Npnt, Npar);
-
-    if (t.length != y_dat.length) {
-      console.log('lm.m error: the length of t must equal the length of y_dat');
-      length_t = t.length;
-      length_y_dat = y_dat.length;
-      var X2 = 0,
-          corr = 0,
-          sigma_p = 0,
-          sigma_y = 0,
-          R_sq = 0,
-          cvg_hist = 0;
-
-      if (!tensor_parameter) {
-        return;
-      }
-    }
-
-    weight = weight || Math.sqrt((Npnt - Npar + 1) / math.multiply(math.transpose(y_dat), y_dat));
-    dp = dp || 0.001;
-    p_min = p_min || math.multiply(Math.abs(p), -100);
-    p_max = p_max || math.multiply(Math.abs(p), 100);
-    c = c || 1; // Algorithmic Paramters
-    //prnt MaxIter  eps1  eps2  epx3  eps4  lam0  lamUP lamDN UpdateType
-
-    opts = opts || [3, 10 * Npar, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 11, 9, 1];
-    var prnt = opts[0]; // >1 intermediate results; >2 plots
-
-    var MaxIter = opts[1]; // maximum number of iterations
-
-    var epsilon_1 = opts[2]; // convergence tolerance for gradient
-
-    var epsilon_2 = opts[3]; // convergence tolerance for parameter
-
-    var epsilon_3 = opts[4]; // convergence tolerance for Chi-square
-
-    var epsilon_4 = opts[5]; // determines acceptance of a L-M step
-
-    var lambda_0 = opts[6]; // initial value of damping paramter, lambda
-
-    var lambda_UP_fac = opts[7]; // factor for increasing lambda
-
-    var lambda_DN_fac = opts[8]; // factor for decreasing lambda
-
-    var Update_Type = opts[9]; // 1: Levenberg-Marquardt lambda update
-    // 2: Quadratic update
-    // 3: Nielsen's lambda update equations
-
-    if (tensor_parameter && prnt == 3) prnt = 2;
-
-    if (!dp.length || dp.length == 1) {
-      var dp_array = new Array(Npar);
-
-      for (var i = 0; i < Npar; i++) dp_array[i] = [dp];
-
-      dp = dp_array;
-    } // indices of the parameters to be fit
-
-
-    var idx = [];
-
-    for (i = 0; i < dp.length; i++) {
-      if (dp[i][0] != 0) {
-        idx.push(i);
-      }
-    }
-
-    var Nfit = idx.length; // number of parameters to fit
-
-    var stop = false; // termination flag
-
-    var weight_sq = null; //console.log(weight);
-
-    if (!weight.length || weight.length < Npnt) {
-      // squared weighting vector
-      //weight_sq = ( weight(1)*ones(Npnt,1) ).^2;
-      //console.log("weight[0] "+typeof weight[0]);
-      var tmp = math.multiply(Matrix.ones(Npnt, 1), weight[0]);
-      weight_sq = math.dotMultiply(tmp, tmp);
-    } else {
-      //weight_sq = (weight(:)).^2;
-      weight_sq = math.dotMultiply(weight, weight);
-    } // initialize Jacobian with finite difference calculation
-    //console.log("J "+weight_sq);
-
-
-    var result = this.lm_matx(func, t, p_old, y_old, 1, J, p, y_dat, weight_sq, dp, c);
-    var JtWJ = result.JtWJ,
-        JtWdy = result.JtWdy,
-        X2 = result.Chi_sq,
-        y_hat = result.y_hat,
-        J = result.J; //[JtWJ,JtWdy,X2,y_hat,J] = this.lm_matx(func,t,p_old,y_old,1,J,p,y_dat,weight_sq,dp,c);
-    //console.log(JtWJ);
-
-    if (Math.max(Math.abs(JtWdy)) < epsilon_1) {
-      console.log(' *** Your Initial Guess is Extremely Close to Optimal ***');
-      console.log(' *** epsilon_1 = ', epsilon_1);
-      stop = true;
-    }
-
-    switch (Update_Type) {
-      case 1:
-        // Marquardt: init'l lambda
-        lambda = lambda_0;
-        break;
-
-      default:
-        // Quadratic and Nielsen
-        lambda = lambda_0 * Math.max(math.diag(JtWJ));
-        nu = 2;
-    } //console.log(X2);
-
-
-    X2_old = X2; // previous value of X2
-    //console.log(MaxIter+" "+Npar);
-    //var cvg_hst = Matrix.ones(MaxIter,Npar+3);		// initialize convergence history
-
-    var h = null;
-
-    while (!stop && iteration <= MaxIter) {
-      // --- Main Loop
-      iteration = iteration + 1; // incremental change in parameters
-
-      switch (Update_Type) {
-        case 1:
-          // Marquardt
-          //h = ( JtWJ + lambda * math.diag(math.diag(JtWJ)) ) \ JtWdy;
-          //h = math.multiply(math.inv(JtWdy),math.add(JtWJ,math.multiply(lambda,math.diag(math.diag(Npar)))));
-          h = math.solve(math.add(JtWJ, math.multiply(math.diag(math.diag(JtWJ)), lambda)), JtWdy);
-          break;
-
-        default:
-          // Quadratic and Nielsen
-          //h = ( JtWJ + lambda * math.eye(Npar) ) \ JtWdy;
-          h = math.solve(math.add(JtWJ, math.multiply(Matrix.eye(Npar), lambda)), JtWdy);
-      }
-      /*for(var k=0;k< h.length;k++){
-       h[k]=[h[k]];
-       }*/
-      //console.log("h "+h);
-      //h=math.matrix(h);
-      //  big = max(abs(h./p)) > 2;
-      //this is a big step
-      // --- Are parameters [p+h] much better than [p] ?
-
-
-      var hidx = new Array(idx.length);
-
-      for (k = 0; k < idx.length; k++) {
-        hidx[k] = h[idx[k]];
-      }
-
-      var p_try = math.add(p, hidx); // update the [idx] elements
-
-      for (k = 0; k < p_try.length; k++) {
-        p_try[k][0] = Math.min(Math.max(p_min[k][0], p_try[k][0]), p_max[k][0]);
-      } // p_try = Math.min(Math.max(p_min,p_try),p_max);           // apply constraints
-
-
-      var delta_y = math.subtract(y_dat, func(t, p_try, c)); // residual error using p_try
-      //func_calls = func_calls + 1;
-      //X2_try = delta_y' * ( delta_y .* weight_sq );  // Chi-squared error criteria
-
-      var X2_try = math.multiply(math.transpose(delta_y), math.dotMultiply(delta_y, weight_sq));
-
-      if (Update_Type == 2) {
-        // Quadratic
-        //    One step of quadratic line update in the h direction for minimum X2
-        //var alpha =  JtWdy'*h / ( (X2_try - X2)/2 + 2*JtWdy'*h ) ;
-        var JtWdy_th = math.multiply(math.transpose(JtWdy), h);
-        var alpha = math.multiply(JtWdy_th, math.inv(math.add(math.multiply(math.subtract(X2_try - X2), 1 / 2)), math.multiply(JtWdy_th, 2))); //JtWdy'*h / ( (X2_try - X2)/2 + 2*JtWdy'*h ) ;
-
-        h = math.multiply(alpha, h);
-
-        for (var k = 0; k < idx.length; k++) {
-          hidx[k] = h[idx[k]];
-        }
-
-        p_try = math.add(p, hidx); // update only [idx] elements
-
-        p_try = math.min(math.max(p_min, p_try), p_max); // apply constraints
-
-        delta_y = math.subtract(y_dat, func(t, p_try, c)); // residual error using p_try
-        // func_calls = func_calls + 1;
-        //X2_try = delta_y' * ( delta_y .* weight_sq ); // Chi-squared error criteria
-
-        X2_try = math.multiply(math.transpose(delta_y), mat.dotMultiply(delta_y, weight_sq));
-      } //rho = (X2 - X2_try) / ( 2*h' * (lambda * h + JtWdy) ); // Nielsen
-
-
-      var rho = (X2 - X2_try) / math.multiply(math.multiply(math.transpose(h), 2), math.add(math.multiply(lambda, h), JtWdy)); //console.log("rho "+rho);
-
-      if (rho > epsilon_4) {
-        // it IS significantly better
-        //console.log("Here");
-        dX2 = X2 - X2_old;
-        X2_old = X2;
-        p_old = p;
-        y_old = y_hat;
-        p = p_try; // accept p_try
-
-        result = this.lm_matx(func, t, p_old, y_old, dX2, J, p, y_dat, weight_sq, dp, c);
-        JtWJ = result.JtWJ, JtWdy = result.JtWdy, X2 = result.Chi_sq, y_hat = result.y_hat, J = result.J; // decrease lambda ==> Gauss-Newton method
-
-        switch (Update_Type) {
-          case 1:
-            // Levenberg
-            lambda = Math.max(lambda / lambda_DN_fac, 1.e-7);
-            break;
-
-          case 2:
-            // Quadratic
-            lambda = Math.max(lambda / (1 + alpha), 1.e-7);
-            break;
-
-          case 3:
-            // Nielsen
-            lambda = math.multiply(Math.max(1 / 3, 1 - (2 * rho - 1) ^ 3), lambda);
-            nu = 2;
-            break;
-        }
-      } else {
-        // it IS NOT better
-        X2 = X2_old; // do not accept p_try
-
-        if (iteration % (2 * Npar) == 0) {
-          // rank-1 update of Jacobian
-          result = this.lm_matx(func, t, p_old, y_old, -1, J, p, y_dat, weight_sq, dp, c);
-          JtWJ = result.JtWJ, JtWdy = result.JtWdy, dX2 = result.Chi_sq, y_hat = result.y_hat, J = result.J;
-        } // increase lambda  ==> gradient descent method
-
-
-        switch (Update_Type) {
-          case 1:
-            // Levenberg
-            lambda = Math.min(lambda * lambda_UP_fac, 1.e7);
-            break;
-
-          case 2:
-            // Quadratic
-            lambda = lambda + Math.abs((X2_try - X2) / 2 / alpha);
-            break;
-
-          case 3:
-            // Nielsen
-            lambda = lambda * nu;
-            nu = 2 * nu;
-            break;
-        }
-      }
-    } // --- End of Main Loop
-    // --- convergence achieved, find covariance and confidence intervals
-    // equal weights for paramter error analysis
-
-
-    weight_sq = math.multiply(math.multiply(math.transpose(delta_y), delta_y), Matrix.ones(Npnt, 1));
-    weight_sq.apply(function (i, j) {
-      weight_sq[i][j] = (Npnt - Nfit + 1) / weight_sq[i][j];
-    }); //console.log(weight_sq);
-
-    result = this.lm_matx(func, t, p_old, y_old, -1, J, p, y_dat, weight_sq, dp, c);
-    JtWJ = result.JtWJ, JtWdy = result.JtWdy, X2 = result.Chi_sq, y_hat = result.y_hat, J = result.J;
-    /*if nargout > 2				// standard error of parameters
-     covar = inv(JtWJ);
-     sigma_p = sqrt(diag(covar));
-     end
-      if nargout > 3				// standard error of the fit
-     //  sigma_y = sqrt(diag(J * covar * J'));	// slower version of below
-     sigma_y = zeros(Npnt,1);
-     for i=1:Npnt
-     sigma_y(i) = J(i,:) * covar * J(i,:)';
-     end
-     sigma_y = sqrt(sigma_y);
-     end
-      if nargout > 4				// parameter correlation matrix
-     corr = covar ./ [sigma_p*sigma_p'];
-     end
-      if nargout > 5				// coefficient of multiple determination
-     R_sq = corrcoef([y_dat y_hat]);
-     R_sq = R_sq(1,2).^2;
-     end
-      if nargout > 6				// convergence history
-     cvg_hst = cvg_hst(1:iteration,:);
-     end*/
-    // endfunction  # ---------------------------------------------------------- LM
-
-    return {
-      p: p,
-      X2: X2
-    };
-  },
-  lm_FD_J: function lm_FD_J(func, t, p, y, dp, c) {
-    // J = lm_FD_J(func,t,p,y,{dp},{c})
-    //
-    // partial derivatives (Jacobian) dy/dp for use with lm.m
-    // computed via Finite Differences
-    // Requires n or 2n function evaluations, n = number of nonzero values of dp
-    // -------- INPUT VARIABLES ---------
-    // func = function of independent variables, 't', and parameters, 'p',
-    //        returning the simulated model: y_hat = func(t,p,c)
-    // t  = m-vector of independent variables (used as arg to func)
-    // p  = n-vector of current parameter values
-    // y  = func(t,p,c) n-vector initialised by user before each call to lm_FD_J
-    // dp = fractional increment of p for numerical derivatives
-    //      dp(j)>0 central differences calculated
-    //      dp(j)<0 one sided differences calculated
-    //      dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
-    //      Default:  0.001;
-    // c  = optional vector of constants passed to y_hat = func(t,p,c)
-    //---------- OUTPUT VARIABLES -------
-    // J  = Jacobian Matrix J(i,j)=dy(i)/dp(j)	i=1:n; j=1:m
-    //   Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. November 2005
-    //   modified from: ftp://fly.cnuce.cnr.it/pub/software/octave/leasqr/
-    //   Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
-    var m = y.length; // number of data points
-
-    var n = p.length; // number of parameters
-
-    dp = dp || math.multiply(Matrix.ones(n, 1), 0.001);
-    var ps = p.clone(); //JSON.parse(JSON.stringify(p));
-    //var ps = $.extend(true, [], p);
-
-    var J = new Matrix(m, n),
-        del = new Array(n); // initialize Jacobian to Zero
-
-    for (var j = 0; j < n; j++) {
-      //console.log(j+" "+dp[j]+" "+p[j]+" "+ps[j]+" "+del[j]);
-      del[j] = dp[j] * (1 + Math.abs(p[j][0])); // parameter perturbation
-
-      p[j] = [ps[j][0] + del[j]]; // perturb parameter p(j)
-      //console.log(j+" "+dp[j]+" "+p[j]+" "+ps[j]+" "+del[j]);
-
-      if (del[j] != 0) {
-        y1 = func(t, p, c); //func_calls = func_calls + 1;
-
-        if (dp[j][0] < 0) {
-          // backwards difference
-          //J(:,j) = math.dotDivide(math.subtract(y1, y),del[j]);//. / del[j];
-          //console.log(del[j]);
-          //console.log(y);
-          var column = math.dotDivide(math.subtract(y1, y), del[j]);
-
-          for (var k = 0; k < m; k++) {
-            J[k][j] = column[k][0];
-          } //console.log(column);
-
-        } else {
-          p[j][0] = ps[j][0] - del[j]; //J(:,j) = (y1 - feval(func, t, p, c)). / (2. * del[j]);
-
-          var column = math.dotDivide(math.subtract(y1, func(t, p, c)), 2 * del[j]);
-
-          for (var k = 0; k < m; k++) {
-            J[k][j] = column[k][0];
-          }
-        } // central difference, additional func call
-
-      }
-
-      p[j] = ps[j]; // restore p(j)
-    } //console.log("lm_FD_J: "+ JSON.stringify(J));
-
-
-    return J;
-  },
-  // endfunction # -------------------------------------------------- LM_FD_J
-  lm_Broyden_J: function lm_Broyden_J(p_old, y_old, J, p, y) {
-    // J = lm_Broyden_J(p_old,y_old,J,p,y)
-    // carry out a rank-1 update to the Jacobian matrix using Broyden's equation
-    //---------- INPUT VARIABLES -------
-    // p_old = previous set of parameters
-    // y_old = model evaluation at previous set of parameters, y_hat(t;p_old)
-    // J  = current version of the Jacobian matrix
-    // p     = current  set of parameters
-    // y     = model evaluation at current  set of parameters, y_hat(t;p)
-    //---------- OUTPUT VARIABLES -------
-    // J = rank-1 update to Jacobian Matrix J(i,j)=dy(i)/dp(j)	i=1:n; j=1:m
-    //console.log(p+" X "+ p_old)
-    var h = math.subtract(p, p_old); //console.log("hhh "+h);
-
-    var h_t = math.transpose(h);
-    h_t.div(math.multiply(h_t, h)); //console.log(h_t);
-    //J = J + ( y - y_old - J*h )*h' / (h'*h);	// Broyden rank-1 update eq'n
-
-    J = math.add(J, math.multiply(math.subtract(y, math.add(y_old, math.multiply(J, h))), h_t));
-    return J; // endfunction # ---------------------------------------------- LM_Broyden_J
-  },
-  lm_matx: function lm_matx(func, t, p_old, y_old, dX2, J, p, y_dat, weight_sq, dp, c, iteration) {
-    // [JtWJ,JtWdy,Chi_sq,y_hat,J] = this.lm_matx(func,t,p_old,y_old,dX2,J,p,y_dat,weight_sq,{da},{c})
-    //
-    // Evaluate the linearized fitting matrix, JtWJ, and vector JtWdy,
-    // and calculate the Chi-squared error function, Chi_sq
-    // Used by Levenberg-Marquard algorithm, lm.m
-    // -------- INPUT VARIABLES ---------
-    // func   = function ofpn independent variables, p, and m parameters, p,
-    //         returning the simulated model: y_hat = func(t,p,c)
-    // t      = m-vectors or matrix of independent variables (used as arg to func)
-    // p_old  = n-vector of previous parameter values
-    // y_old  = m-vector of previous model ... y_old = y_hat(t;p_old);
-    // dX2    = previous change in Chi-squared criteria
-    // J   = m-by-n Jacobian of model, y_hat, with respect to parameters, p
-    // p      = n-vector of current  parameter values
-    // y_dat  = n-vector of data to be fit by func(t,p,c)
-    // weight_sq = square of the weighting vector for least squares fit ...
-    //	    inverse of the standard measurement errors
-    // dp     = fractional increment of 'p' for numerical derivatives
-    //          dp(j)>0 central differences calculated
-    //          dp(j)<0 one sided differences calculated
-    //          dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
-    //          Default:  0.001;
-    // c      = optional vector of constants passed to y_hat = func(t,p,c)
-    //---------- OUTPUT VARIABLES -------
-    // JtWJ	 = linearized Hessian matrix (inverse of covariance matrix)
-    // JtWdy   = linearized fitting vector
-    // Chi_sq = Chi-squared criteria: weighted sum of the squared residuals WSSR
-    // y_hat  = model evaluated with parameters 'p'
-    // J   = m-by-n Jacobian of model, y_hat, with respect to parameters, p
-    //   Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. November 2005
-    //   modified from: ftp://fly.cnuce.cnr.it/pub/software/octave/leasqr/
-    //   Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
-    var Npnt = y_dat.length; // number of data points
-
-    var Npar = p.length; // number of parameters
-
-    dp = dp || 0.001; //var JtWJ = new Matrix.zeros(Npar);
-    //var JtWdy  = new Matrix.zeros(Npar,1);
-
-    var y_hat = func(t, p, c); // evaluate model using parameters 'p'
-    //func_calls = func_calls + 1;
-    //console.log(J);
-
-    if (iteration % (2 * Npar) == 0 || dX2 > 0) {
-      //console.log("Par");
-      J = this.lm_FD_J(func, t, p, y_hat, dp, c); // finite difference
-    } else {
-      //console.log("ImPar");
-      J = this.lm_Broyden_J(p_old, y_old, J, p, y_hat); // rank-1 update
-    } //console.log(y_dat);
-    //console.log(y_hat);
-
-
-    var delta_y = math.subtract(y_dat, y_hat); // residual error between model and data
-    //console.log(delta_y[0][0]);
-    //console.log(delta_y.rows+" "+delta_y.columns+" "+JSON.stringify(weight_sq));
-    //var Chi_sq = delta_y' * ( delta_y .* weight_sq ); 	// Chi-squared error criteria
-
-    var Chi_sq = math.multiply(math.transpose(delta_y), math.dotMultiply(delta_y, weight_sq)); //JtWJ  = J' * ( J .* ( weight_sq * ones(1,Npar) ) );
-
-    var Jt = math.transpose(J); //console.log(weight_sq);
-
-    var JtWJ = math.multiply(Jt, math.dotMultiply(J, math.multiply(weight_sq, Matrix.ones(1, Npar)))); //JtWdy = J' * ( weight_sq .* delta_y );
-
-    var JtWdy = math.multiply(Jt, math.dotMultiply(weight_sq, delta_y));
-    return {
-      JtWJ: JtWJ,
-      JtWdy: JtWdy,
-      Chi_sq: Chi_sq,
-      y_hat: y_hat,
-      J: J
-    }; // endfunction  # ------------------------------------------------------ LM_MATX
-  }
-};
-module.exports = LM;
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-if (!Symbol.species) {
-  Symbol.species = Symbol.for('@@species');
-}
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = exports = __webpack_require__(24);
-exports.getEquallySpacedData = __webpack_require__(26).getEquallySpacedData;
-exports.SNV = __webpack_require__(27).SNV;
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-const Stat = __webpack_require__(10).array;
-/**
- * Function that returns an array of points given 1D array as follows:
- *
- * [x1, y1, .. , x2, y2, ..]
- *
- * And receive the number of dimensions of each point.
- * @param array
- * @param dimensions
- * @returns {Array} - Array of points.
- */
-
-
-function coordArrayToPoints(array, dimensions) {
-  if (array.length % dimensions !== 0) {
-    throw new RangeError('Dimensions number must be accordance with the size of the array.');
-  }
-
-  var length = array.length / dimensions;
-  var pointsArr = new Array(length);
-  var k = 0;
-
-  for (var i = 0; i < array.length; i += dimensions) {
-    var point = new Array(dimensions);
-
-    for (var j = 0; j < dimensions; ++j) {
-      point[j] = array[i + j];
-    }
-
-    pointsArr[k] = point;
-    k++;
-  }
-
-  return pointsArr;
-}
-/**
- * Function that given an array as follows:
- * [x1, y1, .. , x2, y2, ..]
- *
- * Returns an array as follows:
- * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
- *
- * And receives the number of dimensions of each coordinate.
- * @param array
- * @param dimensions
- * @returns {Array} - Matrix of coordinates
- */
-
-
-function coordArrayToCoordMatrix(array, dimensions) {
-  if (array.length % dimensions !== 0) {
-    throw new RangeError('Dimensions number must be accordance with the size of the array.');
-  }
-
-  var coordinatesArray = new Array(dimensions);
-  var points = array.length / dimensions;
-
-  for (var i = 0; i < coordinatesArray.length; i++) {
-    coordinatesArray[i] = new Array(points);
-  }
-
-  for (i = 0; i < array.length; i += dimensions) {
-    for (var j = 0; j < dimensions; ++j) {
-      var currentPoint = Math.floor(i / dimensions);
-      coordinatesArray[j][currentPoint] = array[i + j];
-    }
-  }
-
-  return coordinatesArray;
-}
-/**
- * Function that receives a coordinate matrix as follows:
- * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
- *
- * Returns an array of coordinates as follows:
- * [x1, y1, .. , x2, y2, ..]
- *
- * @param coordMatrix
- * @returns {Array}
- */
-
-
-function coordMatrixToCoordArray(coordMatrix) {
-  var coodinatesArray = new Array(coordMatrix.length * coordMatrix[0].length);
-  var k = 0;
-
-  for (var i = 0; i < coordMatrix[0].length; ++i) {
-    for (var j = 0; j < coordMatrix.length; ++j) {
-      coodinatesArray[k] = coordMatrix[j][i];
-      ++k;
-    }
-  }
-
-  return coodinatesArray;
-}
-/**
- * Tranpose a matrix, this method is for coordMatrixToPoints and
- * pointsToCoordMatrix, that because only transposing the matrix
- * you can change your representation.
- *
- * @param matrix
- * @returns {Array}
- */
-
-
-function transpose(matrix) {
-  var resultMatrix = new Array(matrix[0].length);
-
-  for (var i = 0; i < resultMatrix.length; ++i) {
-    resultMatrix[i] = new Array(matrix.length);
-  }
-
-  for (i = 0; i < matrix.length; ++i) {
-    for (var j = 0; j < matrix[0].length; ++j) {
-      resultMatrix[j][i] = matrix[i][j];
-    }
-  }
-
-  return resultMatrix;
-}
-/**
- * Function that transform an array of points into a coordinates array
- * as follows:
- * [x1, y1, .. , x2, y2, ..]
- *
- * @param points
- * @returns {Array}
- */
-
-
-function pointsToCoordArray(points) {
-  var coodinatesArray = new Array(points.length * points[0].length);
-  var k = 0;
-
-  for (var i = 0; i < points.length; ++i) {
-    for (var j = 0; j < points[0].length; ++j) {
-      coodinatesArray[k] = points[i][j];
-      ++k;
-    }
-  }
-
-  return coodinatesArray;
-}
-/**
- * Apply the dot product between the smaller vector and a subsets of the
- * largest one.
- *
- * @param firstVector
- * @param secondVector
- * @returns {Array} each dot product of size of the difference between the
- *                  larger and the smallest one.
- */
-
-
-function applyDotProduct(firstVector, secondVector) {
-  var largestVector, smallestVector;
-
-  if (firstVector.length <= secondVector.length) {
-    smallestVector = firstVector;
-    largestVector = secondVector;
-  } else {
-    smallestVector = secondVector;
-    largestVector = firstVector;
-  }
-
-  var difference = largestVector.length - smallestVector.length + 1;
-  var dotProductApplied = new Array(difference);
-
-  for (var i = 0; i < difference; ++i) {
-    var sum = 0;
-
-    for (var j = 0; j < smallestVector.length; ++j) {
-      sum += smallestVector[j] * largestVector[i + j];
-    }
-
-    dotProductApplied[i] = sum;
-  }
-
-  return dotProductApplied;
-}
-/**
- * To scale the input array between the specified min and max values. The operation is performed inplace
- * if the options.inplace is specified. If only one of the min or max parameters is specified, then the scaling
- * will multiply the input array by min/min(input) or max/max(input)
- * @param input
- * @param options
- * @returns {*}
- */
-
-
-function scale(input, options) {
-  var y;
-
-  if (options.inPlace) {
-    y = input;
-  } else {
-    y = new Array(input.length);
-  }
-
-  const max = options.max;
-  const min = options.min;
-
-  if (typeof max === "number") {
-    if (typeof min === "number") {
-      var minMax = Stat.minMax(input);
-      var factor = (max - min) / (minMax.max - minMax.min);
-
-      for (var i = 0; i < y.length; i++) {
-        y[i] = (input[i] - minMax.min) * factor + min;
-      }
-    } else {
-      var currentMin = Stat.max(input);
-      var factor = max / currentMin;
-
-      for (var i = 0; i < y.length; i++) {
-        y[i] = input[i] * factor;
-      }
-    }
-  } else {
-    if (typeof min === "number") {
-      var currentMin = Stat.min(input);
-      var factor = min / currentMin;
-
-      for (var i = 0; i < y.length; i++) {
-        y[i] = input[i] * factor;
-      }
-    }
-  }
-
-  return y;
-}
-
-module.exports = {
-  coordArrayToPoints: coordArrayToPoints,
-  coordArrayToCoordMatrix: coordArrayToCoordMatrix,
-  coordMatrixToCoordArray: coordMatrixToCoordArray,
-  coordMatrixToPoints: transpose,
-  pointsToCoordArray: pointsToCoordArray,
-  pointsToCoordMatrix: transpose,
-  applyDotProduct: applyDotProduct,
-  scale: scale
-};
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var arrayStat = __webpack_require__(11);
+var arrayStat = __webpack_require__(6);
 
 function compareNumbers(a, b) {
   return a - b;
@@ -8238,7 +6041,1045 @@ exports.weightedScatter = function weightedScatter(matrix, weights, means, facto
 };
 
 /***/ }),
-/* 26 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Created by acastillo on 9/6/15.
+ */
+
+
+let optimize = __webpack_require__(7);
+
+function sampleFunction(from, to, x, y, lastIndex) {
+  let nbPoints = x.length;
+  let sampleX = [];
+  let sampleY = [];
+  let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
+
+  if (direction === -1) {
+    lastIndex[0] = x.length - 1;
+  }
+
+  let delta = Math.abs(to - from) / 2;
+  let mid = (from + to) / 2;
+  let stop = false;
+  let index = lastIndex[0];
+
+  while (!stop && index < nbPoints && index >= 0) {
+    if (Math.abs(x[index] - mid) <= delta) {
+      sampleX.push(x[index]);
+      sampleY.push(y[index]);
+      index += direction;
+    } else {
+      // It is outside the range.
+      if (Math.sign(mid - x[index]) === 1) {
+        // We'll reach the mid going in the current direction
+        index += direction;
+      } else {
+        // There is not more peaks in the current range
+        stop = true;
+      }
+    } // console.log(sampleX);
+
+  }
+
+  lastIndex[0] = index;
+  return [sampleX, sampleY];
+}
+
+module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
+  let i;
+  let j;
+  let lastIndex = [0];
+  let groups = groupPeaks(peakList, n);
+  let result = [];
+  let factor = 1;
+
+  if (fnType === 'gaussian') {
+    factor = 1.17741;
+  } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
+
+
+  let sampling, error, opts;
+
+  for (i = 0; i < groups.length; i++) {
+    let peaks = groups[i].group;
+
+    if (peaks.length > 1) {
+      // Multiple peaks
+      // console.log("Pending group of overlaped peaks "+peaks.length);
+      // console.log("here1");
+      // console.log(groups[i].limits);
+      sampling = sampleFunction(groups[i].limits[0] - groups[i].limits[1], groups[i].limits[0] + groups[i].limits[1], x, y, lastIndex); // console.log(sampling);
+
+      if (sampling[0].length > 5) {
+        error = peaks[0].width / 1000;
+        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1]; // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
+
+        let optPeaks = [];
+
+        if (fnType === 'gaussian') {
+          optPeaks = optimize.optimizeGaussianSum(sampling, peaks, opts);
+        } else {
+          if (fnType === 'lorentzian') {
+            optPeaks = optimize.optimizeLorentzianSum(sampling, peaks, opts);
+          }
+        } // console.log(optPeak);
+
+
+        for (j = 0; j < optPeaks.length; j++) {
+          result.push({
+            x: optPeaks[j][0][0],
+            y: optPeaks[j][1][0],
+            width: optPeaks[j][2][0] * factor
+          });
+        }
+      }
+    } else {
+      // Single peak
+      peaks = peaks[0];
+      sampling = sampleFunction(peaks.x - n * peaks.width, peaks.x + n * peaks.width, x, y, lastIndex); // console.log("here2");
+      // console.log(groups[i].limits);
+
+      if (sampling[0].length > 5) {
+        error = peaks.width / 1000;
+        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1]; // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
+        // var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
+
+        let optPeak = [];
+
+        if (fnType === 'gaussian') {
+          optPeak = optimize.optimizeSingleGaussian([sampling[0], sampling[1]], peaks, opts);
+        } else {
+          if (fnType === 'lorentzian') {
+            optPeak = optimize.optimizeSingleLorentzian([sampling[0], sampling[1]], peaks, opts);
+          }
+        } // console.log(optPeak);
+
+
+        result.push({
+          x: optPeak[0][0],
+          y: optPeak[1][0],
+          width: optPeak[2][0] * factor
+        }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+      }
+    }
+  }
+
+  return result;
+};
+
+function groupPeaks(peakList, nL) {
+  let group = [];
+  let groups = [];
+  let i, j;
+  let limits = [peakList[0].x, nL * peakList[0].width];
+  let upperLimit, lowerLimit; // Merge forward
+
+  for (i = 0; i < peakList.length; i++) {
+    // If the 2 things overlaps
+    if (Math.abs(peakList[i].x - limits[0]) < nL * peakList[i].width + limits[1]) {
+      // Add the peak to the group
+      group.push(peakList[i]); // Update the group limits
+
+      upperLimit = limits[0] + limits[1];
+
+      if (peakList[i].x + nL * peakList[i].width > upperLimit) {
+        upperLimit = peakList[i].x + nL * peakList[i].width;
+      }
+
+      lowerLimit = limits[0] - limits[1];
+
+      if (peakList[i].x - nL * peakList[i].width < lowerLimit) {
+        lowerLimit = peakList[i].x - nL * peakList[i].width;
+      }
+
+      limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
+    } else {
+      groups.push({
+        limits: limits,
+        group: group
+      }); // var optmimalPeak = fitSpectrum(group,limits,spectrum);
+
+      group = [peakList[i]];
+      limits = [peakList[i].x, nL * peakList[i].width];
+    }
+  }
+
+  groups.push({
+    limits: limits,
+    group: group
+  }); // Merge backward
+
+  for (i = groups.length - 2; i >= 0; i--) {
+    // The groups overlaps
+    if (Math.abs(groups[i].limits[0] - groups[i + 1].limits[0]) < (groups[i].limits[1] + groups[i + 1].limits[1]) / 2) {
+      for (j = 0; j < groups[i + 1].group.length; j++) {
+        groups[i].group.push(groups[i + 1].group[j]);
+      }
+
+      upperLimit = groups[i].limits[0] + groups[i].limits[1];
+
+      if (groups[i + 1].limits[0] + groups[i + 1].limits[1] > upperLimit) {
+        upperLimit = groups[i + 1].limits[0] + groups[i + 1].limits[1];
+      }
+
+      lowerLimit = groups[i].limits[0] - groups[i].limits[1];
+
+      if (groups[i + 1].limits[0] - groups[i + 1].limits[1] < lowerLimit) {
+        lowerLimit = groups[i + 1].limits[0] - groups[i + 1].limits[1];
+      } // console.log(limits);
+
+
+      groups[i].limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
+      groups.splice(i + 1, 1);
+    }
+  }
+
+  return groups;
+}
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(19);
+module.exports.Matrix = __webpack_require__(2);
+module.exports.Matrix.algebra = __webpack_require__(11);
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Created by acastillo on 8/5/15.
+ */
+var Matrix = __webpack_require__(2);
+
+var math = __webpack_require__(11);
+
+var DEBUG = false;
+/** Levenberg Marquardt curve-fitting: minimize sum of weighted squared residuals
+ ----------  INPUT  VARIABLES  -----------
+ func   = function of n independent variables, 't', and m parameters, 'p',
+ returning the simulated model: y_hat = func(t,p,c)
+ p      = n-vector of initial guess of parameter values
+ t      = m-vectors or matrix of independent variables (used as arg to func)
+ y_dat  = m-vectors or matrix of data to be fit by func(t,p)
+ weight = weighting vector for least squares fit ( weight >= 0 ) ...
+ inverse of the standard measurement errors
+ Default:  sqrt(d.o.f. / ( y_dat' * y_dat ))
+ dp     = fractional increment of 'p' for numerical derivatives
+ dp(j)>0 central differences calculated
+ dp(j)<0 one sided 'backwards' differences calculated
+ dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
+ Default:  0.001;
+ p_min  = n-vector of lower bounds for parameter values
+ p_max  = n-vector of upper bounds for parameter values
+ c      = an optional matrix of values passed to func(t,p,c)
+ opts   = vector of algorithmic parameters
+ parameter    defaults    meaning
+ opts(1)  =  prnt            3        >1 intermediate results; >2 plots
+ opts(2)  =  MaxIter      10*Npar     maximum number of iterations
+ opts(3)  =  epsilon_1       1e-3     convergence tolerance for gradient
+ opts(4)  =  epsilon_2       1e-3     convergence tolerance for parameters
+ opts(5)  =  epsilon_3       1e-3     convergence tolerance for Chi-square
+ opts(6)  =  epsilon_4       1e-2     determines acceptance of a L-M step
+ opts(7)  =  lambda_0        1e-2     initial value of L-M paramter
+ opts(8)  =  lambda_UP_fac   11       factor for increasing lambda
+ opts(9)  =  lambda_DN_fac    9       factor for decreasing lambda
+ opts(10) =  Update_Type      1       1: Levenberg-Marquardt lambda update
+ 2: Quadratic update
+ 3: Nielsen's lambda update equations
+
+ ----------  OUTPUT  VARIABLES  -----------
+ p       = least-squares optimal estimate of the parameter values
+ X2      = Chi squared criteria
+ sigma_p = asymptotic standard error of the parameters
+ sigma_y = asymptotic standard error of the curve-fit
+ corr    = correlation matrix of the parameters
+ R_sq    = R-squared cofficient of multiple determination
+ cvg_hst = convergence history
+
+ Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. 22 Sep 2013
+ modified from: http://octave.sourceforge.net/optim/function/leasqr.html
+ using references by
+ Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
+ Sam Roweis       http://www.cs.toronto.edu/~roweis/notes/lm.pdf
+ Manolis Lourakis http://www.ics.forth.gr/~lourakis/levmar/levmar.pdf
+ Hans Nielson     http://www2.imm.dtu.dk/~hbn/publ/TR9905.ps
+ Mathworks        optimization toolbox reference manual
+ K. Madsen, H.B., Nielsen, and O. Tingleff
+ http://www2.imm.dtu.dk/pubdb/views/edoc_download.php/3215/pdf/imm3215.pdf
+ */
+
+var LM = {
+  optimize: function optimize(func, p, t, y_dat, weight, dp, p_min, p_max, c, opts) {
+    var tensor_parameter = 0; // set to 1 of parameter is a tensor
+
+    var iteration = 0; // iteration counter
+    //func_calls = 0;			// running count of function evaluations
+
+    if (typeof p[0] != "object") {
+      for (var i = 0; i < p.length; i++) {
+        p[i] = [p[i]];
+      }
+    } //p = p(:); y_dat = y_dat(:); 		// make column vectors
+
+
+    var i, k;
+    var eps = 2 ^ -52;
+    var Npar = p.length; //length(p); 			// number of parameters
+
+    var Npnt = y_dat.length; //length(y_dat);		// number of data points
+
+    var p_old = Matrix.zeros(Npar, 1); // previous set of parameters
+
+    var y_old = Matrix.zeros(Npnt, 1); // previous model, y_old = y_hat(t;p_old)
+
+    var X2 = 1e-2 / eps; // a really big initial Chi-sq value
+
+    var X2_old = 1e-2 / eps; // a really big initial Chi-sq value
+
+    var J = Matrix.zeros(Npnt, Npar);
+
+    if (t.length != y_dat.length) {
+      console.log('lm.m error: the length of t must equal the length of y_dat');
+      length_t = t.length;
+      length_y_dat = y_dat.length;
+      var X2 = 0,
+          corr = 0,
+          sigma_p = 0,
+          sigma_y = 0,
+          R_sq = 0,
+          cvg_hist = 0;
+
+      if (!tensor_parameter) {
+        return;
+      }
+    }
+
+    weight = weight || Math.sqrt((Npnt - Npar + 1) / math.multiply(math.transpose(y_dat), y_dat));
+    dp = dp || 0.001;
+    p_min = p_min || math.multiply(Math.abs(p), -100);
+    p_max = p_max || math.multiply(Math.abs(p), 100);
+    c = c || 1; // Algorithmic Paramters
+    //prnt MaxIter  eps1  eps2  epx3  eps4  lam0  lamUP lamDN UpdateType
+
+    opts = opts || [3, 10 * Npar, 1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 11, 9, 1];
+    var prnt = opts[0]; // >1 intermediate results; >2 plots
+
+    var MaxIter = opts[1]; // maximum number of iterations
+
+    var epsilon_1 = opts[2]; // convergence tolerance for gradient
+
+    var epsilon_2 = opts[3]; // convergence tolerance for parameter
+
+    var epsilon_3 = opts[4]; // convergence tolerance for Chi-square
+
+    var epsilon_4 = opts[5]; // determines acceptance of a L-M step
+
+    var lambda_0 = opts[6]; // initial value of damping paramter, lambda
+
+    var lambda_UP_fac = opts[7]; // factor for increasing lambda
+
+    var lambda_DN_fac = opts[8]; // factor for decreasing lambda
+
+    var Update_Type = opts[9]; // 1: Levenberg-Marquardt lambda update
+    // 2: Quadratic update
+    // 3: Nielsen's lambda update equations
+
+    if (tensor_parameter && prnt == 3) prnt = 2;
+
+    if (!dp.length || dp.length == 1) {
+      var dp_array = new Array(Npar);
+
+      for (var i = 0; i < Npar; i++) dp_array[i] = [dp];
+
+      dp = dp_array;
+    } // indices of the parameters to be fit
+
+
+    var idx = [];
+
+    for (i = 0; i < dp.length; i++) {
+      if (dp[i][0] != 0) {
+        idx.push(i);
+      }
+    }
+
+    var Nfit = idx.length; // number of parameters to fit
+
+    var stop = false; // termination flag
+
+    var weight_sq = null; //console.log(weight);
+
+    if (!weight.length || weight.length < Npnt) {
+      // squared weighting vector
+      //weight_sq = ( weight(1)*ones(Npnt,1) ).^2;
+      //console.log("weight[0] "+typeof weight[0]);
+      var tmp = math.multiply(Matrix.ones(Npnt, 1), weight[0]);
+      weight_sq = math.dotMultiply(tmp, tmp);
+    } else {
+      //weight_sq = (weight(:)).^2;
+      weight_sq = math.dotMultiply(weight, weight);
+    } // initialize Jacobian with finite difference calculation
+    //console.log("J "+weight_sq);
+
+
+    var result = this.lm_matx(func, t, p_old, y_old, 1, J, p, y_dat, weight_sq, dp, c);
+    var JtWJ = result.JtWJ,
+        JtWdy = result.JtWdy,
+        X2 = result.Chi_sq,
+        y_hat = result.y_hat,
+        J = result.J; //[JtWJ,JtWdy,X2,y_hat,J] = this.lm_matx(func,t,p_old,y_old,1,J,p,y_dat,weight_sq,dp,c);
+    //console.log(JtWJ);
+
+    if (Math.max(Math.abs(JtWdy)) < epsilon_1) {
+      console.log(' *** Your Initial Guess is Extremely Close to Optimal ***');
+      console.log(' *** epsilon_1 = ', epsilon_1);
+      stop = true;
+    }
+
+    switch (Update_Type) {
+      case 1:
+        // Marquardt: init'l lambda
+        lambda = lambda_0;
+        break;
+
+      default:
+        // Quadratic and Nielsen
+        lambda = lambda_0 * Math.max(math.diag(JtWJ));
+        nu = 2;
+    } //console.log(X2);
+
+
+    X2_old = X2; // previous value of X2
+    //console.log(MaxIter+" "+Npar);
+    //var cvg_hst = Matrix.ones(MaxIter,Npar+3);		// initialize convergence history
+
+    var h = null;
+
+    while (!stop && iteration <= MaxIter) {
+      // --- Main Loop
+      iteration = iteration + 1; // incremental change in parameters
+
+      switch (Update_Type) {
+        case 1:
+          // Marquardt
+          //h = ( JtWJ + lambda * math.diag(math.diag(JtWJ)) ) \ JtWdy;
+          //h = math.multiply(math.inv(JtWdy),math.add(JtWJ,math.multiply(lambda,math.diag(math.diag(Npar)))));
+          h = math.solve(math.add(JtWJ, math.multiply(math.diag(math.diag(JtWJ)), lambda)), JtWdy);
+          break;
+
+        default:
+          // Quadratic and Nielsen
+          //h = ( JtWJ + lambda * math.eye(Npar) ) \ JtWdy;
+          h = math.solve(math.add(JtWJ, math.multiply(Matrix.eye(Npar), lambda)), JtWdy);
+      }
+      /*for(var k=0;k< h.length;k++){
+       h[k]=[h[k]];
+       }*/
+      //console.log("h "+h);
+      //h=math.matrix(h);
+      //  big = max(abs(h./p)) > 2;
+      //this is a big step
+      // --- Are parameters [p+h] much better than [p] ?
+
+
+      var hidx = new Array(idx.length);
+
+      for (k = 0; k < idx.length; k++) {
+        hidx[k] = h[idx[k]];
+      }
+
+      var p_try = math.add(p, hidx); // update the [idx] elements
+
+      for (k = 0; k < p_try.length; k++) {
+        p_try[k][0] = Math.min(Math.max(p_min[k][0], p_try[k][0]), p_max[k][0]);
+      } // p_try = Math.min(Math.max(p_min,p_try),p_max);           // apply constraints
+
+
+      var delta_y = math.subtract(y_dat, func(t, p_try, c)); // residual error using p_try
+      //func_calls = func_calls + 1;
+      //X2_try = delta_y' * ( delta_y .* weight_sq );  // Chi-squared error criteria
+
+      var X2_try = math.multiply(math.transpose(delta_y), math.dotMultiply(delta_y, weight_sq));
+
+      if (Update_Type == 2) {
+        // Quadratic
+        //    One step of quadratic line update in the h direction for minimum X2
+        //var alpha =  JtWdy'*h / ( (X2_try - X2)/2 + 2*JtWdy'*h ) ;
+        var JtWdy_th = math.multiply(math.transpose(JtWdy), h);
+        var alpha = math.multiply(JtWdy_th, math.inv(math.add(math.multiply(math.subtract(X2_try - X2), 1 / 2)), math.multiply(JtWdy_th, 2))); //JtWdy'*h / ( (X2_try - X2)/2 + 2*JtWdy'*h ) ;
+
+        h = math.multiply(alpha, h);
+
+        for (var k = 0; k < idx.length; k++) {
+          hidx[k] = h[idx[k]];
+        }
+
+        p_try = math.add(p, hidx); // update only [idx] elements
+
+        p_try = math.min(math.max(p_min, p_try), p_max); // apply constraints
+
+        delta_y = math.subtract(y_dat, func(t, p_try, c)); // residual error using p_try
+        // func_calls = func_calls + 1;
+        //X2_try = delta_y' * ( delta_y .* weight_sq ); // Chi-squared error criteria
+
+        X2_try = math.multiply(math.transpose(delta_y), mat.dotMultiply(delta_y, weight_sq));
+      } //rho = (X2 - X2_try) / ( 2*h' * (lambda * h + JtWdy) ); // Nielsen
+
+
+      var rho = (X2 - X2_try) / math.multiply(math.multiply(math.transpose(h), 2), math.add(math.multiply(lambda, h), JtWdy)); //console.log("rho "+rho);
+
+      if (rho > epsilon_4) {
+        // it IS significantly better
+        //console.log("Here");
+        dX2 = X2 - X2_old;
+        X2_old = X2;
+        p_old = p;
+        y_old = y_hat;
+        p = p_try; // accept p_try
+
+        result = this.lm_matx(func, t, p_old, y_old, dX2, J, p, y_dat, weight_sq, dp, c);
+        JtWJ = result.JtWJ, JtWdy = result.JtWdy, X2 = result.Chi_sq, y_hat = result.y_hat, J = result.J; // decrease lambda ==> Gauss-Newton method
+
+        switch (Update_Type) {
+          case 1:
+            // Levenberg
+            lambda = Math.max(lambda / lambda_DN_fac, 1.e-7);
+            break;
+
+          case 2:
+            // Quadratic
+            lambda = Math.max(lambda / (1 + alpha), 1.e-7);
+            break;
+
+          case 3:
+            // Nielsen
+            lambda = math.multiply(Math.max(1 / 3, 1 - (2 * rho - 1) ^ 3), lambda);
+            nu = 2;
+            break;
+        }
+      } else {
+        // it IS NOT better
+        X2 = X2_old; // do not accept p_try
+
+        if (iteration % (2 * Npar) == 0) {
+          // rank-1 update of Jacobian
+          result = this.lm_matx(func, t, p_old, y_old, -1, J, p, y_dat, weight_sq, dp, c);
+          JtWJ = result.JtWJ, JtWdy = result.JtWdy, dX2 = result.Chi_sq, y_hat = result.y_hat, J = result.J;
+        } // increase lambda  ==> gradient descent method
+
+
+        switch (Update_Type) {
+          case 1:
+            // Levenberg
+            lambda = Math.min(lambda * lambda_UP_fac, 1.e7);
+            break;
+
+          case 2:
+            // Quadratic
+            lambda = lambda + Math.abs((X2_try - X2) / 2 / alpha);
+            break;
+
+          case 3:
+            // Nielsen
+            lambda = lambda * nu;
+            nu = 2 * nu;
+            break;
+        }
+      }
+    } // --- End of Main Loop
+    // --- convergence achieved, find covariance and confidence intervals
+    // equal weights for paramter error analysis
+
+
+    weight_sq = math.multiply(math.multiply(math.transpose(delta_y), delta_y), Matrix.ones(Npnt, 1));
+    weight_sq.apply(function (i, j) {
+      weight_sq[i][j] = (Npnt - Nfit + 1) / weight_sq[i][j];
+    }); //console.log(weight_sq);
+
+    result = this.lm_matx(func, t, p_old, y_old, -1, J, p, y_dat, weight_sq, dp, c);
+    JtWJ = result.JtWJ, JtWdy = result.JtWdy, X2 = result.Chi_sq, y_hat = result.y_hat, J = result.J;
+    /*if nargout > 2				// standard error of parameters
+     covar = inv(JtWJ);
+     sigma_p = sqrt(diag(covar));
+     end
+      if nargout > 3				// standard error of the fit
+     //  sigma_y = sqrt(diag(J * covar * J'));	// slower version of below
+     sigma_y = zeros(Npnt,1);
+     for i=1:Npnt
+     sigma_y(i) = J(i,:) * covar * J(i,:)';
+     end
+     sigma_y = sqrt(sigma_y);
+     end
+      if nargout > 4				// parameter correlation matrix
+     corr = covar ./ [sigma_p*sigma_p'];
+     end
+      if nargout > 5				// coefficient of multiple determination
+     R_sq = corrcoef([y_dat y_hat]);
+     R_sq = R_sq(1,2).^2;
+     end
+      if nargout > 6				// convergence history
+     cvg_hst = cvg_hst(1:iteration,:);
+     end*/
+    // endfunction  # ---------------------------------------------------------- LM
+
+    return {
+      p: p,
+      X2: X2
+    };
+  },
+  lm_FD_J: function lm_FD_J(func, t, p, y, dp, c) {
+    // J = lm_FD_J(func,t,p,y,{dp},{c})
+    //
+    // partial derivatives (Jacobian) dy/dp for use with lm.m
+    // computed via Finite Differences
+    // Requires n or 2n function evaluations, n = number of nonzero values of dp
+    // -------- INPUT VARIABLES ---------
+    // func = function of independent variables, 't', and parameters, 'p',
+    //        returning the simulated model: y_hat = func(t,p,c)
+    // t  = m-vector of independent variables (used as arg to func)
+    // p  = n-vector of current parameter values
+    // y  = func(t,p,c) n-vector initialised by user before each call to lm_FD_J
+    // dp = fractional increment of p for numerical derivatives
+    //      dp(j)>0 central differences calculated
+    //      dp(j)<0 one sided differences calculated
+    //      dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
+    //      Default:  0.001;
+    // c  = optional vector of constants passed to y_hat = func(t,p,c)
+    //---------- OUTPUT VARIABLES -------
+    // J  = Jacobian Matrix J(i,j)=dy(i)/dp(j)	i=1:n; j=1:m
+    //   Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. November 2005
+    //   modified from: ftp://fly.cnuce.cnr.it/pub/software/octave/leasqr/
+    //   Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
+    var m = y.length; // number of data points
+
+    var n = p.length; // number of parameters
+
+    dp = dp || math.multiply(Matrix.ones(n, 1), 0.001);
+    var ps = p.clone(); //JSON.parse(JSON.stringify(p));
+    //var ps = $.extend(true, [], p);
+
+    var J = new Matrix(m, n),
+        del = new Array(n); // initialize Jacobian to Zero
+
+    for (var j = 0; j < n; j++) {
+      //console.log(j+" "+dp[j]+" "+p[j]+" "+ps[j]+" "+del[j]);
+      del[j] = dp[j] * (1 + Math.abs(p[j][0])); // parameter perturbation
+
+      p[j] = [ps[j][0] + del[j]]; // perturb parameter p(j)
+      //console.log(j+" "+dp[j]+" "+p[j]+" "+ps[j]+" "+del[j]);
+
+      if (del[j] != 0) {
+        y1 = func(t, p, c); //func_calls = func_calls + 1;
+
+        if (dp[j][0] < 0) {
+          // backwards difference
+          //J(:,j) = math.dotDivide(math.subtract(y1, y),del[j]);//. / del[j];
+          //console.log(del[j]);
+          //console.log(y);
+          var column = math.dotDivide(math.subtract(y1, y), del[j]);
+
+          for (var k = 0; k < m; k++) {
+            J[k][j] = column[k][0];
+          } //console.log(column);
+
+        } else {
+          p[j][0] = ps[j][0] - del[j]; //J(:,j) = (y1 - feval(func, t, p, c)). / (2. * del[j]);
+
+          var column = math.dotDivide(math.subtract(y1, func(t, p, c)), 2 * del[j]);
+
+          for (var k = 0; k < m; k++) {
+            J[k][j] = column[k][0];
+          }
+        } // central difference, additional func call
+
+      }
+
+      p[j] = ps[j]; // restore p(j)
+    } //console.log("lm_FD_J: "+ JSON.stringify(J));
+
+
+    return J;
+  },
+  // endfunction # -------------------------------------------------- LM_FD_J
+  lm_Broyden_J: function lm_Broyden_J(p_old, y_old, J, p, y) {
+    // J = lm_Broyden_J(p_old,y_old,J,p,y)
+    // carry out a rank-1 update to the Jacobian matrix using Broyden's equation
+    //---------- INPUT VARIABLES -------
+    // p_old = previous set of parameters
+    // y_old = model evaluation at previous set of parameters, y_hat(t;p_old)
+    // J  = current version of the Jacobian matrix
+    // p     = current  set of parameters
+    // y     = model evaluation at current  set of parameters, y_hat(t;p)
+    //---------- OUTPUT VARIABLES -------
+    // J = rank-1 update to Jacobian Matrix J(i,j)=dy(i)/dp(j)	i=1:n; j=1:m
+    //console.log(p+" X "+ p_old)
+    var h = math.subtract(p, p_old); //console.log("hhh "+h);
+
+    var h_t = math.transpose(h);
+    h_t.div(math.multiply(h_t, h)); //console.log(h_t);
+    //J = J + ( y - y_old - J*h )*h' / (h'*h);	// Broyden rank-1 update eq'n
+
+    J = math.add(J, math.multiply(math.subtract(y, math.add(y_old, math.multiply(J, h))), h_t));
+    return J; // endfunction # ---------------------------------------------- LM_Broyden_J
+  },
+  lm_matx: function lm_matx(func, t, p_old, y_old, dX2, J, p, y_dat, weight_sq, dp, c, iteration) {
+    // [JtWJ,JtWdy,Chi_sq,y_hat,J] = this.lm_matx(func,t,p_old,y_old,dX2,J,p,y_dat,weight_sq,{da},{c})
+    //
+    // Evaluate the linearized fitting matrix, JtWJ, and vector JtWdy,
+    // and calculate the Chi-squared error function, Chi_sq
+    // Used by Levenberg-Marquard algorithm, lm.m
+    // -------- INPUT VARIABLES ---------
+    // func   = function ofpn independent variables, p, and m parameters, p,
+    //         returning the simulated model: y_hat = func(t,p,c)
+    // t      = m-vectors or matrix of independent variables (used as arg to func)
+    // p_old  = n-vector of previous parameter values
+    // y_old  = m-vector of previous model ... y_old = y_hat(t;p_old);
+    // dX2    = previous change in Chi-squared criteria
+    // J   = m-by-n Jacobian of model, y_hat, with respect to parameters, p
+    // p      = n-vector of current  parameter values
+    // y_dat  = n-vector of data to be fit by func(t,p,c)
+    // weight_sq = square of the weighting vector for least squares fit ...
+    //	    inverse of the standard measurement errors
+    // dp     = fractional increment of 'p' for numerical derivatives
+    //          dp(j)>0 central differences calculated
+    //          dp(j)<0 one sided differences calculated
+    //          dp(j)=0 sets corresponding partials to zero; i.e. holds p(j) fixed
+    //          Default:  0.001;
+    // c      = optional vector of constants passed to y_hat = func(t,p,c)
+    //---------- OUTPUT VARIABLES -------
+    // JtWJ	 = linearized Hessian matrix (inverse of covariance matrix)
+    // JtWdy   = linearized fitting vector
+    // Chi_sq = Chi-squared criteria: weighted sum of the squared residuals WSSR
+    // y_hat  = model evaluated with parameters 'p'
+    // J   = m-by-n Jacobian of model, y_hat, with respect to parameters, p
+    //   Henri Gavin, Dept. Civil & Environ. Engineering, Duke Univ. November 2005
+    //   modified from: ftp://fly.cnuce.cnr.it/pub/software/octave/leasqr/
+    //   Press, et al., Numerical Recipes, Cambridge Univ. Press, 1992, Chapter 15.
+    var Npnt = y_dat.length; // number of data points
+
+    var Npar = p.length; // number of parameters
+
+    dp = dp || 0.001; //var JtWJ = new Matrix.zeros(Npar);
+    //var JtWdy  = new Matrix.zeros(Npar,1);
+
+    var y_hat = func(t, p, c); // evaluate model using parameters 'p'
+    //func_calls = func_calls + 1;
+    //console.log(J);
+
+    if (iteration % (2 * Npar) == 0 || dX2 > 0) {
+      //console.log("Par");
+      J = this.lm_FD_J(func, t, p, y_hat, dp, c); // finite difference
+    } else {
+      //console.log("ImPar");
+      J = this.lm_Broyden_J(p_old, y_old, J, p, y_hat); // rank-1 update
+    } //console.log(y_dat);
+    //console.log(y_hat);
+
+
+    var delta_y = math.subtract(y_dat, y_hat); // residual error between model and data
+    //console.log(delta_y[0][0]);
+    //console.log(delta_y.rows+" "+delta_y.columns+" "+JSON.stringify(weight_sq));
+    //var Chi_sq = delta_y' * ( delta_y .* weight_sq ); 	// Chi-squared error criteria
+
+    var Chi_sq = math.multiply(math.transpose(delta_y), math.dotMultiply(delta_y, weight_sq)); //JtWJ  = J' * ( J .* ( weight_sq * ones(1,Npar) ) );
+
+    var Jt = math.transpose(J); //console.log(weight_sq);
+
+    var JtWJ = math.multiply(Jt, math.dotMultiply(J, math.multiply(weight_sq, Matrix.ones(1, Npar)))); //JtWdy = J' * ( weight_sq .* delta_y );
+
+    var JtWdy = math.multiply(Jt, math.dotMultiply(weight_sq, delta_y));
+    return {
+      JtWJ: JtWJ,
+      JtWdy: JtWdy,
+      Chi_sq: Chi_sq,
+      y_hat: y_hat,
+      J: J
+    }; // endfunction  # ------------------------------------------------------ LM_MATX
+  }
+};
+module.exports = LM;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+if (!Symbol.species) {
+  Symbol.species = Symbol.for('@@species');
+}
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = exports = __webpack_require__(22);
+exports.getEquallySpacedData = __webpack_require__(23).getEquallySpacedData;
+exports.SNV = __webpack_require__(24).SNV;
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Stat = __webpack_require__(4).array;
+/**
+ * Function that returns an array of points given 1D array as follows:
+ *
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * And receive the number of dimensions of each point.
+ * @param array
+ * @param dimensions
+ * @returns {Array} - Array of points.
+ */
+
+
+function coordArrayToPoints(array, dimensions) {
+  if (array.length % dimensions !== 0) {
+    throw new RangeError('Dimensions number must be accordance with the size of the array.');
+  }
+
+  var length = array.length / dimensions;
+  var pointsArr = new Array(length);
+  var k = 0;
+
+  for (var i = 0; i < array.length; i += dimensions) {
+    var point = new Array(dimensions);
+
+    for (var j = 0; j < dimensions; ++j) {
+      point[j] = array[i + j];
+    }
+
+    pointsArr[k] = point;
+    k++;
+  }
+
+  return pointsArr;
+}
+/**
+ * Function that given an array as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * Returns an array as follows:
+ * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
+ *
+ * And receives the number of dimensions of each coordinate.
+ * @param array
+ * @param dimensions
+ * @returns {Array} - Matrix of coordinates
+ */
+
+
+function coordArrayToCoordMatrix(array, dimensions) {
+  if (array.length % dimensions !== 0) {
+    throw new RangeError('Dimensions number must be accordance with the size of the array.');
+  }
+
+  var coordinatesArray = new Array(dimensions);
+  var points = array.length / dimensions;
+
+  for (var i = 0; i < coordinatesArray.length; i++) {
+    coordinatesArray[i] = new Array(points);
+  }
+
+  for (i = 0; i < array.length; i += dimensions) {
+    for (var j = 0; j < dimensions; ++j) {
+      var currentPoint = Math.floor(i / dimensions);
+      coordinatesArray[j][currentPoint] = array[i + j];
+    }
+  }
+
+  return coordinatesArray;
+}
+/**
+ * Function that receives a coordinate matrix as follows:
+ * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
+ *
+ * Returns an array of coordinates as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * @param coordMatrix
+ * @returns {Array}
+ */
+
+
+function coordMatrixToCoordArray(coordMatrix) {
+  var coodinatesArray = new Array(coordMatrix.length * coordMatrix[0].length);
+  var k = 0;
+
+  for (var i = 0; i < coordMatrix[0].length; ++i) {
+    for (var j = 0; j < coordMatrix.length; ++j) {
+      coodinatesArray[k] = coordMatrix[j][i];
+      ++k;
+    }
+  }
+
+  return coodinatesArray;
+}
+/**
+ * Tranpose a matrix, this method is for coordMatrixToPoints and
+ * pointsToCoordMatrix, that because only transposing the matrix
+ * you can change your representation.
+ *
+ * @param matrix
+ * @returns {Array}
+ */
+
+
+function transpose(matrix) {
+  var resultMatrix = new Array(matrix[0].length);
+
+  for (var i = 0; i < resultMatrix.length; ++i) {
+    resultMatrix[i] = new Array(matrix.length);
+  }
+
+  for (i = 0; i < matrix.length; ++i) {
+    for (var j = 0; j < matrix[0].length; ++j) {
+      resultMatrix[j][i] = matrix[i][j];
+    }
+  }
+
+  return resultMatrix;
+}
+/**
+ * Function that transform an array of points into a coordinates array
+ * as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * @param points
+ * @returns {Array}
+ */
+
+
+function pointsToCoordArray(points) {
+  var coodinatesArray = new Array(points.length * points[0].length);
+  var k = 0;
+
+  for (var i = 0; i < points.length; ++i) {
+    for (var j = 0; j < points[0].length; ++j) {
+      coodinatesArray[k] = points[i][j];
+      ++k;
+    }
+  }
+
+  return coodinatesArray;
+}
+/**
+ * Apply the dot product between the smaller vector and a subsets of the
+ * largest one.
+ *
+ * @param firstVector
+ * @param secondVector
+ * @returns {Array} each dot product of size of the difference between the
+ *                  larger and the smallest one.
+ */
+
+
+function applyDotProduct(firstVector, secondVector) {
+  var largestVector, smallestVector;
+
+  if (firstVector.length <= secondVector.length) {
+    smallestVector = firstVector;
+    largestVector = secondVector;
+  } else {
+    smallestVector = secondVector;
+    largestVector = firstVector;
+  }
+
+  var difference = largestVector.length - smallestVector.length + 1;
+  var dotProductApplied = new Array(difference);
+
+  for (var i = 0; i < difference; ++i) {
+    var sum = 0;
+
+    for (var j = 0; j < smallestVector.length; ++j) {
+      sum += smallestVector[j] * largestVector[i + j];
+    }
+
+    dotProductApplied[i] = sum;
+  }
+
+  return dotProductApplied;
+}
+/**
+ * To scale the input array between the specified min and max values. The operation is performed inplace
+ * if the options.inplace is specified. If only one of the min or max parameters is specified, then the scaling
+ * will multiply the input array by min/min(input) or max/max(input)
+ * @param input
+ * @param options
+ * @returns {*}
+ */
+
+
+function scale(input, options) {
+  var y;
+
+  if (options.inPlace) {
+    y = input;
+  } else {
+    y = new Array(input.length);
+  }
+
+  const max = options.max;
+  const min = options.min;
+
+  if (typeof max === "number") {
+    if (typeof min === "number") {
+      var minMax = Stat.minMax(input);
+      var factor = (max - min) / (minMax.max - minMax.min);
+
+      for (var i = 0; i < y.length; i++) {
+        y[i] = (input[i] - minMax.min) * factor + min;
+      }
+    } else {
+      var currentMin = Stat.max(input);
+      var factor = max / currentMin;
+
+      for (var i = 0; i < y.length; i++) {
+        y[i] = input[i] * factor;
+      }
+    }
+  } else {
+    if (typeof min === "number") {
+      var currentMin = Stat.min(input);
+      var factor = min / currentMin;
+
+      for (var i = 0; i < y.length; i++) {
+        y[i] = input[i] * factor;
+      }
+    }
+  }
+
+  return y;
+}
+
+module.exports = {
+  coordArrayToPoints: coordArrayToPoints,
+  coordArrayToCoordMatrix: coordArrayToCoordMatrix,
+  coordMatrixToCoordArray: coordMatrixToCoordArray,
+  coordMatrixToPoints: transpose,
+  pointsToCoordArray: pointsToCoordArray,
+  pointsToCoordMatrix: transpose,
+  applyDotProduct: applyDotProduct,
+  scale: scale
+};
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8482,7 +7323,7 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 27 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8490,7 +7331,7 @@ exports.integral = integral;
 
 exports.SNV = SNV;
 
-var Stat = __webpack_require__(10).array;
+var Stat = __webpack_require__(4).array;
 /**
  * Function that applies the standard normal variate (SNV) to an array of values.
  *
@@ -8512,7 +7353,7 @@ function SNV(data) {
 }
 
 /***/ }),
-/* 28 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8539,7 +7380,7 @@ class MatrixTransposeView extends BaseView {
 module.exports = MatrixTransposeView;
 
 /***/ }),
-/* 29 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8567,7 +7408,7 @@ class MatrixRowView extends BaseView {
 module.exports = MatrixRowView;
 
 /***/ }),
-/* 30 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8599,7 +7440,7 @@ class MatrixSubView extends BaseView {
 module.exports = MatrixSubView;
 
 /***/ }),
-/* 31 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8631,7 +7472,7 @@ class MatrixSelectionView extends BaseView {
 module.exports = MatrixSelectionView;
 
 /***/ }),
-/* 32 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8659,7 +7500,7 @@ class MatrixColumnView extends BaseView {
 module.exports = MatrixColumnView;
 
 /***/ }),
-/* 33 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8686,7 +7527,7 @@ class MatrixFlipRowView extends BaseView {
 module.exports = MatrixFlipRowView;
 
 /***/ }),
-/* 34 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8713,7 +7554,7 @@ class MatrixFlipColumnView extends BaseView {
 module.exports = MatrixFlipColumnView;
 
 /***/ }),
-/* 35 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8721,15 +7562,15 @@ module.exports = MatrixFlipColumnView;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var SingularValueDecomposition = __webpack_require__(9);
+var SingularValueDecomposition = __webpack_require__(10);
 
-var EigenvalueDecomposition = __webpack_require__(36);
+var EigenvalueDecomposition = __webpack_require__(33);
 
-var LuDecomposition = __webpack_require__(8);
+var LuDecomposition = __webpack_require__(9);
 
-var QrDecomposition = __webpack_require__(37);
+var QrDecomposition = __webpack_require__(34);
 
-var CholeskyDecomposition = __webpack_require__(38);
+var CholeskyDecomposition = __webpack_require__(35);
 
 function inverse(matrix) {
   matrix = Matrix.checkMatrix(matrix);
@@ -8787,7 +7628,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 36 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8795,7 +7636,7 @@ module.exports = {
 
 const Matrix = __webpack_require__(0).Matrix;
 
-const util = __webpack_require__(4);
+const util = __webpack_require__(5);
 
 const hypotenuse = util.hypotenuse;
 const getFilled2DArray = util.getFilled2DArray;
@@ -9666,7 +8507,7 @@ function cdiv(xr, xi, yr, yi) {
 module.exports = EigenvalueDecomposition;
 
 /***/ }),
-/* 37 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9674,7 +8515,7 @@ module.exports = EigenvalueDecomposition;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var hypotenuse = __webpack_require__(4).hypotenuse; //https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
+var hypotenuse = __webpack_require__(5).hypotenuse; //https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 
 
 function QrDecomposition(value) {
@@ -9856,7 +8697,7 @@ QrDecomposition.prototype = {
 module.exports = QrDecomposition;
 
 /***/ }),
-/* 38 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9962,13 +8803,13 @@ CholeskyDecomposition.prototype = {
 module.exports = CholeskyDecomposition;
 
 /***/ }),
-/* 39 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Opt = __webpack_require__(6);
+let Opt = __webpack_require__(7);
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
  * @param peakList
@@ -9978,12 +8819,12 @@ var Opt = __webpack_require__(6);
 
 module.exports = function joinBroadPeaks(peakList) {
   let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var width = options.width;
-  var broadLines = []; // Optimize the possible broad lines
+  let width = options.width;
+  let broadLines = []; // Optimize the possible broad lines
 
-  var max = 0;
-  var maxI = 0;
-  var count = 1;
+  let max = 0;
+  let maxI = 0;
+  let count = 1;
 
   for (let i = peakList.length - 1; i >= 0; i--) {
     if (peakList[i].soft) {
@@ -9995,8 +8836,8 @@ module.exports = function joinBroadPeaks(peakList) {
   broadLines.push({
     x: Number.MAX_VALUE
   });
-  var candidates = [[broadLines[0].x, broadLines[0].y]];
-  var indexes = [0];
+  let candidates = [[broadLines[0].x, broadLines[0].y]];
+  let indexes = [0];
 
   for (let i = 1; i < broadLines.length; i++) {
     // console.log(broadLines[i-1].x+" "+broadLines[i].x);
@@ -10012,7 +8853,7 @@ module.exports = function joinBroadPeaks(peakList) {
       count++;
     } else {
       if (count > 2) {
-        var fitted = Opt.optimizeSingleLorentzian(candidates, {
+        let fitted = Opt.optimizeSingleLorentzian(candidates, {
           x: broadLines[maxI].x,
           y: max,
           width: Math.abs(candidates[0][0] - candidates[candidates.length - 1][0])
@@ -10045,7 +8886,7 @@ module.exports = function joinBroadPeaks(peakList) {
 };
 
 /***/ }),
-/* 40 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
