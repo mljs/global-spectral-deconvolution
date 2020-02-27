@@ -1,3 +1,7 @@
+# [3.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v2.0.6...v3.0.0) (2020-02-27)
+
+
+
 ## [2.0.5](https://github.com/mljs/global-spectral-deconvolution/compare/v2.0.4...v2.0.5) (2019-01-09)
 
 
