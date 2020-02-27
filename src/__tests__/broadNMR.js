@@ -1,16 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-let fs = require('fs');
-
-let peakPicking = require('..');
+let { gsd, joinBroadPeaks } = require('..');
 
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should give 1 broad peak and around 14 other peaks', () => {
     let spectrum = JSON.parse(
-      fs.readFileSync(`${__dirname}/data/broadNMR.json`, 'utf-8'),
+      readFileSync(join(__dirname, '/data/broadNMR.json'), 'utf-8'),
     );
-    let result = peakPicking.gsd(spectrum[0], spectrum[1], {
+    let result = gsd(spectrum[0], spectrum[1], {
       noiseLevel: 1049200.537996172 / 2,
       minMaxRatio: 0.01,
       broadRatio: 0.0025,
@@ -19,7 +18,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
         polynomial: 3,
       },
     });
-    peakPicking.post.joinBroadPeaks(result, { width: 0.25 });
+    joinBroadPeaks(result, { width: 0.25 });
     expect(result).toHaveLength(14);
     result.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {

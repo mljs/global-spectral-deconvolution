@@ -1,9 +1,7 @@
-'use strict';
+import { gsd, optimizePeaks } from '..';
 
 let CC = require('chemcalc');
 let Stat = require('ml-stat');
-
-let peakPicking = require('..');
 
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
@@ -27,14 +25,14 @@ let noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
 
 describe('Check the peak picking of a simulated mass spectrum', () => {
   it('Check result', () => {
-    let result = peakPicking.gsd(x, y, {
+    let result = gsd(x, y, {
       noiseLevel: noiseLevel,
       minMaxRatio: 0,
       broadRatio: 0,
       smoothY: false,
       realTopDetection: true,
     });
-    result = peakPicking.post.optimizePeaks(result, x, y, 1, 'gaussian');
+    result = optimizePeaks(result, x, y, 1, 'gaussian');
 
     expect(result[0].x).toBeCloseTo(69.938, 1);
     expect(result[0].y).toBeCloseTo(max, 2);

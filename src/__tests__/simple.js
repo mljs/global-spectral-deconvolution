@@ -1,6 +1,4 @@
-'use strict';
-
-let gsd = require('../gsd');
+import { gsd } from '..';
 
 describe('Simple test cases', () => {
   let X = [];

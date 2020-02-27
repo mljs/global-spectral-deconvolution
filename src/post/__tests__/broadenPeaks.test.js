@@ -1,6 +1,4 @@
-'use strict';
-
-let broadenPeaks = require('../broadenPeaks');
+import { broadenPeaks } from '../broadenPeaks';
 
 describe('broadenPeaks', () => {
   it('should prevent overlap', () => {

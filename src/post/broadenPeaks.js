@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks
  * Because peaks may not be symmetric after we add 2 properties, from and to.
@@ -9,7 +7,7 @@
  * @param {boolean} [overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
-module.exports = function broadenPeaks(peakList, options = {}) {
+export function broadenPeaks(peakList, options = {}) {
   const { factor = 2, overlap = false } = options;
 
   for (let peak of peakList) {
@@ -32,4 +30,4 @@ module.exports = function broadenPeaks(peakList, options = {}) {
   }
 
   return peakList;
-};
+}

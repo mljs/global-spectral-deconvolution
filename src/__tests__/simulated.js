@@ -1,6 +1,4 @@
-'use strict';
-
-const gsd = require('..').gsd;
+import { gsd } from '..';
 
 const { SpectrumGenerator } = require('spectrum-generator');
 

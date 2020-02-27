@@ -1,13 +1,11 @@
-'use strict';
-
-let Opt = require('ml-optimize-lorentzian');
+import Opt from 'ml-optimize-lorentzian';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
  * @param peakList
  * @param options
  */
-module.exports = function joinBroadPeaks(peakList, options = {}) {
+export function joinBroadPeaks(peakList, options = {}) {
   let width = options.width;
   let broadLines = [];
   // Optimize the possible broad lines
@@ -71,4 +69,4 @@ module.exports = function joinBroadPeaks(peakList, options = {}) {
   });
 
   return peakList;
-};
+}

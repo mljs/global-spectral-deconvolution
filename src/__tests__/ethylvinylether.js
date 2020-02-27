@@ -1,16 +1,14 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-let fs = require('fs');
-
-let peakPicking = require('..');
+import { gsd } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Ethylvinylether should have 21 peaks', () => {
     let spectrum = JSON.parse(
-      fs.readFileSync(`${__dirname}/data/ethylvinylether.json`, 'utf-8'),
+      readFileSync(`${__dirname}/data/ethylvinylether.json`, 'utf-8'),
     );
-    let result = peakPicking.gsd(spectrum[0], spectrum[1], {
+    let result = gsd(spectrum[0], spectrum[1], {
       // noiseLevel: 1049200.537996172,
       minMaxRatio: 0.03,
       smoothY: false,

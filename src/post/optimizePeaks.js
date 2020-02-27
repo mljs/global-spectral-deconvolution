@@ -1,9 +1,4 @@
-/**
- * Created by acastillo on 9/6/15.
- */
-'use strict';
-
-let optimize = require('ml-optimize-lorentzian');
+import optimize from 'ml-optimize-lorentzian';
 
 function sampleFunction(from, to, x, y, lastIndex) {
   let nbPoints = x.length;
@@ -39,7 +34,7 @@ function sampleFunction(from, to, x, y, lastIndex) {
   return [sampleX, sampleY];
 }
 
-module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
+export function optimizePeaks(peakList, x, y, n, fnType) {
   let i;
   let j;
 
@@ -130,7 +125,7 @@ module.exports = function optimizePeaks(peakList, x, y, n, fnType) {
     }
   }
   return result;
-};
+}
 
 function groupPeaks(peakList, nL) {
   let group = [];

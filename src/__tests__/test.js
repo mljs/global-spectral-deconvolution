@@ -1,8 +1,7 @@
-'use strict';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-let fs = require('fs');
-
-const gsd = require('..').gsd;
+import { gsd } from '..';
 
 function lorentzian(x, x0 = 0, gamma = 1) {
   return (
@@ -14,7 +13,7 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should provide the right result ...', () => {
     let spectrum = JSON.parse(
-      fs.readFileSync(`${__dirname}/data//C2.json`, 'utf-8'),
+      readFileSync(join(__dirname, '/data//C2.json'), 'utf8'),
     );
     let result = gsd(spectrum[0], spectrum[1], {
       // noiseLevel: 0.001,

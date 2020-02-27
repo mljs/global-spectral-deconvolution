@@ -1,6 +1,4 @@
-'use strict';
-
-const SG = require('ml-savitzky-golay-generalized');
+import SG from 'ml-savitzky-golay-generalized';
 
 const defaultOptions = {
   sgOptions: {
@@ -38,7 +36,7 @@ const defaultOptions = {
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
-function gsd(x, yIn, options) {
+export function gsd(x, yIn, options) {
   options = Object.assign({}, defaultOptions, options);
   let sgOptions = options.sgOptions;
   const y = yIn.slice();
@@ -341,5 +339,3 @@ function realTopDetection(peakList, x, y) {
     }
   }
 }
-
-module.exports = gsd;
