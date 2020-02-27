@@ -1,21 +1,21 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset='utf-8' />
-  <title>ml-gsd 2.0.5 | Documentation</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
-  <link href='assets/style.css' type='text/css' rel='stylesheet' />
-  <link href='assets/github.css' type='text/css' rel='stylesheet' />
-  <link href='assets/split.css' type='text/css' rel='stylesheet' />
+  <meta charset='utf-8'>
+  <title>ml-gsd 3.0.0 | Documentation</title>
   <meta name='description' content='Global Spectra Deconvolution'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' rel='stylesheet'>
+  <link href='assets/style.css' rel='stylesheet'>
+  <link href='assets/github.css' rel='stylesheet'>
+  <link href='assets/split.css' rel='stylesheet'>
 </head>
 <body class='documentation m0'>
     <div class='flex'>
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>ml-gsd</h3>
-          <div class='mb1'><code>2.0.5</code></div>
+          <div class='mb1'><code>3.0.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -26,29 +26,19 @@
               
                 
                 <li><a
-                  href='#gsd'
-                  class="">
-                  gsd
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#'
-                  class="">
-                  
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
                   href='#broadenpeaks'
                   class="">
                   broadenPeaks
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#gsd'
+                  class="">
+                  gsd
                   
                 </a>
                 
@@ -79,12 +69,114 @@
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='broadenpeaks'>
+      broadenPeaks
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/e3ace56631c23e6a70b8782d82c50491debcbde7/src/post/broadenPeaks.js#L10-L33'>
+      <span>src/post/broadenPeaks.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>This method will allow to enlarge peaks and prevent overlap between peaks
+Because peaks may not be symmetric after we add 2 properties, from and to.</p>
+
+    <div class='pre p1 fill-light mt0'>broadenPeaks(peakList: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>, factor: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, overlap: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>peakList</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>factor</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>2</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>overlap</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
+            = <code>false</code>)</code>
+	    by default we don't allow overlap
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
+        peakList
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='gsd'>
       gsd
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:mljs/global-spectral-deconvolution/blob/1c9facd4a116c1fa018f4abde90517d1006970ed/src/gsd.js#L41-L262'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/e3ace56631c23e6a70b8782d82c50491debcbde7/src/gsd.js#L39-L259'>
       <span>src/gsd.js</span>
       </a>
     
@@ -93,10 +185,7 @@
 
   <p>Global spectra deconvolution</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>gsd(x: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>, yIn: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>></div>
-   
   
   
 
@@ -317,162 +406,11 @@ to determine the true x,y values of the peak?
   
 
   
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id=''>
-      
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:mljs/global-spectral-deconvolution/blob/1c9facd4a116c1fa018f4abde90517d1006970ed/src/post/optimizePeaks.js#L4-L4'>
-      <span>src/post/optimizePeaks.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Created by acastillo on 9/6/15.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 </section>
 
-        
           
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='broadenpeaks'>
-      broadenPeaks
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:mljs/global-spectral-deconvolution/blob/1c9facd4a116c1fa018f4abde90517d1006970ed/src/post/broadenPeaks.js#L12-L35'>
-      <span>src/post/broadenPeaks.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>This method will allow to enlarge peaks and prevent overlap between peaks
-Because peaks may not be symmetric after we add 2 properties, from and to.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>broadenPeaks(peakList: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>, factor: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, overlap: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>peakList</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>factor</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>2</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>overlap</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>
-            = <code>false</code>)</code>
-	    by default we don't allow overlap
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code>:
-        peakList
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -485,7 +423,7 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:mljs/global-spectral-deconvolution/blob/1c9facd4a116c1fa018f4abde90517d1006970ed/src/post/joinBroadPeaks.js#L10-L74'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/e3ace56631c23e6a70b8782d82c50491debcbde7/src/post/joinBroadPeaks.js#L8-L72'>
       <span>src/post/joinBroadPeaks.js</span>
       </a>
     
@@ -494,10 +432,7 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
 
   <p>This function try to join the peaks that seems to belong to a broad signal in a single broad peak.</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>joinBroadPeaks(peakList: any, options: any)</div>
-   
   
   
 
@@ -522,7 +457,8 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(any)</code>
+            <span class='code bold'>options</span> <code class='quiet'>(any
+            = <code>{}</code>)</code>
 	    
           </div>
           
@@ -544,8 +480,11 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
   
 
   
+
+  
 </section>
 
+          
         
       </div>
     </div>
