@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "ml-optimize-lorentzian": "0.1.4",
-    "ml-savitzky-golay-generalized": "2.0.0"
+    "ml-savitzky-golay-generalized": "2.0.1"
   },
   "jest": {
     "verbose": true,
