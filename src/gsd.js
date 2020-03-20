@@ -11,7 +11,6 @@ const defaultOptions = {
   smoothY: true,
   realTopDetection: false,
   heightFactor: 0,
-  boundaries: false,
   derivativeThreshold: -1,
 };
 
@@ -226,10 +225,10 @@ export function gsd(x, yIn, options) {
           width: Math.abs(intervalR[possible].x - intervalL[possible].x), // widthCorrection
           soft: broadMask[j],
         };
-        if (options.boundaries) {
-          signals[signalsLen - 1].left = intervalL[possible];
-          signals[signalsLen - 1].right = intervalR[possible];
-        }
+
+        signals[signalsLen - 1].left = intervalL[possible];
+        signals[signalsLen - 1].right = intervalR[possible];
+
         if (options.heightFactor) {
           let yLeft = Y[intervalL[possible].index];
           let yRight = Y[intervalR[possible].index];

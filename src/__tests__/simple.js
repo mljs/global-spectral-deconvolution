@@ -34,6 +34,14 @@ describe('Simple test cases', () => {
         width: 2,
         x: 15,
         y: 4.657142857142857,
+        left: {
+          index: 14,
+          x: 14,
+        },
+        right: {
+          index: 16,
+          x: 16,
+        },
       },
     ]);
   });
@@ -54,6 +62,14 @@ describe('Simple test cases', () => {
       {
         base: 1.2434539324230613,
         index: 15,
+        left: {
+          index: 13,
+          x: 13,
+        },
+        right: {
+          index: 16,
+          x: 16,
+        },
         soft: false,
         width: 3,
         x: 15,
@@ -78,6 +94,14 @@ describe('Simple test cases', () => {
       {
         base: 1.2434539324230613,
         index: 15,
+        left: {
+          index: 13,
+          x: 13,
+        },
+        right: {
+          index: 16,
+          x: 16,
+        },
         soft: false,
         width: 3,
         x: 14.755485084898725,
