@@ -1,3 +1,12 @@
+# [4.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v3.0.1...v4.0.0) (2020-03-20)
+
+
+### Features
+
+* broadenPeaks takes into account the inflection points if available ([d9302c7](https://github.com/mljs/global-spectral-deconvolution/commit/d9302c74a937f1202dc0898b0ca86bf684edf2c2))
+
+
+
 ## [3.0.1](https://github.com/mljs/global-spectral-deconvolution/compare/v3.0.0...v3.0.1) (2020-02-28)
 
 
