@@ -3,14 +3,38 @@ import { broadenPeaks } from '../broadenPeaks';
 describe('broadenPeaks', () => {
   it('should prevent overlap', () => {
     let result = broadenPeaks([
-      { x: 5, y: 10, width: 5 },
-      { x: 10, y: 10, width: 5 },
-      { x: 30, y: 10, width: 5 },
+      { x: 5, y: 10, width: 5, left: { x: 2.5 }, right: { x: 7.5 } },
+      { x: 10, y: 10, width: 5, left: { x: 7.5 }, right: { x: 12.5 } },
+      { x: 30, y: 10, width: 5, left: { x: 27.5 }, right: { x: 32.5 } },
     ]);
     expect(result).toStrictEqual([
-      { from: 0, to: 7.5, width: 7.5, x: 5, y: 10 },
-      { from: 7.5, to: 15, width: 7.5, x: 10, y: 10 },
-      { from: 25, to: 35, width: 10, x: 30, y: 10 },
+      {
+        x: 5,
+        y: 10,
+        width: 7.5,
+        left: { x: 2.5 },
+        right: { x: 7.5 },
+        from: 0,
+        to: 7.5,
+      },
+      {
+        x: 10,
+        y: 10,
+        width: 7.5,
+        left: { x: 7.5 },
+        right: { x: 12.5 },
+        from: 7.5,
+        to: 15,
+      },
+      {
+        x: 30,
+        y: 10,
+        width: 10,
+        left: { x: 27.5 },
+        right: { x: 32.5 },
+        from: 25,
+        to: 35,
+      },
     ]);
   });
 

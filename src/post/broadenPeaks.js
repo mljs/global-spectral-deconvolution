@@ -11,8 +11,13 @@ export function broadenPeaks(peakList, options = {}) {
   const { factor = 2, overlap = false } = options;
 
   for (let peak of peakList) {
-    peak.from = peak.x - (peak.width / 2) * factor;
-    peak.to = peak.x + (peak.width / 2) * factor;
+    if (!peak.right || !peak.left) {
+      peak.from = peak.x - (peak.width / 2) * factor;
+      peak.to = peak.x + (peak.width / 2) * factor;
+    } else {
+      peak.from = peak.x - (peak.x - peak.left.x) * factor;
+      peak.to = peak.x + (peak.right.x - peak.x) * factor;
+    }
   }
 
   if (!overlap) {
