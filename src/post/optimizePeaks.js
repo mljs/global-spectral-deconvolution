@@ -1,39 +1,5 @@
 import optimize from 'ml-optimize-lorentzian';
 
-function sampleFunction(from, to, x, y, lastIndex) {
-  let nbPoints = x.length;
-  let sampleX = [];
-  let sampleY = [];
-  let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
-  if (direction === -1) {
-    lastIndex[0] = x.length - 1;
-  }
-
-  let delta = Math.abs(to - from) / 2;
-  let mid = (from + to) / 2;
-  let stop = false;
-  let index = lastIndex[0];
-  while (!stop && index < nbPoints && index >= 0) {
-    if (Math.abs(x[index] - mid) <= delta) {
-      sampleX.push(x[index]);
-      sampleY.push(y[index]);
-      index += direction;
-    } else {
-      // It is outside the range.
-      if (Math.sign(mid - x[index]) === 1) {
-        // We'll reach the mid going in the current direction
-        index += direction;
-      } else {
-        // There is not more peaks in the current range
-        stop = true;
-      }
-    }
-    // console.log(sampleX);
-  }
-  lastIndex[0] = index;
-  return [sampleX, sampleY];
-}
-
 export function optimizePeaks(peakList, x, y, n, fnType) {
   let i;
   let j;
@@ -125,6 +91,40 @@ export function optimizePeaks(peakList, x, y, n, fnType) {
     }
   }
   return result;
+}
+
+function sampleFunction(from, to, x, y, lastIndex) {
+  let nbPoints = x.length;
+  let sampleX = [];
+  let sampleY = [];
+  let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
+  if (direction === -1) {
+    lastIndex[0] = x.length - 1;
+  }
+
+  let delta = Math.abs(to - from) / 2;
+  let mid = (from + to) / 2;
+  let stop = false;
+  let index = lastIndex[0];
+  while (!stop && index < nbPoints && index >= 0) {
+    if (Math.abs(x[index] - mid) <= delta) {
+      sampleX.push(x[index]);
+      sampleY.push(y[index]);
+      index += direction;
+    } else {
+      // It is outside the range.
+      if (Math.sign(mid - x[index]) === 1) {
+        // We'll reach the mid going in the current direction
+        index += direction;
+      } else {
+        // There is not more peaks in the current range
+        stop = true;
+      }
+    }
+    // console.log(sampleX);
+  }
+  lastIndex[0] = index;
+  return [sampleX, sampleY];
 }
 
 function groupPeaks(peakList, nL) {
