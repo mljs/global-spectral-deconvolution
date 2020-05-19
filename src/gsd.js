@@ -235,7 +235,7 @@ export function gsd(x, yIn, options = {}) {
     signals[j].base = noiseLevel;
   }
 
-  signals.sort(function(a, b) {
+  signals.sort(function (a, b) {
     return a.x - b.x;
   });
 

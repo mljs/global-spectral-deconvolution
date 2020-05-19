@@ -65,7 +65,7 @@ export function joinBroadPeaks(peakList, options = {}) {
     }
   }
 
-  peakList.sort(function(a, b) {
+  peakList.sort(function (a, b) {
     return a.x - b.x;
   });
 
