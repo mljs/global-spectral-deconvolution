@@ -1,5 +1,4 @@
 import SG from 'ml-savitzky-golay-generalized';
-import { xGetNoiseLevel } from 'ml-spectra-processing';
 
 /**
  * Global spectra deconvolution
@@ -29,9 +28,6 @@ export function gsd(x, yIn, options = {}) {
       windowSize: 9,
       polynomial: 3,
     },
-    noiseLevelOptions = {
-      magnitudeMode: false,
-    },
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -42,11 +38,10 @@ export function gsd(x, yIn, options = {}) {
   } = options;
 
   const y = yIn.slice();
-  let { maxDx, minDx } = minMaxDx(x);
+  let equalSpaced = isEqualSpaced(x);
 
   if (noiseLevel === undefined) {
-    let noiseAnalisys = xGetNoiseLevel(y, noiseLevelOptions);
-    noiseLevel = noiseAnalisys.positive;
+    noiseLevel = equalSpaced ? getNoiseLevel(y) : 0;
   }
 
   const yCorrection = { m: 1, b: noiseLevel };
@@ -70,14 +65,8 @@ export function gsd(x, yIn, options = {}) {
   let Y = y;
   let dY, ddY;
   const { windowSize, polynomial } = sgOptions;
-  // console.log(`winde ${windowSize}, ${polynomial}`)
-  // console.log(`winde ${JSON.stringify({
-  //   windowSize,
-  //   polynomial,
-  //   derivative: 0,
-  // })}`)
-  // console.log('this is 2', y)
-  if ((maxDx - minDx) / maxDx < 0.05) {
+
+  if (equalSpaced) {
     if (smoothY) {
       Y = SG(y, x[1] - x[0], {
         windowSize,
@@ -253,7 +242,7 @@ export function gsd(x, yIn, options = {}) {
   return signals;
 }
 
-const minMaxDx = (x) => {
+const isEqualSpaced = (x) => {
   let tmp;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -266,10 +255,36 @@ const minMaxDx = (x) => {
       maxDx = tmp;
     }
   }
-  return { maxDx, minDx };
+  return (maxDx - minDx) / maxDx < 0.05;
 };
 
-function determineRealTop(peakList, x, y) {
+const getNoiseLevel = (y) => {
+  let mean = 0;
+
+  let stddev = 0;
+  let length = y.length;
+  for (let i = 0; i < length; ++i) {
+    mean += y[i];
+  }
+  mean /= length;
+  let averageDeviations = new Array(length);
+  for (let i = 0; i < length; ++i) {
+    averageDeviations[i] = Math.abs(y[i] - mean);
+  }
+  averageDeviations.sort((a, b) => a - b);
+  if (length % 2 === 1) {
+    stddev = averageDeviations[(length - 1) / 2] / 0.6745;
+  } else {
+    stddev =
+      (0.5 *
+        (averageDeviations[length / 2] + averageDeviations[length / 2 - 1])) /
+      0.6745;
+  }
+
+  return stddev;
+};
+
+const determineRealTop = (peakList, x, y) => {
   let alpha, beta, gamma, p, currentPoint;
   for (let j = 0; j < peakList.length; j++) {
     currentPoint = peakList[j].index; // peakList[j][2];
@@ -323,4 +338,4 @@ function determineRealTop(peakList, x, y) {
         0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
     }
   }
-}
+};

@@ -26,8 +26,8 @@ describe('Simple test cases', () => {
       },
     });
 
-    expect(peaks[0].y).toBeCloseTo(4.657142857142857, 3);
-    expect(peaks[0].base).toStrictEqual(0);
+    expect(peaks[0].y).toBeCloseTo(4.657, 3);
+    expect(peaks[0].base).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toStrictEqual(15);
   });
 
@@ -45,7 +45,7 @@ describe('Simple test cases', () => {
 
     expect(peaks).toStrictEqual([
       {
-        base: 0,
+        base: 1.2434539324230613,
         index: 15,
         left: {
           index: 13,
@@ -76,7 +76,7 @@ describe('Simple test cases', () => {
     });
     expect(peaks).toStrictEqual([
       {
-        base: 0,
+        base: 1.2434539324230613,
         index: 15,
         left: {
           index: 13,
@@ -89,7 +89,7 @@ describe('Simple test cases', () => {
         soft: false,
         width: 3,
         x: 14.5,
-        y: 5.25,
+        y: 4.006546067576939,
       },
     ]);
   });
