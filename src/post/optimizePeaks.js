@@ -1,24 +1,33 @@
-import optimize from 'ml-optimize-lorentzian';
+import {
+  optimizeGaussianSum,
+  optimizeLorentzianSum,
+  optimizeSingleGaussian,
+  optimizeSingleLorentzian,
+} from 'ml-optimize-lorentzian';
 
-export function optimizePeaks(peakList, x, y, n, fnType) {
-  let i;
-  let j;
+export function optimizePeaks(peakList, x, y, options = {}) {
+  const {
+    functionName = 'gaussian',
+    factorWidth = 4,
+    optimizationOptions = {
+      damping: 1.5,
+      maxIterations: 100,
+      errorTolerance: 10e-5,
+    },
+  } = options;
 
   let lastIndex = [0];
-  let groups = groupPeaks(peakList, n);
+  let groups = groupPeaks(peakList, factorWidth);
   let result = [];
   let factor = 1;
-  if (fnType === 'gaussian') {
+  if (functionName === 'gaussian') {
     factor = 1.17741;
   } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
-  let sampling, error, opts;
-  for (i = 0; i < groups.length; i++) {
+  let sampling;
+  for (let i = 0; i < groups.length; i++) {
     let peaks = groups[i].group;
     if (peaks.length > 1) {
       // Multiple peaks
-      // console.log("Pending group of overlaped peaks "+peaks.length);
-      // console.log("here1");
-      // console.log(groups[i].limits);
       sampling = sampleFunction(
         groups[i].limits[0] - groups[i].limits[1],
         groups[i].limits[0] + groups[i].limits[1],
@@ -26,21 +35,20 @@ export function optimizePeaks(peakList, x, y, n, fnType) {
         y,
         lastIndex,
       );
-      // console.log(sampling);
       if (sampling[0].length > 5) {
-        error = peaks[0].width / 1000;
-        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1];
-        // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
         let optPeaks = [];
-        if (fnType === 'gaussian') {
-          optPeaks = optimize.optimizeGaussianSum(sampling, peaks, opts);
+        if (functionName === 'gaussian') {
+          optPeaks = optimizeGaussianSum(sampling, peaks, optimizationOptions);
         } else {
-          if (fnType === 'lorentzian') {
-            optPeaks = optimize.optimizeLorentzianSum(sampling, peaks, opts);
+          if (functionName === 'lorentzian') {
+            optPeaks = optimizeLorentzianSum(
+              sampling,
+              peaks,
+              optimizationOptions,
+            );
           }
         }
-        // console.log(optPeak);
-        for (j = 0; j < optPeaks.length; j++) {
+        for (let j = 0; j < optPeaks.length; j++) {
           result.push({
             x: optPeaks[j][0][0],
             y: optPeaks[j][1][0],
@@ -52,40 +60,35 @@ export function optimizePeaks(peakList, x, y, n, fnType) {
       // Single peak
       peaks = peaks[0];
       sampling = sampleFunction(
-        peaks.x - n * peaks.width,
-        peaks.x + n * peaks.width,
+        peaks.x - factorWidth * peaks.width,
+        peaks.x + factorWidth * peaks.width,
         x,
         y,
         lastIndex,
       );
-      // console.log("here2");
-      // console.log(groups[i].limits);
+
       if (sampling[0].length > 5) {
-        error = peaks.width / 1000;
-        opts = [3, 100, error, error, error, error * 10, error * 10, 11, 9, 1];
-        // var gauss = Opt.optimizeSingleGaussian(sampling[0], sampling[1], opts, peaks);
-        // var gauss = Opt.optimizeSingleGaussian([sampling[0],sampling[1]], peaks, opts);
-        let optPeak = [];
-        if (fnType === 'gaussian') {
-          optPeak = optimize.optimizeSingleGaussian(
+        let fitResult = [];
+        if (functionName === 'gaussian') {
+          fitResult = optimizeSingleGaussian(
             [sampling[0], sampling[1]],
             peaks,
-            opts,
+            optimizationOptions,
           );
         } else {
-          if (fnType === 'lorentzian') {
-            optPeak = optimize.optimizeSingleLorentzian(
+          if (functionName === 'lorentzian') {
+            fitResult = optimizeSingleLorentzian(
               [sampling[0], sampling[1]],
               peaks,
-              opts,
+              optimizationOptions,
             );
           }
         }
-        // console.log(optPeak);
+        let { parameters } = fitResult;
         result.push({
-          x: optPeak[0][0],
-          y: optPeak[1][0],
-          width: optPeak[2][0] * factor,
+          x: parameters[0],
+          y: parameters[1],
+          width: parameters[2] * factor,
         }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
       }
     }
@@ -121,7 +124,6 @@ function sampleFunction(from, to, x, y, lastIndex) {
         stop = true;
       }
     }
-    // console.log(sampleX);
   }
   lastIndex[0] = index;
   return [sampleX, sampleY];
@@ -130,11 +132,10 @@ function sampleFunction(from, to, x, y, lastIndex) {
 function groupPeaks(peakList, nL) {
   let group = [];
   let groups = [];
-  let i, j;
   let limits = [peakList[0].x, nL * peakList[0].width];
   let upperLimit, lowerLimit;
   // Merge forward
-  for (i = 0; i < peakList.length; i++) {
+  for (let i = 0; i < peakList.length; i++) {
     // If the 2 things overlaps
     if (
       Math.abs(peakList[i].x - limits[0]) <
@@ -164,13 +165,13 @@ function groupPeaks(peakList, nL) {
   }
   groups.push({ limits: limits, group: group });
   // Merge backward
-  for (i = groups.length - 2; i >= 0; i--) {
+  for (let i = groups.length - 2; i >= 0; i--) {
     // The groups overlaps
     if (
       Math.abs(groups[i].limits[0] - groups[i + 1].limits[0]) <
       (groups[i].limits[1] + groups[i + 1].limits[1]) / 2
     ) {
-      for (j = 0; j < groups[i + 1].group.length; j++) {
+      for (let j = 0; j < groups[i + 1].group.length; j++) {
         groups[i].group.push(groups[i + 1].group[j]);
       }
       upperLimit = groups[i].limits[0] + groups[i].limits[1];
@@ -181,7 +182,7 @@ function groupPeaks(peakList, nL) {
       if (groups[i + 1].limits[0] - groups[i + 1].limits[1] < lowerLimit) {
         lowerLimit = groups[i + 1].limits[0] - groups[i + 1].limits[1];
       }
-      // console.log(limits);
+
       groups[i].limits = [
         (upperLimit + lowerLimit) / 2,
         Math.abs(upperLimit - lowerLimit) / 2,

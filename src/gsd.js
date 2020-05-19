@@ -1,19 +1,5 @@
 import SG from 'ml-savitzky-golay-generalized';
 
-const defaultOptions = {
-  sgOptions: {
-    windowSize: 9,
-    polynomial: 3,
-  },
-  minMaxRatio: 0.00025,
-  broadRatio: 0.0,
-  maxCriteria: true,
-  smoothY: true,
-  realTopDetection: false,
-  heightFactor: 0,
-  derivativeThreshold: -1,
-};
-
 /**
  * Global spectra deconvolution
  * @param {Array<number>} x - Independent variable
@@ -35,35 +21,32 @@ const defaultOptions = {
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
-export function gsd(x, yIn, options) {
-  options = Object.assign({}, defaultOptions, options);
-  let sgOptions = options.sgOptions;
+export function gsd(x, yIn, options = {}) {
+  let {
+    noiseLevel,
+    sgOptions = {
+      windowSize: 9,
+      polynomial: 3,
+    },
+    smoothY = true,
+    heightFactor = 0,
+    broadRatio = 0.0,
+    maxCriteria = true,
+    minMaxRatio = 0.00025,
+    derivativeThreshold = -1,
+    realTopDetection = false,
+  } = options;
+
   const y = yIn.slice();
+  let equalSpaced = isEqualSpaced(x);
 
-  let maxDx = 0;
-  let minDx = Number.MAX_VALUE;
-  if (!('noiseLevel' in options)) {
-    // We have to know if x is equally spaced
-
-    let tmp;
-    for (let i = 0; i < x.length - 1; ++i) {
-      tmp = Math.abs(x[i + 1] - x[i]);
-      if (tmp < minDx) {
-        minDx = tmp;
-      }
-      if (tmp > maxDx) {
-        maxDx = tmp;
-      }
-    }
-
-    if ((maxDx - minDx) / maxDx < 0.05) {
-      options.noiseLevel = getNoiseLevel(y);
-    } else {
-      options.noiseLevel = 0;
-    }
+  if (noiseLevel === undefined) {
+    noiseLevel = equalSpaced ? getNoiseLevel(y) : 0;
   }
-  const yCorrection = { m: 1, b: options.noiseLevel };
-  if (!options.maxCriteria) {
+
+  const yCorrection = { m: 1, b: noiseLevel };
+
+  if (!maxCriteria) {
     yCorrection.m = -1;
     yCorrection.b *= -1;
   }
@@ -77,47 +60,50 @@ export function gsd(x, yIn, options) {
       y[i] = 0;
     }
   }
-  // If the max difference between delta x is less than 5%, then, we can assume it to be equally spaced variable
+  // If the max difference between delta x is less than 5%, then,
+  // we can assume it to be equally spaced variable
   let Y = y;
   let dY, ddY;
-  if ((maxDx - minDx) / maxDx < 0.05) {
-    if (options.smoothY) {
+  const { windowSize, polynomial } = sgOptions;
+
+  if (equalSpaced) {
+    if (smoothY) {
       Y = SG(y, x[1] - x[0], {
-        windowSize: sgOptions.windowSize,
-        polynomial: sgOptions.polynomial,
+        windowSize,
+        polynomial,
         derivative: 0,
       });
     }
     dY = SG(y, x[1] - x[0], {
-      windowSize: sgOptions.windowSize,
-      polynomial: sgOptions.polynomial,
+      windowSize,
+      polynomial,
       derivative: 1,
     });
     ddY = SG(y, x[1] - x[0], {
-      windowSize: sgOptions.windowSize,
-      polynomial: sgOptions.polynomial,
+      windowSize,
+      polynomial,
       derivative: 2,
     });
   } else {
-    if (options.smoothY) {
+    if (smoothY) {
       Y = SG(y, x, {
-        windowSize: sgOptions.windowSize,
-        polynomial: sgOptions.polynomial,
+        windowSize,
+        polynomial,
         derivative: 0,
       });
     }
     dY = SG(y, x, {
-      windowSize: sgOptions.windowSize,
-      polynomial: sgOptions.polynomial,
+      windowSize,
+      polynomial,
       derivative: 1,
     });
     ddY = SG(y, x, {
-      windowSize: sgOptions.windowSize,
-      polynomial: sgOptions.polynomial,
+      windowSize,
+      polynomial,
       derivative: 2,
     });
   }
-
+  // console.log('this is 2', y)
   const X = x;
   const dx = x[1] - x[0];
   let maxDdy = 0;
@@ -144,7 +130,8 @@ export function gsd(x, yIn, options) {
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < Y.length - 1; ++i) {
     // filter based on derivativeThreshold
-    if (Math.abs(dY[i]) > options.derivativeThreshold) {
+    // console.log('pasa', y[i], dY[i], ddY[i]);
+    if (Math.abs(dY[i]) > derivativeThreshold) {
       // Minimum in first derivative
       if (
         (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
@@ -180,8 +167,7 @@ export function gsd(x, yIn, options) {
     if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
       // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
       minddY[minddYLen++] = i; // ( [X[i], Y[i], i] );
-      broadMask[broadMaskLen++] =
-        Math.abs(ddY[i]) <= options.broadRatio * maxDdy;
+      broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= broadRatio * maxDdy;
     }
   }
   minddY.length = minddYLen;
@@ -217,7 +203,7 @@ export function gsd(x, yIn, options) {
     }
 
     if (possible !== -1) {
-      if (Math.abs(Y[minddY[j]]) > options.minMaxRatio * maxY) {
+      if (Math.abs(Y[minddY[j]]) > minMaxRatio * maxY) {
         signals[signalsLen++] = {
           index: minddY[j],
           x: frequency,
@@ -229,25 +215,24 @@ export function gsd(x, yIn, options) {
         signals[signalsLen - 1].left = intervalL[possible];
         signals[signalsLen - 1].right = intervalR[possible];
 
-        if (options.heightFactor) {
+        if (heightFactor) {
           let yLeft = Y[intervalL[possible].index];
           let yRight = Y[intervalR[possible].index];
           signals[signalsLen - 1].height =
-            options.heightFactor *
-            (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
+            heightFactor * (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
         }
       }
     }
   }
   signals.length = signalsLen;
 
-  if (options.realTopDetection) {
-    realTopDetection(signals, X, Y);
+  if (realTopDetection) {
+    determineRealTop(signals, X, Y);
   }
 
   // Correct the values to fit the original spectra data
   for (let j = 0; j < signals.length; j++) {
-    signals[j].base = options.noiseLevel;
+    signals[j].base = noiseLevel;
   }
 
   signals.sort(function(a, b) {
@@ -257,7 +242,23 @@ export function gsd(x, yIn, options) {
   return signals;
 }
 
-function getNoiseLevel(y) {
+const isEqualSpaced = (x) => {
+  let tmp;
+  let maxDx = 0;
+  let minDx = Number.MAX_SAFE_INTEGER;
+  for (let i = 0; i < x.length - 1; ++i) {
+    tmp = Math.abs(x[i + 1] - x[i]);
+    if (tmp < minDx) {
+      minDx = tmp;
+    }
+    if (tmp > maxDx) {
+      maxDx = tmp;
+    }
+  }
+  return (maxDx - minDx) / maxDx < 0.05;
+};
+
+const getNoiseLevel = (y) => {
   let mean = 0;
 
   let stddev = 0;
@@ -281,9 +282,9 @@ function getNoiseLevel(y) {
   }
 
   return stddev;
-}
+};
 
-function realTopDetection(peakList, x, y) {
+const determineRealTop = (peakList, x, y) => {
   let alpha, beta, gamma, p, currentPoint;
   for (let j = 0; j < peakList.length; j++) {
     currentPoint = peakList[j].index; // peakList[j][2];
@@ -337,4 +338,4 @@ function realTopDetection(peakList, x, y) {
         0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
     }
   }
-}
+};

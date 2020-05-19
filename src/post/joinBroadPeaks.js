@@ -1,4 +1,4 @@
-import Opt from 'ml-optimize-lorentzian';
+import { optimizeSingleLorentzian } from 'ml-optimize-lorentzian';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -37,17 +37,18 @@ export function joinBroadPeaks(peakList, options = {}) {
       count++;
     } else {
       if (count > 2) {
-        let fitted = Opt.optimizeSingleLorentzian(candidates, {
+        let fitted = optimizeSingleLorentzian(candidates, {
           x: broadLines[maxI].x,
           y: max,
           width: Math.abs(
             candidates[0][0] - candidates[candidates.length - 1][0],
           ),
         });
+        let { parameters } = fitted;
         peakList.push({
-          x: fitted[0][0],
-          y: fitted[1][0],
-          width: fitted[2][0],
+          x: parameters[0],
+          y: parameters[1],
+          width: parameters[2],
           soft: false,
         });
       } else {
