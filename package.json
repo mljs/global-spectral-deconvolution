@@ -57,8 +57,9 @@
     "xy-parser": "^3.0.0"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "0.1.4",
-    "ml-savitzky-golay-generalized": "2.0.1"
+    "ml-optimize-lorentzian": "^0.1.5",
+    "ml-savitzky-golay-generalized": "2.0.1",
+    "ml-spectra-processing": "^3.0.2"
   },
   "jest": {
     "verbose": true,
