@@ -23,7 +23,7 @@ export function joinBroadPeaks(peakList, options = {}) {
   broadLines.push({ x: Number.MAX_VALUE });
 
   let candidates = [[broadLines[0].x, broadLines[0].y]];
-  let indexes = [0];
+  let indexes = [broadLines[0].index];
 
   for (let i = 1; i < broadLines.length; i++) {
     // console.log(broadLines[i-1].x+" "+broadLines[i].x);
@@ -33,7 +33,7 @@ export function joinBroadPeaks(peakList, options = {}) {
         max = broadLines[i].y;
         maxI = i;
       }
-      indexes.push(i);
+      indexes.push(broadLines[i].index);
       count++;
     } else {
       if (count > 2) {
@@ -49,6 +49,9 @@ export function joinBroadPeaks(peakList, options = {}) {
           x: parameters[0],
           y: parameters[1],
           width: parameters[2],
+          index: Math.floor(
+            indexes.reduce((a, b) => a + b, 0) / indexes.length,
+          ),
           soft: false,
         });
       } else {

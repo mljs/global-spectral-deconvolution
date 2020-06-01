@@ -48,11 +48,14 @@ export function optimizePeaks(peakList, x, y, options = {}) {
             );
           }
         }
+
         for (let j = 0; j < optPeaks.length; j++) {
+          let { parameters } = optPeaks[j];
           result.push({
-            x: optPeaks[j][0][0],
-            y: optPeaks[j][1][0],
-            width: optPeaks[j][2][0] * factor,
+            x: parameters[0],
+            y: parameters[1],
+            width: parameters[2] * factor,
+            index: peaks[j].index,
           });
         }
       }
@@ -84,11 +87,13 @@ export function optimizePeaks(peakList, x, y, options = {}) {
             );
           }
         }
+
         let { parameters } = fitResult;
         result.push({
           x: parameters[0],
           y: parameters[1],
           width: parameters[2] * factor,
+          index: peaks.index,
         }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
       }
     }
