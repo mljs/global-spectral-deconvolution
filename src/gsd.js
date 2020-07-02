@@ -17,7 +17,6 @@ import SG from 'ml-savitzky-golay-generalized';
  * @param {boolean} [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors
  * to determine the true x,y values of the peak?
  * @param {number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
- * @param {boolean} [options.boundaries = false] - Return also the inflection points of the peaks
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */

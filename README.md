@@ -43,10 +43,6 @@ Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of
 
 Factor to multiply the calculated height (usually 2).
 
-#### boundaries=false
-
-Return also the inflection points of the peaks
-
 #### derivativeThreshold=0
 
 Filters based on the amplitude of the first derivative
