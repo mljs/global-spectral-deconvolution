@@ -61,13 +61,13 @@ export function gsd(x, yIn, options = {}) {
   }
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
-  let Y = y;
+  let yData = y;
   let dY, ddY;
   const { windowSize, polynomial } = sgOptions;
 
   if (equalSpaced) {
     if (smoothY) {
-      Y = SG(y, x[1] - x[0], {
+      yData = SG(y, x[1] - x[0], {
         windowSize,
         polynomial,
         derivative: 0,
@@ -85,7 +85,7 @@ export function gsd(x, yIn, options = {}) {
     });
   } else {
     if (smoothY) {
-      Y = SG(y, x, {
+      yData = SG(y, x, {
         windowSize,
         polynomial,
         derivative: 0,
@@ -102,32 +102,32 @@ export function gsd(x, yIn, options = {}) {
       derivative: 2,
     });
   }
-  // console.log('this is 2', y)
-  const X = x;
-  const dx = x[1] - x[0];
+
+  const xData = x;
+  const dX = x[1] - x[0];
   let maxDdy = 0;
   let maxY = 0;
-  for (let i = 0; i < Y.length; i++) {
+  for (let i = 0; i < yData.length; i++) {
     if (Math.abs(ddY[i]) > maxDdy) {
       maxDdy = Math.abs(ddY[i]);
     }
-    if (Math.abs(Y[i]) > maxY) {
-      maxY = Math.abs(Y[i]);
+    if (Math.abs(yData[i]) > maxY) {
+      maxY = Math.abs(yData[i]);
     }
   }
 
   let lastMax = null;
   let lastMin = null;
-  let minddY = new Array(Y.length - 2);
-  let intervalL = new Array(Y.length);
-  let intervalR = new Array(Y.length);
-  let broadMask = new Array(Y.length - 2);
+  let minddY = new Array(yData.length - 2);
+  let intervalL = new Array(yData.length);
+  let intervalR = new Array(yData.length);
+  let broadMask = new Array(yData.length - 2);
   let minddYLen = 0;
   let intervalLLen = 0;
   let intervalRLen = 0;
   let broadMaskLen = 0;
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
-  for (let i = 1; i < Y.length - 1; ++i) {
+  for (let i = 1; i < yData.length - 1; ++i) {
     // filter based on derivativeThreshold
     // console.log('pasa', y[i], dY[i], ddY[i]);
     if (Math.abs(dY[i]) > derivativeThreshold) {
@@ -137,10 +137,10 @@ export function gsd(x, yIn, options = {}) {
         (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
       ) {
         lastMin = {
-          x: X[i],
+          x: xData[i],
           index: i,
         };
-        if (dx > 0 && lastMax !== null) {
+        if (dX > 0 && lastMax !== null) {
           intervalL[intervalLLen++] = lastMax;
           intervalR[intervalRLen++] = lastMin;
         }
@@ -152,10 +152,10 @@ export function gsd(x, yIn, options = {}) {
         (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
       ) {
         lastMax = {
-          x: X[i],
+          x: xData[i],
           index: i,
         };
-        if (dx < 0 && lastMin !== null) {
+        if (dX < 0 && lastMin !== null) {
           intervalL[intervalLLen++] = lastMax;
           intervalR[intervalRLen++] = lastMin;
         }
@@ -165,7 +165,7 @@ export function gsd(x, yIn, options = {}) {
     // Minimum in second derivative
     if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
       // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-      minddY[minddYLen++] = i; // ( [X[i], Y[i], i] );
+      minddY[minddYLen++] = i; // ( [xData[i], yData[i], i] );
       broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= broadRatio * maxDdy;
     }
   }
@@ -179,7 +179,7 @@ export function gsd(x, yIn, options = {}) {
   let lastK = -1;
   let possible, frequency, distanceJ, minDistance, gettingCloser;
   for (let j = 0; j < minddY.length; ++j) {
-    frequency = X[minddY[j]];
+    frequency = xData[minddY[j]];
     possible = -1;
     let k = lastK + 1;
     minDistance = Number.MAX_VALUE;
@@ -202,11 +202,11 @@ export function gsd(x, yIn, options = {}) {
     }
 
     if (possible !== -1) {
-      if (Math.abs(Y[minddY[j]]) > minMaxRatio * maxY) {
+      if (Math.abs(yData[minddY[j]]) > minMaxRatio * maxY) {
         signals[signalsLen++] = {
           index: minddY[j],
           x: frequency,
-          y: (Y[minddY[j]] + yCorrection.b) / yCorrection.m,
+          y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
           width: Math.abs(intervalR[possible].x - intervalL[possible].x), // widthCorrection
           soft: broadMask[j],
         };
@@ -215,8 +215,8 @@ export function gsd(x, yIn, options = {}) {
         signals[signalsLen - 1].right = intervalR[possible];
 
         if (heightFactor) {
-          let yLeft = Y[intervalL[possible].index];
-          let yRight = Y[intervalR[possible].index];
+          let yLeft = yData[intervalL[possible].index];
+          let yRight = yData[intervalR[possible].index];
           signals[signalsLen - 1].height =
             heightFactor * (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
         }
@@ -226,7 +226,7 @@ export function gsd(x, yIn, options = {}) {
   signals.length = signalsLen;
 
   if (realTopDetection) {
-    determineRealTop(signals, X, Y);
+    determineRealTop(signals, xData, yData);
   }
 
   // Correct the values to fit the original spectra data
