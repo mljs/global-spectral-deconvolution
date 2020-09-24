@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Global Spectra Deconvolution",
   "keywords": [
     "optimization",
