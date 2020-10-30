@@ -1,9 +1,6 @@
-import {
-  optimizeGaussianSum,
-  optimizeLorentzianSum,
-  optimizeSingleGaussian,
-  optimizeSingleLorentzian,
-} from 'ml-optimize-lorentzian';
+import { optimize, optimizeSum } from 'ml-spectra-fitting';
+
+const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
 export function optimizePeaks(peakList, x, y, options = {}) {
   const {
@@ -15,6 +12,8 @@ export function optimizePeaks(peakList, x, y, options = {}) {
       errorTolerance: 10e-5,
     },
   } = options;
+
+  checkFuncName(functionName, optimizationOptions);
 
   let lastIndex = [0];
   let groups = groupPeaks(peakList, factorWidth);
@@ -36,27 +35,15 @@ export function optimizePeaks(peakList, x, y, options = {}) {
         lastIndex,
       );
       if (sampling[0].length > 5) {
-        let optPeaks = [];
-        if (functionName === 'gaussian') {
-          optPeaks = optimizeGaussianSum(sampling, peaks, optimizationOptions);
-        } else {
-          if (functionName === 'lorentzian') {
-            optPeaks = optimizeLorentzianSum(
-              sampling,
-              peaks,
-              optimizationOptions,
-            );
-          }
-        }
-
+        let { parameters: optPeaks } = optimizeSum(
+          sampling,
+          peaks,
+          optimizationOptions,
+        );
         for (let j = 0; j < optPeaks.length; j++) {
-          let { parameters } = optPeaks[j];
-          result.push({
-            x: parameters[0],
-            y: parameters[1],
-            width: parameters[2] * factor,
-            index: peaks[j].index,
-          });
+          optPeaks[j].width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+          optPeaks[j].index = peaks.index;
+          result.push(optPeaks[j]);
         }
       }
     } else {
@@ -70,31 +57,12 @@ export function optimizePeaks(peakList, x, y, options = {}) {
         lastIndex,
       );
 
-      if (sampling[0].length > 5) {
-        let fitResult = [];
-        if (functionName === 'gaussian') {
-          fitResult = optimizeSingleGaussian(
-            [sampling[0], sampling[1]],
-            peaks,
-            optimizationOptions,
-          );
-        } else {
-          if (functionName === 'lorentzian') {
-            fitResult = optimizeSingleLorentzian(
-              [sampling[0], sampling[1]],
-              peaks,
-              optimizationOptions,
-            );
-          }
-        }
-
+      if (sampling.x.length > 5) {
+        let fitResult = optimize(sampling, peaks, optimizationOptions);
         let { parameters } = fitResult;
-        result.push({
-          x: parameters[0],
-          y: parameters[1],
-          width: parameters[2] * factor,
-          index: peaks.index,
-        }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+        parameters.width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+        parameters.index = peaks.index;
+        result.push(parameters);
       }
     }
   }
@@ -131,7 +99,7 @@ function sampleFunction(from, to, x, y, lastIndex) {
     }
   }
   lastIndex[0] = index;
-  return [sampleX, sampleY];
+  return { x: sampleX, y: sampleY };
 }
 
 function groupPeaks(peakList, nL) {
@@ -197,4 +165,18 @@ function groupPeaks(peakList, nL) {
     }
   }
   return groups;
+}
+
+function checkFuncName(functionName, optimizationOptions) {
+  let kind = functionName.toLowerCase().replace(/[^a-z]/g, '');
+  let isSupported = kindSupported.some((ks) => ks === kind);
+  if (isSupported) {
+    optimizationOptions.kind = kind;
+  } else {
+    throw new Error(
+      `Kind of function unsupported. Just these kind are supported: ${kindSupported.join(
+        ', ',
+      )}`,
+    );
+  }
 }

@@ -1,4 +1,4 @@
-import { optimizeSingleLorentzian } from 'ml-optimize-lorentzian';
+import { optimize } from 'ml-spectra-fitting';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -22,52 +22,50 @@ export function joinBroadPeaks(peakList, options = {}) {
   // Push a feke peak
   broadLines.push({ x: Number.MAX_VALUE });
 
-  let candidates = [[broadLines[0].x, broadLines[0].y]];
-  let indexes = [broadLines[0].index];
-
+  let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
+  let indexes = [0];
   for (let i = 1; i < broadLines.length; i++) {
-    // console.log(broadLines[i-1].x+" "+broadLines[i].x);
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
-      candidates.push([broadLines[i].x, broadLines[i].y]);
+      candidates.x.push(broadLines[i].x);
+      candidates.y.push(broadLines[i].y);
       if (broadLines[i].y > max) {
         max = broadLines[i].y;
         maxI = i;
       }
-      indexes.push(broadLines[i].index);
+      indexes.push(i);
       count++;
     } else {
       if (count > 2) {
-        let fitted = optimizeSingleLorentzian(candidates, {
-          x: broadLines[maxI].x,
-          y: max,
-          width: Math.abs(
-            candidates[0][0] - candidates[candidates.length - 1][0],
-          ),
-        });
-        let { parameters } = fitted;
-        peakList.push({
-          x: parameters[0],
-          y: parameters[1],
-          width: parameters[2],
-          index: Math.floor(
-            indexes.reduce((a, b) => a + b, 0) / indexes.length,
-          ),
-          soft: false,
-        });
+        let fitted = optimize(
+          candidates,
+          {
+            x: broadLines[maxI].x,
+            y: max,
+            width: Math.abs(
+              candidates.x[0] - candidates.x[candidates.x.length - 1],
+            ),
+          },
+          { kind: 'lorentzian' },
+        );
+        let { parameters: peak } = fitted;
+        peak.index = Math.floor(
+          indexes.reduce((a, b) => a + b, 0) / indexes.length,
+        );
+        peak.soft = false;
+        peakList.push(peak);
       } else {
         // Put back the candidates to the signals list
         indexes.forEach((index) => {
           peakList.push(broadLines[index]);
         });
       }
-      candidates = [[broadLines[i].x, broadLines[i].y]];
+      candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;
       maxI = i;
       count = 1;
     }
   }
-
   peakList.sort(function (a, b) {
     return a.x - b.x;
   });

@@ -40,6 +40,16 @@
     "url": "https://github.com/mljs/global-spectral-deconvolution/issues"
   },
   "homepage": "https://github.com/mljs/global-spectral-deconvolution",
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "chemcalc": "^3.4.1",
@@ -57,11 +67,7 @@
     "xy-parser": "^3.0.0"
   },
   "dependencies": {
-    "ml-optimize-lorentzian": "^0.2.0",
-    "ml-savitzky-golay-generalized": "2.0.2"
-  },
-  "jest": {
-    "verbose": true,
-    "testURL": "http://localhost/"
+    "ml-savitzky-golay-generalized": "2.0.2",
+    "ml-spectra-fitting": "^0.2.1"
   }
 }
