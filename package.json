@@ -12,7 +12,7 @@
     "jest": true
   },
   "scripts": {
-    "build": "cheminfo-build --entry src/index.js --root GSD",
+    "build": "rollup -c && cheminfo-build --entry src/index.js --root GSD",
     "eslint": "eslint src --cache",
     "eslint-fix": "npm run eslint -- --fix",
     "prepublishOnly": "rollup -c",
@@ -53,7 +53,7 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "chemcalc": "^3.4.1",
-    "cheminfo-tools": "^1.23.3",
+    "cheminfo-build": "^1.1.8",
     "eslint": "^7.12.1",
     "eslint-config-cheminfo": "^5.2.2",
     "eslint-plugin-import": "^2.22.1",
