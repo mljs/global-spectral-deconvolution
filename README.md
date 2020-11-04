@@ -49,14 +49,14 @@ Filters based on the amplitude of the first derivative
 
 ## Post methods
 
-### GSD.post.broadenPeaks(peakList, {factor=2, overlap=false})
+### GSD.broadenPeaks(peakList, {factor=2, overlap=false})
 
 We enlarge the peaks and add the properties from and to.
 By default we enlarge of a factor 2 and we don't allow overlap.
 
-### GSD.post.joinBroadPeaks
+### GSD.joinBroadPeaks
 
-### GSD.post.optimizePeaks
+### GSD.optimizePeaks
 
 ## Example
 
@@ -68,7 +68,7 @@ var peakPicking = require('ml-gsd');
 var spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
   fwhm: 0.01,
-  gaussianWidth: 11
+  gaussianWidth: 11,
 });
 var xy = spectrum.arrayXXYY;
 var x = xy[0];
@@ -76,9 +76,9 @@ var y = xy[1];
 //Just a fake noiseLevel
 var noiseLevel =
   Stat.array.median(
-    y.filter(function(a) {
+    y.filter(function (a) {
       return a > 0;
-    })
+    }),
   ) * 3;
 
 var options = {
@@ -86,10 +86,14 @@ var options = {
   minMaxRatio: 0,
   broadRatio: 0,
   smoothY: false,
-  realTopDetection: true
+  realTopDetection: true,
 };
 var result = peakPicking.gsd(x, y, options);
-result = peakPicking.post.optimizePeaks(result, x, y, 1, 'gaussian');
+
+result = peakPicking.optimizePeaks(result, x, y, {
+  factorWidth: 1,
+  functionName: 'gaussian',
+});
 ```
 
 ## License
