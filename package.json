@@ -68,6 +68,6 @@
   },
   "dependencies": {
     "ml-savitzky-golay-generalized": "2.0.2",
-    "ml-spectra-fitting": "^0.2.1"
+    "ml-spectra-fitting": "^0.3.2"
   }
 }

@@ -38,21 +38,23 @@ export function joinBroadPeaks(peakList, options = {}) {
       if (count > 2) {
         let fitted = optimize(
           candidates,
-          {
-            x: broadLines[maxI].x,
-            y: max,
-            width: Math.abs(
-              candidates.x[0] - candidates.x[candidates.x.length - 1],
-            ),
-          },
+          [
+            {
+              x: broadLines[maxI].x,
+              y: max,
+              width: Math.abs(
+                candidates.x[0] - candidates.x[candidates.x.length - 1],
+              ),
+            },
+          ],
           { kind: 'lorentzian' },
         );
-        let { parameters: peak } = fitted;
-        peak.index = Math.floor(
+        let { peaks: peak } = fitted;
+        peak[0].index = Math.floor(
           indexes.reduce((a, b) => a + b, 0) / indexes.length,
         );
-        peak.soft = false;
-        peakList.push(peak);
+        peak[0].soft = false;
+        peakList.push(peak[0]);
       } else {
         // Put back the candidates to the signals list
         indexes.forEach((index) => {

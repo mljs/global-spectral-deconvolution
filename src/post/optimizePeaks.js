@@ -1,4 +1,4 @@
-import { optimize, optimizeSum } from 'ml-spectra-fitting';
+import { optimize } from 'ml-spectra-fitting';
 
 const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
@@ -35,7 +35,7 @@ export function optimizePeaks(peakList, x, y, options = {}) {
         lastIndex,
       );
       if (sampling[0].length > 5) {
-        let { parameters: optPeaks } = optimizeSum(
+        let { peaks: optPeaks } = optimize(
           sampling,
           peaks,
           optimizationOptions,
@@ -58,11 +58,11 @@ export function optimizePeaks(peakList, x, y, options = {}) {
       );
 
       if (sampling.x.length > 5) {
-        let fitResult = optimize(sampling, peaks, optimizationOptions);
-        let { parameters } = fitResult;
-        parameters.width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
-        parameters.index = peaks.index;
-        result.push(parameters);
+        let fitResult = optimize(sampling, [peaks], optimizationOptions);
+        let { peaks: optPeaks } = fitResult;
+        optPeaks[0].width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+        optPeaks[0].index = peaks.index;
+        result.push(optPeaks[0]);
       }
     }
   }
