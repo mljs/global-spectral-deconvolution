@@ -2,8 +2,9 @@ import SG from 'ml-savitzky-golay-generalized';
 
 /**
  * Global spectra deconvolution
- * @param {Array<number>} x - Independent variable
- * @param {Array<number>} yIn - Dependent variable
+ * @param {object} data - Object data with x and y arrays
+ * @param {Array<number>} [data.x] - Independent variable
+ * @param {Array<number>} [data.y] - Dependent variable
  * @param {object} [options] - Options object
  * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
  * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
@@ -20,7 +21,7 @@ import SG from 'ml-savitzky-golay-generalized';
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
-export function gsd(x, yIn, options = {}) {
+export function gsd(data, options = {}) {
   let {
     noiseLevel,
     sgOptions = {
@@ -35,6 +36,8 @@ export function gsd(x, yIn, options = {}) {
     derivativeThreshold = -1,
     realTopDetection = false,
   } = options;
+
+  let { y: yIn, x } = data;
 
   const y = yIn.slice();
   let equalSpaced = isEqualSpaced(x);

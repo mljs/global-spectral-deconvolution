@@ -2,7 +2,7 @@ import { optimize } from 'ml-spectra-fitting';
 
 const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
-export function optimizePeaks(peakList, x, y, options = {}) {
+export function optimizePeaks(data, peakList, options = {}) {
   const {
     functionName = 'gaussian',
     factorWidth = 4,
@@ -12,6 +12,8 @@ export function optimizePeaks(peakList, x, y, options = {}) {
       errorTolerance: 10e-5,
     },
   } = options;
+
+  let { x, y } = data;
 
   checkFuncName(functionName, optimizationOptions);
 
@@ -34,7 +36,7 @@ export function optimizePeaks(peakList, x, y, options = {}) {
         y,
         lastIndex,
       );
-      if (sampling[0].length > 5) {
+      if (sampling.x.length > 5) {
         let { peaks: optPeaks } = optimize(
           sampling,
           peaks,
