@@ -9,15 +9,18 @@ describe('Global spectra deconvolution NMR spectra', () => {
     let spectrum = JSON.parse(
       readFileSync(join(__dirname, '/data/broadNMR.json'), 'utf-8'),
     );
-    let result = gsd(spectrum[0], spectrum[1], {
-      noiseLevel: 1049200.537996172 / 2,
-      minMaxRatio: 0.01,
-      broadRatio: 0.0025,
-      sgOptions: {
-        windowSize: 9,
-        polynomial: 3,
+    let result = gsd(
+      { x: spectrum[0], y: spectrum[1] },
+      {
+        noiseLevel: 1049200.537996172 / 2,
+        minMaxRatio: 0.01,
+        broadRatio: 0.0025,
+        sgOptions: {
+          windowSize: 9,
+          polynomial: 3,
+        },
       },
-    });
+    );
     joinBroadPeaks(result, { width: 0.25 });
     expect(result).toHaveLength(14);
     result.forEach((peak) => {

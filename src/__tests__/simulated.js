@@ -13,7 +13,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
 
     let spectrum = sg.getSpectrum();
 
-    let result = gsd(spectrum.x, spectrum.y, {
+    let result = gsd(spectrum, {
       minMaxRatio: 0,
       realTopDetection: false,
       smoothY: false,

@@ -15,12 +15,15 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
     let spectrum = JSON.parse(
       readFileSync(join(__dirname, '/data//C2.json'), 'utf8'),
     );
-    let result = gsd(spectrum[0], spectrum[1], {
-      // noiseLevel: 0.001,
-      minMaxRatio: 0,
-      realTopDetection: true,
-      smoothY: false,
-    });
+    let result = gsd(
+      { x: spectrum[0], y: spectrum[1] },
+      {
+        // noiseLevel: 0.001,
+        minMaxRatio: 0,
+        realTopDetection: true,
+        smoothY: false,
+      },
+    );
 
     expect(result[0].x).toBeCloseTo(24, 2);
     expect(result[0].y).toBeCloseTo(0.09394372786996513, 5);
@@ -49,12 +52,15 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
         lorentzian(i, 9 * fourth) +
         2 * lorentzian(i, 10 * fourth);
     }
-    let ans = gsd(times, tic, {
-      noiseLevel: 0,
-      realTopDetection: false,
-      smoothY: false,
-      sgOptions: { windowSize: 5, polynomial: 3 },
-    });
+    let ans = gsd(
+      { x: times, y: tic },
+      {
+        noiseLevel: 0,
+        realTopDetection: false,
+        smoothY: false,
+        sgOptions: { windowSize: 5, polynomial: 3 },
+      },
+    );
 
     expect(ans).toHaveLength(10);
   });

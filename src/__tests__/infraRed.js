@@ -8,7 +8,7 @@ describe('Global spectra deconvolution Infrared spectra', function () {
     let spectrum = JSON.parse(
       readFileSync(`${__dirname}/data/infraRed.json`, 'utf-8'),
     );
-    gsd(spectrum.x, spectrum.y, {
+    gsd(spectrum, {
       noiseLevel: 32,
       minMaxRatio: 0.03,
       maxCriteria: false,
