@@ -10,4 +10,5 @@ let peaks = gsd(X, Y, {
   smoothY: false,
   sgOptions: { windowSize: 7, polynomial: 3 },
 });
+
 console.log(peaks);
