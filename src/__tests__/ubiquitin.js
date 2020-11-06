@@ -18,7 +18,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
     // console.log("Parsing time: "+(d.getTime()-n));
     let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
 
-    let result = gsd(spectrum.x, spectrum.y, {
+    let result = gsd(spectrum, {
       noiseLevel: noiseLevel,
       minMaxRatio: 0.0,
       broadRatio: 0,
