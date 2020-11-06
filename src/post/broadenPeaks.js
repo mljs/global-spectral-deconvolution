@@ -3,8 +3,8 @@
  * Because peaks may not be symmetric after we add 2 properties, from and to.
  * @param {Array} peakList
  * @param {object} [options={}]
- * @param {number} [factor=2]
- * @param {boolean} [overlap=false] by default we don't allow overlap
+ * @param {number} [options.factor=2]
+ * @param {boolean} [options.overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
 export function broadenPeaks(peakList, options = {}) {

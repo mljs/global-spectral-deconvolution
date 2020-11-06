@@ -1,5 +1,7 @@
 import { optimize } from 'ml-spectra-fitting';
 
+const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
+
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)
  * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
@@ -11,7 +13,6 @@ import { optimize } from 'ml-spectra-fitting';
  * @param {object} [options.joinPeaks = true] - if true the peaks could be grouped if the separation between them are inside of a range of factorWidth * width
  * @param {object} [options.optimizationOptions] - options of ml-levenberg-marquardt optimization package.
  */
-const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
 export function optimizePeaks(data, peakList, options = {}) {
   const {
