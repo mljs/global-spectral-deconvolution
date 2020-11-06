@@ -1,11 +1,23 @@
 import { optimize } from 'ml-spectra-fitting';
 
+/**
+ * Optimize the position (x), max intensity (y), full width at half maximum (width)
+ * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * @param {object} data - An object containing the x and y data to be fitted.
+ * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ * @param {object} [options = {}] -
+ * @param {string} [options.kind = 'gaussian'] - kind of shape used to fitting, lorentzian, gaussian and pseudovoigt are supported.
+ * @param {number} [options.factorWidth = 4] - times of width to group peaks.
+ * @param {object} [options.joinPeaks = true] - if true the peaks could be grouped if the separation between them are inside of a range of factorWidth * width
+ * @param {object} [options.optimizationOptions] - options of ml-levenberg-marquardt optimization package.
+ */
 const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
 export function optimizePeaks(data, peakList, options = {}) {
   const {
     functionName = 'gaussian',
     factorWidth = 4,
+    joinPeaks = true,
     optimizationOptions = {
       damping: 1.5,
       maxIterations: 100,
@@ -18,12 +30,9 @@ export function optimizePeaks(data, peakList, options = {}) {
   checkFuncName(functionName, optimizationOptions);
 
   let lastIndex = [0];
-  let groups = groupPeaks(peakList, factorWidth);
+  let groups = groupPeaks(peakList, factorWidth, joinPeaks);
+
   let result = [];
-  let factor = 1;
-  if (functionName === 'gaussian') {
-    factor = 1.17741;
-  } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
   let sampling;
   for (let i = 0; i < groups.length; i++) {
     let peaks = groups[i].group;
@@ -37,13 +46,11 @@ export function optimizePeaks(data, peakList, options = {}) {
         lastIndex,
       );
       if (sampling.x.length > 5) {
-        let { peaks: optPeaks } = optimize(
-          sampling,
-          peaks,
-          optimizationOptions,
-        );
+        let { peaks: optPeaks } = optimize(sampling, peaks, {
+          kind: functionName,
+          lmOptions: optimizationOptions,
+        });
         for (let j = 0; j < optPeaks.length; j++) {
-          optPeaks[j].width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
           optPeaks[j].index = peaks.index;
           result.push(optPeaks[j]);
         }
@@ -60,9 +67,11 @@ export function optimizePeaks(data, peakList, options = {}) {
       );
 
       if (sampling.x.length > 5) {
-        let fitResult = optimize(sampling, [peaks], optimizationOptions);
+        let fitResult = optimize(sampling, [peaks], {
+          kind: functionName,
+          lmOptions: optimizationOptions,
+        });
         let { peaks: optPeaks } = fitResult;
-        optPeaks[0].width *= factor; // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
         optPeaks[0].index = peaks.index;
         result.push(optPeaks[0]);
       }
@@ -104,7 +113,7 @@ function sampleFunction(from, to, x, y, lastIndex) {
   return { x: sampleX, y: sampleY };
 }
 
-function groupPeaks(peakList, nL) {
+function groupPeaks(peakList, nL, joinPeaks) {
   let group = [];
   let groups = [];
   let limits = [peakList[0].x, nL * peakList[0].width];
@@ -113,8 +122,8 @@ function groupPeaks(peakList, nL) {
   for (let i = 0; i < peakList.length; i++) {
     // If the 2 things overlaps
     if (
-      Math.abs(peakList[i].x - limits[0]) <
-      nL * peakList[i].width + limits[1]
+      joinPeaks &&
+      Math.abs(peakList[i].x - limits[0]) < nL * peakList[i].width + limits[1]
     ) {
       // Add the peak to the group
       group.push(peakList[i]);
@@ -133,7 +142,6 @@ function groupPeaks(peakList, nL) {
       ];
     } else {
       groups.push({ limits: limits, group: group });
-      // var optmimalPeak = fitSpectrum(group,limits,spectrum);
       group = [peakList[i]];
       limits = [peakList[i].x, nL * peakList[i].width];
     }
