@@ -5,7 +5,7 @@ import SG from 'ml-savitzky-golay-generalized';
  * @param {object} data - Object data with x and y arrays
  * @param {Array<number>} [data.x] - Independent variable
  * @param {Array<number>} [data.y] - Dependent variable
- * @param {object} [options] - Options object
+ * @param {object} [options={}] - Options object
  * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
  * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
  * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
