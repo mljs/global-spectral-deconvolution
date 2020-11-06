@@ -1,4 +1,4 @@
-var gsd = require('../src/gsd');
+const gsd = require('../src/gsd');
 
 let X = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 let Y = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0];
@@ -8,6 +8,6 @@ let peaks = gsd(X, Y, {
   realTopDetection: true,
   maxCriteria: true, // inverted:false
   smoothY: false,
-  sgOptions: { windowSize: 7, polynomial: 3 }
+  sgOptions: { windowSize: 7, polynomial: 3 },
 });
 console.log(peaks);

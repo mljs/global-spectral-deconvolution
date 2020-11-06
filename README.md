@@ -1,11 +1,14 @@
 # global-spectral-deconvolution
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
 [![David deps][david-image]][david-url]
 [![npm download][download-image]][download-url]
 
 Global Spectra Deconvolution + Peak optimizer
+
+`gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
+
+The second algorithm (`optimize`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used. 
 
 ## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
@@ -61,39 +64,28 @@ By default we enlarge of a factor 2 and we don't allow overlap.
 ## Example
 
 ```js
-var CC = require('chemcalc');
-var Stat = require('ml-stat');
-var peakPicking = require('ml-gsd');
+import { IsotopicDistribution } from 'mf-global';
+import { gsd, optimizePeaks } from '../src';
 
-var spectrum = CC.analyseMF('Cl2.Br2', {
-  isotopomers: 'arrayXXYY',
-  fwhm: 0.01,
-  gaussianWidth: 11,
-});
-var xy = spectrum.arrayXXYY;
-var x = xy[0];
-var y = xy[1];
-//Just a fake noiseLevel
-var noiseLevel =
-  Stat.array.median(
-    y.filter(function (a) {
-      return a > 0;
-    }),
-  ) * 3;
+// generate a sample spectrum of the form {x:[], y:[]}
+const data = new IsotopicDistribution('C').getGaussian();
 
-var options = {
-  noiseLevel: noiseLevel,
-  minMaxRatio: 0,
-  broadRatio: 0,
-  smoothY: false,
+let peaks = gsd(data, {
+  noiseLevel: 0,
+  minMaxRatio: 0.00025, // Threshold to determine if a given peak should be considered as a noise
   realTopDetection: true,
-};
-var result = peakPicking.gsd(x, y, options);
-
-result = peakPicking.optimizePeaks(result, x, y, {
-  factorWidth: 1,
-  functionName: 'gaussian',
+  maxCriteria: true, // inverted:false
+  smoothY: false,
+  sgOptions: { windowSize: 7, polynomial: 3 },
 });
+console.log(peaks); // array of peaks {x,y,width}, width = distance between inflection points
+// GSD
+
+let optimized = optimizePeaks(data, peaks);
+console.log(optimized); // array of peaks {x,y,width}, width = FWHM
+
+
+
 ```
 
 ## License
@@ -102,8 +94,6 @@ result = peakPicking.optimizePeaks(result, x, y, {
 
 [npm-image]: https://img.shields.io/npm/v/ml-gsd.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/ml-gsd
-[travis-image]: https://img.shields.io/travis/mljs/global-spectral-deconvolution/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/mljs/global-spectral-deconvolution
 [david-image]: https://img.shields.io/david/mljs/global-spectral-deconvolution.svg?style=flat-square
 [david-url]: https://david-dm.org/mljs/global-spectral-deconvolution
 [download-image]: https://img.shields.io/npm/dm/ml-gsd.svg?style=flat-square
