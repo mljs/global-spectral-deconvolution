@@ -17,7 +17,7 @@ const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 export function optimizePeaks(data, peakList, options = {}) {
   const {
     functionName = 'gaussian',
-    factorWidth = 4,
+    factorWidth = 1,
     joinPeaks = true,
     optimizationOptions = {
       damping: 1.5,
