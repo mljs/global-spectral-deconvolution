@@ -121,14 +121,11 @@ export function gsd(data, options = {}) {
 
   let lastMax = null;
   let lastMin = null;
-  let minddY = new Array(yData.length - 2);
-  let intervalL = new Array(yData.length);
-  let intervalR = new Array(yData.length);
-  let broadMask = new Array(yData.length - 2);
-  let minddYLen = 0;
-  let intervalLLen = 0;
-  let intervalRLen = 0;
-  let broadMaskLen = 0;
+  let minddY = [];
+  let intervalL = [];
+  let intervalR = [];
+  let broadMask = [];
+
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
     // filter based on derivativeThreshold
@@ -144,8 +141,8 @@ export function gsd(data, options = {}) {
           index: i,
         };
         if (dX > 0 && lastMax !== null) {
-          intervalL[intervalLLen++] = lastMax;
-          intervalR[intervalRLen++] = lastMin;
+          intervalL.push(lastMax);
+          intervalR.push(lastMin);
         }
       }
 
@@ -159,8 +156,8 @@ export function gsd(data, options = {}) {
           index: i,
         };
         if (dX < 0 && lastMin !== null) {
-          intervalL[intervalLLen++] = lastMax;
-          intervalR[intervalRLen++] = lastMin;
+          intervalL.push(lastMax);
+          intervalR.push(lastMin);
         }
       }
     }
@@ -168,17 +165,12 @@ export function gsd(data, options = {}) {
     // Minimum in second derivative
     if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
       // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-      minddY[minddYLen++] = i; // ( [xData[i], yData[i], i] );
-      broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= broadRatio * maxDdy;
+      minddY.push(i); // ( [xData[i], yData[i], i] );
+      broadMask.push(Math.abs(ddY[i]) <= broadRatio * maxDdy);
     }
   }
-  minddY.length = minddYLen;
-  intervalL.length = intervalLLen;
-  intervalR.length = intervalRLen;
-  broadMask.length = broadMaskLen;
 
-  let signals = new Array(minddY.length);
-  let signalsLen = 0;
+  let signals = [];
   let lastK = -1;
   let possible, frequency, distanceJ, minDistance, gettingCloser;
   for (let j = 0; j < minddY.length; ++j) {
@@ -206,27 +198,27 @@ export function gsd(data, options = {}) {
 
     if (possible !== -1) {
       if (Math.abs(yData[minddY[j]]) > minMaxRatio * maxY) {
-        signals[signalsLen++] = {
+        signals.push({
           index: minddY[j],
           x: frequency,
           y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
           width: Math.abs(intervalR[possible].x - intervalL[possible].x), // widthCorrection
           soft: broadMask[j],
-        };
+        });
 
-        signals[signalsLen - 1].left = intervalL[possible];
-        signals[signalsLen - 1].right = intervalR[possible];
+        signals[signals.length - 1].left = intervalL[possible];
+        signals[signals.length - 1].right = intervalR[possible];
 
         if (heightFactor) {
           let yLeft = yData[intervalL[possible].index];
           let yRight = yData[intervalR[possible].index];
-          signals[signalsLen - 1].height =
-            heightFactor * (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
+          signals[signals.length - 1].height =
+            heightFactor *
+            (signals[signals.length - 1].y - (yLeft + yRight) / 2);
         }
       }
     }
   }
-  signals.length = signalsLen;
 
   if (realTopDetection) {
     determineRealTop(signals, xData, yData);
