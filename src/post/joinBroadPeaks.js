@@ -4,10 +4,10 @@ import { optimize } from 'ml-spectra-fitting';
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
  * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  * @param {object} [options = {}] -
- * @param {number} [options.width] - width limit to join peaks.
+ * @param {number} options.width - width limit to join peaks.
  */
 export function joinBroadPeaks(peakList, options = {}) {
-  let width = options.width;
+  let { shape = { kind: 'gaussian' }, width, lmOptions = {} } = options;
   let broadLines = [];
   // Optimize the possible broad lines
   let max = 0;
@@ -48,7 +48,7 @@ export function joinBroadPeaks(peakList, options = {}) {
               ),
             },
           ],
-          { kind: 'lorentzian' },
+          { shape, lmOptions },
         );
         let { peaks: peak } = fitted;
         peak[0].index = Math.floor(
