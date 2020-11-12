@@ -1,3 +1,4 @@
+import { inflectionPointsWidthToFWHM } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 
 /**
@@ -28,6 +29,7 @@ export function gsd(data, options = {}) {
       windowSize: 9,
       polynomial: 3,
     },
+    shape = {},
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -198,11 +200,14 @@ export function gsd(data, options = {}) {
 
     if (possible !== -1) {
       if (Math.abs(yData[minddY[j]]) > minMaxRatio * maxY) {
+        let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         signals.push({
           index: minddY[j],
           x: frequency,
           y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
-          width: Math.abs(intervalR[possible].x - intervalL[possible].x), // widthCorrection
+          width: shape.kind
+            ? inflectionPointsWidthToFWHM(width, shape.kind, shape.options)
+            : width, // widthCorrection
           soft: broadMask[j],
         });
 

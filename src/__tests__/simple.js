@@ -1,4 +1,8 @@
+import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
+
 import { gsd } from '..';
+
+expect.extend({ toMatchCloseTo });
 
 describe('Simple test cases', () => {
   let x = [];
@@ -49,24 +53,27 @@ describe('Simple test cases', () => {
       },
     );
 
-    expect(peaks).toStrictEqual([
-      {
-        base: 1.2434539324230613,
-        index: 15,
-        left: {
-          index: 13,
-          x: 13,
+    expect(peaks).toMatchCloseTo(
+      [
+        {
+          base: 1.2434539324230613,
+          index: 15,
+          left: {
+            index: 13,
+            x: 13,
+          },
+          right: {
+            index: 16,
+            x: 16,
+          },
+          soft: false,
+          width: 3,
+          x: 15,
+          y: 5,
         },
-        right: {
-          index: 16,
-          x: 16,
-        },
-        soft: false,
-        width: 3,
-        x: 15,
-        y: 5,
-      },
-    ]);
+      ],
+      2,
+    );
   });
 
   it('gsd realtop', () => {
@@ -83,23 +90,26 @@ describe('Simple test cases', () => {
         },
       },
     );
-    expect(peaks).toStrictEqual([
-      {
-        base: 1.2434539324230613,
-        index: 15,
-        left: {
-          index: 13,
-          x: 13,
+    expect(peaks).toMatchCloseTo(
+      [
+        {
+          base: 1.2434539324230613,
+          index: 15,
+          left: {
+            index: 13,
+            x: 13,
+          },
+          right: {
+            index: 16,
+            x: 16,
+          },
+          soft: false,
+          width: 3,
+          x: 14.5,
+          y: 4.006546067576939,
         },
-        right: {
-          index: 16,
-          x: 16,
-        },
-        soft: false,
-        width: 3,
-        x: 14.5,
-        y: 4.006546067576939,
-      },
-    ]);
+      ],
+      2,
+    );
   });
 });

@@ -1,7 +1,5 @@
 import { optimize } from 'ml-spectra-fitting';
 
-const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
-
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)
  * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
@@ -16,9 +14,11 @@ const kindSupported = ['gaussian', 'lorentzian', 'pseudovoigt'];
 
 export function optimizePeaks(data, peakList, options = {}) {
   const {
-    functionName = 'gaussian',
     factorWidth = 1,
     joinPeaks = true,
+    shape = {
+      kind: 'gaussian',
+    },
     optimizationOptions = {
       damping: 1.5,
       maxIterations: 100,
@@ -27,8 +27,6 @@ export function optimizePeaks(data, peakList, options = {}) {
   } = options;
 
   let { x, y } = data;
-
-  checkFuncName(functionName, optimizationOptions);
 
   let lastIndex = [0];
   let groups = groupPeaks(peakList, factorWidth, joinPeaks);
@@ -48,7 +46,7 @@ export function optimizePeaks(data, peakList, options = {}) {
       );
       if (sampling.x.length > 5) {
         let { peaks: optPeaks } = optimize(sampling, peaks, {
-          kind: functionName,
+          shape,
           lmOptions: optimizationOptions,
         });
         for (let j = 0; j < optPeaks.length; j++) {
@@ -69,7 +67,7 @@ export function optimizePeaks(data, peakList, options = {}) {
 
       if (sampling.x.length > 5) {
         let fitResult = optimize(sampling, [peaks], {
-          kind: functionName,
+          shape,
           lmOptions: optimizationOptions,
         });
         let { peaks: optPeaks } = fitResult;
@@ -176,18 +174,4 @@ function groupPeaks(peakList, nL, joinPeaks) {
     }
   }
   return groups;
-}
-
-function checkFuncName(functionName, optimizationOptions) {
-  let kind = functionName.toLowerCase().replace(/[^a-z]/g, '');
-  let isSupported = kindSupported.some((ks) => ks === kind);
-  if (isSupported) {
-    optimizationOptions.kind = kind;
-  } else {
-    throw new Error(
-      `Kind of function unsupported. Just these kind are supported: ${kindSupported.join(
-        ', ',
-      )}`,
-    );
-  }
 }

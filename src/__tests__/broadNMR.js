@@ -21,7 +21,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
         },
       },
     );
-    joinBroadPeaks(result, { width: 0.25 });
+    joinBroadPeaks(result, { width: 0.25, shape: { kind: 'lorentzian' } });
     expect(result).toHaveLength(14);
     result.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {
