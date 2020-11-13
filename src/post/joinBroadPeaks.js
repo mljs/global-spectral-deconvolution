@@ -3,11 +3,20 @@ import { optimize } from 'ml-spectra-fitting';
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
  * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- * @param {object} [options = {}] -
- * @param {number} options.width - width limit to join peaks.
+ * @param {object} [options = {}] - options
+ * @param {number} [options.width=0.25] - width limit to join peaks.
+ * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
+ * @param {string} [options.shape.kind = 'gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
+ * @param {object} [options.optimization = {}] - it's specify the kind and options of the algorithm use to optimize parameters.
+ * @param {string} [options.optimization.kind = 'lm'] - kind of algorithm. By default it's levenberg-marquardt.
+ * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
 export function joinBroadPeaks(peakList, options = {}) {
-  let { shape = { kind: 'gaussian' }, width, lmOptions = {} } = options;
+  let {
+    width = 0.25,
+    shape = { kind: 'gaussian' },
+    optimization = { kind: 'lm' },
+  } = options;
   let broadLines = [];
   // Optimize the possible broad lines
   let max = 0;
@@ -48,7 +57,7 @@ export function joinBroadPeaks(peakList, options = {}) {
               ),
             },
           ],
-          { shape, lmOptions },
+          { shape, optimization },
         );
         let { peaks: peak } = fitted;
         peak[0].index = Math.floor(
