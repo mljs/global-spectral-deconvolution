@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.1.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.0...v6.1.1) (2020-11-14)
+
+
+### Bug Fixes
+
+* update spectra-fitting ([33d89df](https://www.github.com/mljs/global-spectral-deconvolution/commit/33d89dfba443e5b2080e51e9f265305301f8409a))
+
 ## [6.1.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.0.0...v6.1.0) (2020-11-13)
 
 
