@@ -74,7 +74,7 @@
   "dependencies": {
     "ml-peak-shape-generator": "^0.10.2",
     "ml-savitzky-golay-generalized": "2.0.2",
-    "ml-spectra-fitting": "^0.7.1",
+    "ml-spectra-fitting": "^0.8.0",
     "ml-spectra-processing": "^4.8.0"
   }
 }

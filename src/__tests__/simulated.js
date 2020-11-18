@@ -19,16 +19,17 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     });
 
     let optimizedPeaks = optimizePeaks(data, peakList);
-
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.1, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(0.2, 2);
     expect(optimizedPeaks[0].width).toBeCloseTo(0.3, 2);
+    expect(optimizedPeaks[0].group).toBe(0);
     expect(optimizedPeaks[1].x).toBeCloseTo(0.1, 2);
     expect(optimizedPeaks[1].y).toBeCloseTo(0.2, 2);
     expect(optimizedPeaks[1].width).toBeCloseTo(0.1, 2);
+    expect(optimizedPeaks[1].group).toBe(1);
   });
 
-  it('Overlaped peaks', () => {
+  it.only('Overlaped peaks', () => {
     const peaks = [
       { x: 0.1, y: 0.4, width: 0.0 },
       { x: 0.101, y: 0.5, width: 0.01 },
@@ -42,6 +43,13 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       factorWidth: 1,
       optimization: { kind: 'lm', options: { maxIterations: 300 } },
     });
+
+    expect(optimizedPeaks).toHaveLength(4);
+    expect(optimizedPeaks[0].group).toBe(0);
+    expect(optimizedPeaks[1].group).toBe(0);
+    expect(optimizedPeaks[2].group).toBe(1);
+    expect(optimizedPeaks[3].group).toBe(1);
+
     expect(optimizedPeaks[0].x).toBeCloseTo(0.15, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(0.4, 2);
     expect(optimizedPeaks[0].width).toBeCloseTo(0.01, 2);
