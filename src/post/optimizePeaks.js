@@ -30,6 +30,7 @@ export function optimizePeaks(data, peakList, options = {}) {
   } = options;
 
   let groups = groupPeaks(peakList, factorWidth);
+
   let results = [];
   for (const peaks of groups) {
     const firstPeak = peaks[0];
@@ -52,6 +53,8 @@ export function optimizePeaks(data, peakList, options = {}) {
         optimization,
       });
       results = results.concat(optimizedPeaks);
+    } else {
+      results = results.concat(peaks);
     }
   }
   return results;
