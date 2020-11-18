@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.1.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.1...v6.1.2) (2020-11-18)
+
+
+### Bug Fixes
+
+* method name in README ([cb0e563](https://www.github.com/mljs/global-spectral-deconvolution/commit/cb0e563b5eeaee233004fdcd87882b470654bd99))
+
 ### [6.1.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.0...v6.1.1) (2020-11-14)
 
 
