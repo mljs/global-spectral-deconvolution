@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
+    "@types/jest": "^26.0.15",
     "chemcalc": "^3.4.1",
     "cheminfo-build": "^1.1.8",
     "eslint": "^7.13.0",
@@ -71,8 +72,8 @@
     "xy-parser": "^3.0.0"
   },
   "dependencies": {
+    "ml-peak-shape-generator": "^0.10.2",
     "ml-savitzky-golay-generalized": "2.0.2",
-    "ml-spectra-fitting": "^0.7.1",
-    "ml-peak-shape-generator": "^0.10.2"
+    "ml-spectra-fitting": "^0.7.1"
   }
 }
