@@ -11,7 +11,7 @@ import { optimize } from 'ml-spectra-fitting';
  * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
  * @param {string} [options.shape.kind = 'gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
  * @param {object} [options.optimization = {}] - it's specify the kind and options of the algorithm use to optimize parameters.
- * @param {object} [options.optimization.kind = 'lm'] - kind of algorithm. By default it's levenberg-marquardt.
+ * @param {string} [options.optimization.kind = 'lm'] - kind of algorithm. By default it's levenberg-marquardt.
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
 
@@ -52,6 +52,7 @@ export function optimizePeaks(data, peakList, options = {}) {
         });
         for (let j = 0; j < optPeaks.length; j++) {
           optPeaks[j].index = peaks.index;
+          optPeaks[j].group = i;
           result.push(optPeaks[j]);
         }
       }
@@ -73,6 +74,7 @@ export function optimizePeaks(data, peakList, options = {}) {
         });
         let { peaks: optPeaks } = fitResult;
         optPeaks[0].index = peaks.index;
+        optPeaks[0].group = i;
         result.push(optPeaks[0]);
       }
     }
