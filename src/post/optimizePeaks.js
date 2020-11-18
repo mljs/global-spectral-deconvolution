@@ -9,7 +9,6 @@ import { groupPeaks } from './groupPeaks';
  * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  * @param {object} [options = {}] -
  * @param {number} [options.factorWidth = 1] - times of width to group peaks.
- * @param {object} [options.joinPeaks = true] - if true the peaks could be grouped if the separation between them are inside of a range of factorWidth * width
  * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
  * @param {string} [options.shape.kind = 'gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
  * @param {object} [options.optimization = {}] - it's specify the kind and options of the algorithm use to optimize parameters.
@@ -20,7 +19,6 @@ import { groupPeaks } from './groupPeaks';
 export function optimizePeaks(data, peakList, options = {}) {
   const {
     factorWidth = 1,
-    joinPeaks = true,
     shape = {
       kind: 'gaussian',
     },
@@ -31,57 +29,28 @@ export function optimizePeaks(data, peakList, options = {}) {
 
   let { x, y } = data;
 
-  let lastIndex = [0];
-  let groups = groupPeaks(peakList, factorWidth, joinPeaks);
+  let groups = groupPeaks(peakList, factorWidth);
 
-  let result = [];
-  let sampling;
-  for (let i = 0; i < groups.length; i++) {
-    let peaks = groups[i].group;
-    if (peaks.length > 1) {
-      // Multiple peaks
-      sampling = sampleFunction(
-        groups[i].limits[0] - groups[i].limits[1],
-        groups[i].limits[0] + groups[i].limits[1],
-        x,
-        y,
-        lastIndex,
-      );
-      if (sampling.x.length > 5) {
-        let { peaks: optPeaks } = optimize(sampling, peaks, {
-          shape,
-          optimization,
-        });
-        for (let j = 0; j < optPeaks.length; j++) {
-          optPeaks[j].index = peaks.index;
-          optPeaks[j].group = i;
-          result.push(optPeaks[j]);
-        }
-      }
-    } else {
-      // Single peak
-      peaks = peaks[0];
-      sampling = sampleFunction(
-        peaks.x - factorWidth * peaks.width,
-        peaks.x + factorWidth * peaks.width,
-        x,
-        y,
-        lastIndex,
-      );
+  for (const peaks of groups) {
+    let firstPeak = peaks[0];
+    let lastPeak = peaks[peaks.length - 1];
 
-      if (sampling.x.length > 5) {
-        let fitResult = optimize(sampling, [peaks], {
-          shape,
-          optimization,
-        });
-        let { peaks: optPeaks } = fitResult;
-        optPeaks[0].index = peaks.index;
-        optPeaks[0].group = i;
-        result.push(optPeaks[0]);
-      }
+    // Multiple peaks
+    let sampling = sampleFunction(
+      firstPeak.x - firstPeak.width,
+      lastPeak.x + lastPeak.width,
+      x,
+      y,
+      lastIndex,
+    );
+    if (sampling.x.length > 5) {
+      let { peaks: optimizedPeaks } = optimize(sampling, peaks, {
+        shape,
+        optimization,
+      });
     }
   }
-  return result;
+  return groups.flat();
 }
 
 function sampleFunction(from, to, x, y, lastIndex) {
