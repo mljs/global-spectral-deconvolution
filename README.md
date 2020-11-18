@@ -8,7 +8,7 @@ Global Spectra Deconvolution + Peak optimizer
 
 `gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
 
-The second algorithm (`optimize`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used. 
+The second algorithm (`optimizePeaks`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used. 
 
 ## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
