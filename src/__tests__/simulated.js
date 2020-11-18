@@ -29,7 +29,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     expect(optimizedPeaks[1].group).toBe(1);
   });
 
-  it.only('Overlaped peaks', () => {
+  it('Overlaped peaks', () => {
     const peaks = [
       { x: 0.1, y: 0.4, width: 0.0 },
       { x: 0.101, y: 0.5, width: 0.01 },
@@ -41,6 +41,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
 
     let optimizedPeaks = optimizePeaks(data, peaks, {
       factorWidth: 1,
+      factorLimits: 2,
       optimization: { kind: 'lm', options: { maxIterations: 300 } },
     });
 
