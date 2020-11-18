@@ -11,8 +11,6 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     ];
 
     const data = generateSpectrum(peaks, { from: -1, to: 1, nbPoints: 101 });
-    data.y.reverse();
-    data.x.reverse();
     let peakList = gsd(data, {
       minMaxRatio: 0,
       realTopDetection: false,
@@ -20,15 +18,16 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       heightFactor: 1,
     });
 
-    let optPeaks = optimizePeaks(data, peakList);
+    let optimizedPeaks = optimizePeaks(data, peakList);
 
-    expect(optPeaks[0].x).toBeCloseTo(-0.1, 2);
-    expect(optPeaks[0].y).toBeCloseTo(0.2, 2);
-    expect(optPeaks[0].width).toBeCloseTo(0.3, 2);
-    expect(optPeaks[1].x).toBeCloseTo(0.1, 2);
-    expect(optPeaks[1].y).toBeCloseTo(0.2, 2);
-    expect(optPeaks[1].width).toBeCloseTo(0.1, 2);
+    expect(optimizedPeaks[0].x).toBeCloseTo(-0.1, 2);
+    expect(optimizedPeaks[0].y).toBeCloseTo(0.2, 2);
+    expect(optimizedPeaks[0].width).toBeCloseTo(0.3, 2);
+    expect(optimizedPeaks[1].x).toBeCloseTo(0.1, 2);
+    expect(optimizedPeaks[1].y).toBeCloseTo(0.2, 2);
+    expect(optimizedPeaks[1].width).toBeCloseTo(0.1, 2);
   });
+
   it('Overlaped peaks', () => {
     const peaks = [
       { x: 0.1, y: 0.4, width: 0.0 },
@@ -39,12 +38,12 @@ describe('Global spectra deconvolution with simulated spectra', () => {
 
     const data = generateSpectrum(peaks, { from: 0, to: 1, nbPoints: 101 });
 
-    let optPeaks = optimizePeaks(data, peaks, {
+    let optimizedPeaks = optimizePeaks(data, peaks, {
       factorWidth: 1,
       optimization: { kind: 'lm', options: { maxIterations: 300 } },
     });
-    expect(optPeaks[0].x).toBeCloseTo(0.15, 2);
-    expect(optPeaks[0].y).toBeCloseTo(0.4, 2);
-    expect(optPeaks[0].width).toBeCloseTo(0.01, 2);
+    expect(optimizedPeaks[0].x).toBeCloseTo(0.15, 2);
+    expect(optimizedPeaks[0].y).toBeCloseTo(0.4, 2);
+    expect(optimizedPeaks[0].width).toBeCloseTo(0.01, 2);
   });
 });

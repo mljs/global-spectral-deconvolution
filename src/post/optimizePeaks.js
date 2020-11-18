@@ -1,5 +1,5 @@
 import { optimize } from 'ml-spectra-fitting';
-
+import { xGetFromToIndex } from 'ml-spectra-processing';
 import { groupPeaks } from './groupPeaks';
 
 /**
@@ -9,6 +9,7 @@ import { groupPeaks } from './groupPeaks';
  * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  * @param {object} [options = {}] -
  * @param {number} [options.factorWidth = 1] - times of width to group peaks.
+ * @param {number} [options.factorLimits = 2] - times of width to use to optimize peaks
  * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
  * @param {string} [options.shape.kind = 'gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
  * @param {object} [options.optimization = {}] - it's specify the kind and options of the algorithm use to optimize parameters.
@@ -19,6 +20,7 @@ import { groupPeaks } from './groupPeaks';
 export function optimizePeaks(data, peakList, options = {}) {
   const {
     factorWidth = 1,
+    factorLimits = 2,
     shape = {
       kind: 'gaussian',
     },
@@ -27,61 +29,30 @@ export function optimizePeaks(data, peakList, options = {}) {
     },
   } = options;
 
-  let { x, y } = data;
-
   let groups = groupPeaks(peakList, factorWidth);
-
+  let results = [];
   for (const peaks of groups) {
-    let firstPeak = peaks[0];
-    let lastPeak = peaks[peaks.length - 1];
+    const firstPeak = peaks[0];
+    const lastPeak = peaks[peaks.length - 1];
 
+    const from = firstPeak.x - firstPeak.width * factorLimits;
+    const to = lastPeak.x + lastPeak.width * factorLimits;
+
+    const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-    let sampling = sampleFunction(
-      firstPeak.x - firstPeak.width,
-      lastPeak.x + lastPeak.width,
-      x,
-      y,
-      lastIndex,
-    );
-    if (sampling.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(sampling, peaks, {
+
+    const currentRange = {
+      x: data.x.slice(fromIndex, toIndex),
+      y: data.y.slice(fromIndex, toIndex),
+    };
+
+    if (currentRange.x.length > 5) {
+      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
         shape,
         optimization,
       });
+      results = results.concat(optimizedPeaks);
     }
   }
-  return groups.flat();
-}
-
-function sampleFunction(from, to, x, y, lastIndex) {
-  let nbPoints = x.length;
-  let sampleX = [];
-  let sampleY = [];
-  let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
-  if (direction === -1) {
-    lastIndex[0] = x.length - 1;
-  }
-
-  let delta = Math.abs(to - from) / 2;
-  let mid = (from + to) / 2;
-  let stop = false;
-  let index = lastIndex[0];
-  while (!stop && index < nbPoints && index >= 0) {
-    if (Math.abs(x[index] - mid) <= delta) {
-      sampleX.push(x[index]);
-      sampleY.push(y[index]);
-      index += direction;
-    } else {
-      // It is outside the range.
-      if (Math.sign(mid - x[index]) === 1) {
-        // We'll reach the mid going in the current direction
-        index += direction;
-      } else {
-        // There is not more peaks in the current range
-        stop = true;
-      }
-    }
-  }
-  lastIndex[0] = index;
-  return { x: sampleX, y: sampleY };
+  return results;
 }
