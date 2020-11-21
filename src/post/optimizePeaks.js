@@ -1,5 +1,6 @@
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
+
 import { groupPeaks } from './groupPeaks';
 
 /**
@@ -29,6 +30,11 @@ export function optimizePeaks(data, peakList, options = {}) {
     },
   } = options;
 
+  if (data.x[0] > data.x[1]) {
+    data.x.reverse();
+    data.y.reverse();
+  }
+
   let groups = groupPeaks(peakList, factorWidth);
 
   let results = [];
@@ -38,15 +44,12 @@ export function optimizePeaks(data, peakList, options = {}) {
 
     const from = firstPeak.x - firstPeak.width * factorLimits;
     const to = lastPeak.x + lastPeak.width * factorLimits;
-
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-
     const currentRange = {
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
-
     if (currentRange.x.length > 5) {
       let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
         shape,
