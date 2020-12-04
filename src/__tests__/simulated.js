@@ -138,7 +138,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       shape: { kind: 'gaussian' },
     });
 
-    console.log(peakList)
+    console.log(peakList);
 
     expect(peakList).toHaveLength(1);
     expect(peakList[0].x).toBeCloseTo(0, 2);
