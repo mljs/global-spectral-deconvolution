@@ -1,10 +1,9 @@
-
 import { gsd, optimizePeaks } from '..';
 
 const { generateSpectrum } = require('spectrum-generator');
 
 describe('Global spectra deconvolution with simulated spectra', () => {
-  fix  it('Overlapping peaks', () => {
+  it('Overlapping peaks', () => {
     const peaks = [
       { x: -0.1, y: 0.2, width: 0.3 },
       { x: 0.1, y: 0.2, width: 0.1 },
@@ -20,14 +19,16 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       shape: { kind: 'gaussian' },
     });
 
+    let optimizedPeaks = optimizePeaks(data, peakList);
+
+    console.log(optimizedPeaks);
+
     expect(peakList[0].x).toBeCloseTo(-0.1, 2);
     expect(peakList[0].y).toBeCloseTo(0.2, 2);
     expect(peakList[0].width).toBeCloseTo(0.3, 2);
     expect(peakList[1].x).toBeCloseTo(0.1, 2);
     expect(peakList[1].y).toBeCloseTo(0.2, 2);
     expect(peakList[1].width).toBeCloseTo(0.1, 2);
-
-    let optimizedPeaks = optimizePeaks(data, peakList);
 
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.1, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(0.2, 2);
