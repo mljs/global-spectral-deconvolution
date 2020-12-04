@@ -1,0 +1,95 @@
+<!-- showing graph using jsGraph -->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>A graph</title>
+    <meta name="description" content="A test jsGraph page" />
+    <meta name="opatiny" />
+
+    <script
+      language="javascript"
+      src="https://www.lactame.com/github/NPellet/jsGraph/master/dist/jsgraph.min.js"
+    ></script>
+  </head>
+
+  <body>
+    <h1>A spectrum-generator module usage example</h1>
+    <p>
+      This is an example of graph created using the spectrum-generator node
+      module. Graphics are done using jsGraph.
+    </p>
+    <div id="graph"></div>
+
+    <script>
+      // fetching data
+
+      createGraph();
+
+      async function createGraph() {
+        var reponse = await fetch('./data.json');
+        var values = await reponse.json();
+
+        // options for zoom
+        let options = {
+          plugins: {
+            zoom: {
+              zoomMode: 'xy',
+            },
+          },
+          mouseActions: [
+            {
+              plugin: 'zoom',
+              shift: false,
+              ctrl: false,
+            },
+            {
+              plugin: 'zoom',
+              type: 'mousewheel',
+              options: {
+                direction: 'y',
+              },
+            },
+            {
+              plugin: 'zoom',
+              type: 'dblclick',
+              options: {
+                mode: 'total',
+              },
+            },
+          ],
+        };
+
+        var graph = new Graph('graph', options);
+        graph.resize(800, 600); // Resizes the container
+
+        let waveForm = Graph.newWaveform();
+        let arrayX = values.x;
+        let arrayY = values.y;
+        waveForm.setData(arrayY, arrayX);
+
+        graph
+          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm);
+
+        var modifiers = []; // We can define a specific style for some points in the scatter plot
+        // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
+
+        /*
+        graph
+          .newSerie('scatter serie', {}, 'scatter') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm)
+          .setStyle(
+            { shape: 'circle', r: 4, fill: 'red', stroke: 'blue' },
+            modifiers,
+          );
+*/
+
+        graph.draw(); // Draw
+      }
+    </script>
+  </body>
+</html>
