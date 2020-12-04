@@ -1,11 +1,10 @@
-import { write, writeFileSync } from 'fs';
 
 import { gsd, optimizePeaks } from '..';
 
 const { generateSpectrum } = require('spectrum-generator');
 
 describe('Global spectra deconvolution with simulated spectra', () => {
-  it.skip('Overlapping peaks', () => {
+  fix  it('Overlapping peaks', () => {
     const peaks = [
       { x: -0.1, y: 0.2, width: 0.3 },
       { x: 0.1, y: 0.2, width: 0.1 },
@@ -109,7 +108,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     expect(optimizedPeaks[1].group).toBe(1);
   });
 
-  it.only('Should provide 1 peak', () => {
+  it('Should provide 1 peak', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
     const data = generateSpectrum(peaks, {
@@ -124,12 +123,6 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       },
     });
 
-    writeFileSync(
-      `${__dirname}/../../examples/data.json`,
-      JSON.stringify({ x: Array.from(data.x), y: Array.from(data.y) }),
-      'utf8',
-    );
-
     let peakList = gsd(data, {
       minMaxRatio: 0,
       realTopDetection: false,
@@ -138,11 +131,9 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       shape: { kind: 'gaussian' },
     });
 
-    console.log(peakList);
-
     expect(peakList).toHaveLength(1);
     expect(peakList[0].x).toBeCloseTo(0, 2);
     expect(peakList[0].y).toBeCloseTo(1, 2);
-    expect(peakList[0].width).toBeCloseTo(0.2, 3);
+    expect(peakList[0].width).toBeCloseTo(0.12, 3);
   });
 });
