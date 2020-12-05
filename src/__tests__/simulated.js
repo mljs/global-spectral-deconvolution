@@ -21,8 +21,6 @@ describe('Global spectra deconvolution with simulated spectra', () => {
 
     let optimizedPeaks = optimizePeaks(data, peakList);
 
-    console.log(optimizedPeaks);
-
     expect(peakList[0].x).toBeCloseTo(-0.1, 2);
     expect(peakList[0].y).toBeCloseTo(0.2, 2);
     expect(peakList[0].width).toBeCloseTo(0.3, 2);

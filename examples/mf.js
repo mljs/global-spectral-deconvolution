@@ -1,6 +1,7 @@
 // to execute with `node -r esm ./mf.js`
 
 import { IsotopicDistribution } from 'mf-global';
+
 import { gsd, optimizePeaks } from '../src';
 
 // generate a sample spectrum of the form {x:[], y:[]}
