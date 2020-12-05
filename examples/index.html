@@ -74,7 +74,7 @@
           .autoAxis() // Assigns axes
           .setWaveform(waveForm);
 
-        if (false && json.labels) {
+        if (json.labels) {
           for (let label of json.labels) {
             const shape = graph.newShape('label', {
               label: {
@@ -91,7 +91,7 @@
           }
         }
 
-        if (false && json.lines) {
+        if (json.lines) {
           for (let line of json.lines) {
             const shape = graph.newShape('line', {
               position: line,
