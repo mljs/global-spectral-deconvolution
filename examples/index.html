@@ -80,7 +80,11 @@
           graph
             .newSerie(
               'reconstructed',
-              { lineColor: 'red', lineWidth: 2 },
+              {
+                lineColor: 'rgba( 255, 0, 0, 0.3)',
+                lineWidth: 4,
+                opacity: 0.3,
+              },
               'line',
             ) // Creates a new serie
             .autoAxis() // Assigns axes
