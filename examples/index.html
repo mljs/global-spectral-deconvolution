@@ -24,12 +24,14 @@
 
     <script>
       // fetching data
+      const colors = ['red', 'green', 'blue'];
 
       createGraph();
 
       async function createGraph() {
-        var reponse = await fetch('./data.json');
-        var values = await reponse.json();
+        const response = await fetch('./data.json');
+        const json = await response.json();
+        const data = json.data || json;
 
         // options for zoom
         let options = {
@@ -65,28 +67,59 @@
         graph.resize(800, 600); // Resizes the container
 
         let waveForm = Graph.newWaveform();
-        let arrayX = values.x;
-        let arrayY = values.y;
-        waveForm.setData(arrayY, arrayX);
+        waveForm.setData(data.y, data.x);
 
         graph
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
           .setWaveform(waveForm);
 
-        var modifiers = []; // We can define a specific style for some points in the scatter plot
-        // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
+        if (false && json.labels) {
+          for (let label of json.labels) {
+            const shape = graph.newShape('label', {
+              label: {
+                text: label.text,
+                position: {
+                  x: label.x,
+                  y: label.y,
+                  dx: label.dx,
+                  dy: label.dy,
+                },
+              },
+            });
+            shape.draw();
+          }
+        }
 
-        /*
-        graph
-          .newSerie('scatter serie', {}, 'scatter') // Creates a new serie
-          .autoAxis() // Assigns axes
-          .setWaveform(waveForm)
-          .setStyle(
-            { shape: 'circle', r: 4, fill: 'red', stroke: 'blue' },
-            modifiers,
-          );
-*/
+        if (false && json.lines) {
+          for (let line of json.lines) {
+            const shape = graph.newShape('line', {
+              position: line,
+            });
+            console.log(line);
+            shape.draw();
+          }
+        }
+
+        if (json.polygons) {
+          for (let i = 0; i < json.polygons.length; i++) {
+            const polygon = json.polygons[i];
+            const shape = graph.newShape(
+              'polygon',
+              {
+                position: polygon,
+              },
+              false,
+              {
+                fillColor: colors[i % colors.length],
+                fillOpacity: 0.15,
+                strokeWidth: 1,
+                strokeColor: colors[i % colors.length],
+              },
+            );
+            shape.draw();
+          }
+        }
 
         graph.draw(); // Draw
       }
