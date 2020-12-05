@@ -17,7 +17,10 @@ const peaks = [
   { x: 0.1, y: 0.2, width: 0.1 },
 ];
 
-const original = generateSpectrum(peaks, { from: -1, to: 1, nbPoints: 101 });
+const from = -1;
+const to = 1;
+
+const original = generateSpectrum(peaks, { from, to, nbPoints: 101 });
 
 let peakList = gsd(original, {
   minMaxRatio: 0,
@@ -40,6 +43,7 @@ let lines = optimizedPeaks.map((peak) => [
   { x: peak.x, y: peak.y },
   { x: peak.x, y: peak.y, dy: '-20px' },
 ]);
+
 let polygons = [];
 for (const peak of optimizedPeaks) {
   const peaksSpectrum = generateSpectrum([peak], {
@@ -54,11 +58,19 @@ for (const peak of optimizedPeaks) {
   polygons.push(polygon);
 }
 
+let reconstructed = generateSpectrum(optimizedPeaks, {
+  from,
+  to,
+  nbPoints: 5001,
+});
+reconstructed.x = Array.from(reconstructed.x)
+reconstructed.y = Array.from(reconstructed.y)
+
 original.x = Array.from(original.x);
 original.y = Array.from(original.y);
 
 writeFileSync(
   join(__dirname, 'data.json'),
-  JSON.stringify({ data: original, labels, lines, polygons }),
+  JSON.stringify({ data: original, labels, lines, polygons, reconstructed }),
   'utf8',
 );

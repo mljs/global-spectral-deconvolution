@@ -70,9 +70,22 @@
         waveForm.setData(data.y, data.x);
 
         graph
-          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .newSerie('original', { lineColor: 'black', lineWidth: 1 }, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
           .setWaveform(waveForm);
+
+        if (json.reconstructed) {
+          let waveForm2 = Graph.newWaveform();
+          waveForm2.setData(json.reconstructed.y, json.reconstructed.x);
+          graph
+            .newSerie(
+              'reconstructed',
+              { lineColor: 'red', lineWidth: 2 },
+              'line',
+            ) // Creates a new serie
+            .autoAxis() // Assigns axes
+            .setWaveform(waveForm2);
+        }
 
         if (json.labels) {
           for (let label of json.labels) {
@@ -111,8 +124,8 @@
               false,
               {
                 fillColor: colors[i % colors.length],
-                fillOpacity: 0.15,
-                strokeWidth: 1,
+                fillOpacity: 0.1,
+                strokeWidth: 0,
                 strokeColor: colors[i % colors.length],
               },
             );
