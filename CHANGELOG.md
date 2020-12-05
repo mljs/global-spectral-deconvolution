@@ -1,5 +1,22 @@
 # Changelog
 
+## [6.2.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.2...v6.2.0) (2020-12-05)
+
+
+### Features
+
+* add factorLimits parameter for optimizePeaks ([1af47e1](https://www.github.com/mljs/global-spectral-deconvolution/commit/1af47e1a32cfef957cc43078ae389ecc4f2d691b))
+* add failling test case ([a061013](https://www.github.com/mljs/global-spectral-deconvolution/commit/a06101315d97e70bc19119dad3692eff64848568))
+* improve groupPeaks ([6ef7024](https://www.github.com/mljs/global-spectral-deconvolution/commit/6ef7024a1e34ce63c71fa0679946df74271d3c88))
+* simplify optimizePeaks ([3abfe93](https://www.github.com/mljs/global-spectral-deconvolution/commit/3abfe93a4cc938d799acc495fea959d15db272a3))
+* update ml-spectra-fitting ([97899d5](https://www.github.com/mljs/global-spectral-deconvolution/commit/97899d5f3453d6f0b0a4afa0c8102b07c5d69a32))
+
+
+### Bug Fixes
+
+* always ascending order in x dimension ([6ffc64f](https://www.github.com/mljs/global-spectral-deconvolution/commit/6ffc64f288220f4d004b7627c2fb44caa9b21bbf))
+* update dependencies ([5ea4c7f](https://www.github.com/mljs/global-spectral-deconvolution/commit/5ea4c7fbb042c2145e760b97aab6c92788eeb117))
+
 ### [6.1.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.1...v6.1.2) (2020-11-18)
 
 
