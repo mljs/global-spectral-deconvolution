@@ -7,7 +7,7 @@ describe('groupPeaks', () => {
       { x: 10, y: 10, width: 5 },
       { x: 30, y: 10, width: 5 },
     ]);
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       [
         { x: 5, y: 10, width: 5, group: 0 },
         { x: 10, y: 10, width: 5, group: 0 },
@@ -25,7 +25,7 @@ describe('groupPeaks', () => {
       ],
       0.1,
     );
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       [{ x: 5, y: 10, width: 5, group: 0 }],
       [{ x: 10, y: 10, width: 5, group: 1 }],
       [{ x: 30, y: 10, width: 5, group: 2 }],
@@ -41,7 +41,7 @@ describe('groupPeaks', () => {
       ],
       3,
     );
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       [
         { x: 5, y: 10, width: 5, group: 0 },
         { x: 10, y: 10, width: 5, group: 0 },
@@ -59,7 +59,7 @@ describe('groupPeaks', () => {
       ],
       5,
     );
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       [
         { x: 5, y: 10, width: 5, group: 0 },
         { x: 10, y: 10, width: 5, group: 0 },

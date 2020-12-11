@@ -35,7 +35,8 @@
   ],
   "author": "Andres Castillo",
   "contributors": [
-    "Miguel Asencio <maasencioh@gmail.com> (https://github.com/maasencioh)"
+    "Miguel Asencio <maasencioh@gmail.com> (https://github.com/maasencioh)",
+    "Alejandro Bolaños <jose.bolanos@correounivalle.edu.co> (https://github.com/jobo322)" 
   ],
   "license": "MIT",
   "bugs": {
@@ -74,7 +75,7 @@
     "xy-parser": "^3.0.0"
   },
   "dependencies": {
-    "ml-peak-shape-generator": "^0.10.2",
+    "ml-peak-shape-generator": "^0.12.0",
     "ml-savitzky-golay-generalized": "2.0.3",
     "ml-spectra-fitting": "0.9.0",
     "ml-spectra-processing": "^4.9.4"
