@@ -1,4 +1,4 @@
-import { inflectionPointsWidthToFWHM } from 'ml-peak-shape-generator';
+import { getShapeGenerator } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 
 /**
@@ -167,11 +167,14 @@ export function gsd(data, options = {}) {
 
     // Minimum in second derivative
     if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
-      // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
-      minddY.push(i); // ( [xData[i], yData[i], i] );
+      minddY.push(i);
       broadMask.push(Math.abs(ddY[i]) <= broadRatio * maxDdy);
     }
   }
+
+  let widthProcessor = shape.kind
+    ? getShapeGenerator(shape.kind, shape.options).widthToFWHM
+    : (x) => x;
 
   let signals = [];
   let lastK = -1;
@@ -206,9 +209,7 @@ export function gsd(data, options = {}) {
           index: minddY[j],
           x: frequency,
           y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
-          width: shape.kind
-            ? inflectionPointsWidthToFWHM(width, shape.kind, shape.options)
-            : width, // widthCorrection
+          width: widthProcessor(width),
           soft: broadMask[j],
         });
 
