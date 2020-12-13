@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.3.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.2.0...v6.3.0) (2020-12-13)
+
+
+### Features
+
+* update ml-peak-shape-generator ([9d446a9](https://www.github.com/mljs/global-spectral-deconvolution/commit/9d446a9993d360c2001cbb23e782b6b881b1f47e))
+* update ml-peak-shape-generator ([#44](https://www.github.com/mljs/global-spectral-deconvolution/issues/44)) ([70776d3](https://www.github.com/mljs/global-spectral-deconvolution/commit/70776d3a45b7e25296203ae5cfc8d89c3679d258))
+
 ## [6.2.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.1.2...v6.2.0) (2020-12-05)
 
 

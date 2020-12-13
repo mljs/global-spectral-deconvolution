@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "Global Spectra Deconvolution",
   "main": "lib/index.js",
   "module": "src/index.js",
@@ -36,7 +36,7 @@
   "author": "Andres Castillo",
   "contributors": [
     "Miguel Asencio <maasencioh@gmail.com> (https://github.com/maasencioh)",
-    "Alejandro Bolaños <jose.bolanos@correounivalle.edu.co> (https://github.com/jobo322)" 
+    "Alejandro Bolaños <jose.bolanos@correounivalle.edu.co> (https://github.com/jobo322)"
   ],
   "license": "MIT",
   "bugs": {
