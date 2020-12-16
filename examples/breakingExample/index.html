@@ -1,0 +1,144 @@
+<!-- showing graph using jsGraph -->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>A graph</title>
+    <meta name="description" content="A test jsGraph page" />
+    <meta name="opatiny" />
+
+    <script
+      language="javascript"
+      src="https://www.lactame.com/github/NPellet/jsGraph/master/dist/jsgraph.min.js"
+    ></script>
+  </head>
+
+  <body>
+    <h1>A spectrum-generator module usage example</h1>
+    <p>
+      This is an example of graph created using the spectrum-generator node
+      module. Graphics are done using jsGraph.
+    </p>
+    <div id="graph"></div>
+
+    <script>
+      // fetching data
+      const colors = ['red', 'green', 'blue'];
+
+      createGraph();
+
+      async function createGraph() {
+        const response = await fetch('./data.json');
+        const json = await response.json();
+        const data = json.data || json;
+
+        // options for zoom
+        let options = {
+          plugins: {
+            zoom: {
+              zoomMode: 'xy',
+            },
+          },
+          mouseActions: [
+            {
+              plugin: 'zoom',
+              shift: false,
+              ctrl: false,
+            },
+            {
+              plugin: 'zoom',
+              type: 'mousewheel',
+              options: {
+                direction: 'y',
+              },
+            },
+            {
+              plugin: 'zoom',
+              type: 'dblclick',
+              options: {
+                mode: 'total',
+              },
+            },
+          ],
+        };
+
+        var graph = new Graph('graph', options);
+        graph.resize(800, 600); // Resizes the container
+
+        let waveForm = Graph.newWaveform();
+        waveForm.setData(data.y, data.x);
+
+        graph
+          .newSerie('original', { lineColor: 'black', lineWidth: 1 }, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm);
+
+        if (json.reconstructed) {
+          let waveForm2 = Graph.newWaveform();
+          waveForm2.setData(json.reconstructed.y, json.reconstructed.x);
+          graph
+            .newSerie(
+              'reconstructed',
+              {
+                lineColor: 'rgba( 255, 0, 0, 0.3)',
+                lineWidth: 4,
+                opacity: 0.3,
+              },
+              'line',
+            ) // Creates a new serie
+            .autoAxis() // Assigns axes
+            .setWaveform(waveForm2);
+        }
+
+        if (json.labels) {
+          for (let label of json.labels) {
+            const shape = graph.newShape('label', {
+              label: {
+                text: label.text,
+                position: {
+                  x: label.x,
+                  y: label.y,
+                  dx: label.dx,
+                  dy: label.dy,
+                },
+              },
+            });
+            shape.draw();
+          }
+        }
+
+        if (json.lines) {
+          for (let line of json.lines) {
+            const shape = graph.newShape('line', {
+              position: line,
+            });
+            shape.draw();
+          }
+        }
+
+        if (json.polygons) {
+          for (let i = 0; i < json.polygons.length; i++) {
+            const polygon = json.polygons[i];
+            const shape = graph.newShape(
+              'polygon',
+              {
+                position: polygon,
+              },
+              false,
+              {
+                fillColor: colors[i % colors.length],
+                fillOpacity: 0.1,
+                strokeWidth: 0,
+                strokeColor: colors[i % colors.length],
+              },
+            );
+            shape.draw();
+          }
+        }
+
+        graph.draw(); // Draw
+      }
+    </script>
+  </body>
+</html>
