@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.3.0...v6.4.0) (2020-12-21)
+
+
+### Features
+
+* added timeout option to avoid long executions. close [#37](https://www.github.com/mljs/global-spectral-deconvolution/issues/37) ([#47](https://www.github.com/mljs/global-spectral-deconvolution/issues/47)) ([b847438](https://www.github.com/mljs/global-spectral-deconvolution/commit/b8474381e9ccfef543251ffe2ea0d2afc1815eb7))
+
 ## [6.3.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.2.0...v6.3.0) (2020-12-13)
 
 
