@@ -13,9 +13,9 @@ import { groupPeaks } from './groupPeaks';
  * @param {number} [options.factorLimits = 2] - times of width to use to optimize peaks
  * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
  * @param {string} [options.shape.kind='gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
- * @param {string} [options.shape.options] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
  * @param {object} [options.optimization={}] - it's specify the kind and options of the algorithm use to optimize parameters.
  * @param {string} [options.optimization.kind='lm'] - kind of algorithm. By default it's levenberg-marquardt.
+ * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  */
 
@@ -28,6 +28,9 @@ export function optimizePeaks(data, peakList, options = {}) {
     },
     optimization = {
       kind: 'lm',
+      options: {
+        timeout: 10,
+      },
     },
   } = options;
 
