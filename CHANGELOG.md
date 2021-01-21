@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.6.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.5.0...v6.6.0) (2021-01-21)
+
+
+### Features
+
+* update ml-spectra-fitting to 0.13.0 ([2b4f119](https://www.github.com/mljs/global-spectral-deconvolution/commit/2b4f119ce747208f1045b0a6ddc93b9b9bfbbe15))
+
 ## [6.5.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.4.0...v6.5.0) (2021-01-13)
 
 
