@@ -37,7 +37,9 @@ describe('Check the peak picking of a simulated mass spectrum', () => {
     );
     result = optimizePeaks({ x, y }, result, {
       factorWidth: 4,
-      functionName: 'gaussian',
+      shape: {
+        kind: 'gaussian',
+      },
     });
     expect(result[0].x).toBeCloseTo(69.938, 1);
     expect(result[0].y).toBeCloseTo(max, 2);
