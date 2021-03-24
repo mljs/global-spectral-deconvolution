@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.6.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.6.0...v6.6.1) (2021-03-24)
+
+
+### Bug Fixes
+
+* update dependencies ([bf6ee4b](https://www.github.com/mljs/global-spectral-deconvolution/commit/bf6ee4b246e4d964945b034b6b430aa576caaded))
+
 ## [6.6.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.5.0...v6.6.0) (2021-01-21)
 
 
@@ -147,6 +154,3 @@
 ### BREAKING CHANGES
 
 * gsd: rename i for index
-
-
-
