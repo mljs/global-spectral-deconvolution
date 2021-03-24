@@ -1,14 +1,15 @@
 # global-spectral-deconvolution
 
 [![NPM version][npm-image]][npm-url]
-[![David deps][david-image]][david-url]
+[![build status][ci-image]][ci-url]
+[![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 
 Global Spectra Deconvolution + Peak optimizer
 
 `gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
 
-The second algorithm (`optimizePeaks`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used. 
+The second algorithm (`optimizePeaks`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used.
 
 ## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
@@ -83,18 +84,17 @@ console.log(peaks); // array of peaks {x,y,width}, width = distance between infl
 
 let optimized = optimizePeaks(data, peaks);
 console.log(optimized); // array of peaks {x,y,width}, width = FWHM
-
-
-
 ```
 
 ## License
 
 [MIT](./LICENSE)
 
-[npm-image]: https://img.shields.io/npm/v/ml-gsd.svg?style=flat-square
+[npm-image]: https://img.shields.io/npm/v/ml-gsd.svg
 [npm-url]: https://npmjs.org/package/ml-gsd
-[david-image]: https://img.shields.io/david/mljs/global-spectral-deconvolution.svg?style=flat-square
-[david-url]: https://david-dm.org/mljs/global-spectral-deconvolution
-[download-image]: https://img.shields.io/npm/dm/ml-gsd.svg?style=flat-square
+[codecov-image]: https://img.shields.io/codecov/c/github/mljs/global-spectral-deconvolution.svg
+[codecov-url]: https://codecov.io/gh/mljs/global-spectral-deconvolution
+[ci-image]: https://github.com/mljs/global-spectral-deconvolution/workflows/Node.js%20CI/badge.svg?branch=master
+[ci-url]: https://github.com/mljs/global-spectral-deconvolution/actions?query=workflow%3A%22Node.js+CI%22
+[download-image]: https://img.shields.io/npm/dm/ml-gsd.svg
 [download-url]: https://npmjs.org/package/ml-gsd
