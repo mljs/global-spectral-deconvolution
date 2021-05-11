@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>ml-gsd 6.6.1 | Documentation</title>
+  <title>ml-gsd 6.6.2 | Documentation</title>
   <meta name='description' content='Global Spectra Deconvolution'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>ml-gsd</h3>
-          <div class='mb1'><code>6.6.1</code></div>
+          <div class='mb1'><code>6.6.2</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -97,7 +97,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/985d9aa4d539c2ccf5afd84c51b49d58037da5ac/src/post/broadenPeaks.js#L10-L38'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/034bfee80bc8b24b40304d624717dd3bc31f1b5d/src/post/broadenPeaks.js#L10-L38'>
       <span>src/post/broadenPeaks.js</span>
       </a>
     
@@ -219,7 +219,7 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/985d9aa4d539c2ccf5afd84c51b49d58037da5ac/src/post/groupPeaks.js#L7-L30'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/034bfee80bc8b24b40304d624717dd3bc31f1b5d/src/post/groupPeaks.js#L7-L30'>
       <span>src/post/groupPeaks.js</span>
       </a>
     
@@ -295,7 +295,7 @@ Because peaks may not be symmetric after we add 2 properties, from and to.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/985d9aa4d539c2ccf5afd84c51b49d58037da5ac/src/gsd.js#L28-L246'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/034bfee80bc8b24b40304d624717dd3bc31f1b5d/src/gsd.js#L28-L246'>
       <span>src/gsd.js</span>
       </a>
     
@@ -560,7 +560,6 @@ to determine the true x,y values of the peak?
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>></code>:
         
-
       
     
   
@@ -593,7 +592,7 @@ to determine the true x,y values of the peak?
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/985d9aa4d539c2ccf5afd84c51b49d58037da5ac/src/post/joinBroadPeaks.js#L15-L87'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/034bfee80bc8b24b40304d624717dd3bc31f1b5d/src/post/joinBroadPeaks.js#L15-L87'>
       <span>src/post/joinBroadPeaks.js</span>
       </a>
     
@@ -620,9 +619,7 @@ to determine the true x,y values of the peak?
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>peakList</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
-	    A list of initial parameters to be optimized. e.g. coming from a peak picking 
-[{x, y, width}]
-.
+	    A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
 
           </div>
           
@@ -772,7 +769,7 @@ to determine the true x,y values of the peak?
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/985d9aa4d539c2ccf5afd84c51b49d58037da5ac/src/post/optimizePeaks.js#L23-L69'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/mljs/global-spectral-deconvolution/blob/034bfee80bc8b24b40304d624717dd3bc31f1b5d/src/post/optimizePeaks.js#L23-L69'>
       <span>src/post/optimizePeaks.js</span>
       </a>
     
@@ -809,9 +806,7 @@ and the ratio of gaussian contribution (mu) if it's required. It supports three 
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>peakList</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
-	    A list of initial parameters to be optimized. e.g. coming from a peak picking 
-[{x, y, width}]
-.
+	    A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
 
           </div>
           
@@ -821,7 +816,9 @@ and the ratio of gaussian contribution (mu) if it's required. It supports three 
           <div>
             <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
             = <code>{}</code>)</code>
-	    -
+	    <ul>
+<li></li>
+</ul>
 
           </div>
           
