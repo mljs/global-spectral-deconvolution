@@ -7,17 +7,22 @@ expect.extend({ toMatchCloseTo });
 describe('Simple test cases', () => {
   let x = [];
   let y = [];
+  let negY = [];
   for (let i = 0; i < 10; i++) {
     x.push(x.length);
     y.push(0);
+    negY.push(0);
   }
   for (let i = 0; i <= 10; i++) {
     x.push(x.length);
-    y.push(i > 5 ? 10 - i : i);
+    let newY = i > 5 ? 10 - i : i;
+    y.push(newY);
+    negY.push(-newY);
   }
   for (let i = 0; i < 10; i++) {
     x.push(x.length);
     y.push(0);
+    negY.push(0);
   }
 
   it('gsd not realtop', () => {
@@ -34,6 +39,24 @@ describe('Simple test cases', () => {
     );
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
+    expect(peaks[0].base).toBeCloseTo(1.1956, 3);
+    expect(peaks[0].x).toStrictEqual(15);
+  });
+
+  it('gsd negative peak', () => {
+    let peaks = gsd(
+      { x, y: negY },
+      {
+        realTopDetection: false,
+        maxCriteria: false,
+        smoothY: true,
+        sgOptions: {
+          windowSize: 5,
+          polynomial: 3,
+        },
+      },
+    );
+    expect(peaks[0].y).toBeCloseTo(-4.657, 3);
     expect(peaks[0].base).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toStrictEqual(15);
   });
