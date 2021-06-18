@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.6.3](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.6.2...v6.6.3) (2021-06-18)
+
+
+### Bug Fixes
+
+* maxCriteria=false gives more consistent results ([2652ec2](https://www.github.com/mljs/global-spectral-deconvolution/commit/2652ec265193207ff128348c8d0207d74e1b0c0c))
+
 ### [6.6.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.6.1...v6.6.2) (2021-05-11)
 
 
