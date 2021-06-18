@@ -47,21 +47,18 @@ export function gsd(data, options = {}) {
   const y = yIn.slice();
   let equalSpaced = isEqualSpaced(x);
 
+  if (maxCriteria === false) {
+    for (let i = 0; i < y.length; i++) {
+      y[i] *= -1;
+    }
+  }
+
   if (noiseLevel === undefined) {
     noiseLevel = equalSpaced ? getNoiseLevel(y) : 0;
   }
-
-  const yCorrection = { m: 1, b: noiseLevel };
-
-  if (!maxCriteria) {
-    yCorrection.m = -1;
-    yCorrection.b *= -1;
-  }
-
   for (let i = 0; i < y.length; i++) {
-    y[i] = yCorrection.m * y[i] - yCorrection.b;
+    y[i] -= noiseLevel;
   }
-
   for (let i = 0; i < y.length; i++) {
     if (y[i] < 0) {
       y[i] = 0;
@@ -210,7 +207,9 @@ export function gsd(data, options = {}) {
         signals.push({
           index: minddY[j],
           x: frequency,
-          y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
+          y: maxCriteria
+            ? yData[minddY[j]] + noiseLevel
+            : -yData[minddY[j]] - noiseLevel,
           width: widthProcessor(width),
           soft: broadMask[j],
         });
