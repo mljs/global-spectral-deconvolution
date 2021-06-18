@@ -1,9 +1,9 @@
-import { generateSpectrum } from 'spectrum-generator';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
-
-expect.extend({ toMatchCloseTo });
+import { generateSpectrum } from 'spectrum-generator';
 
 import { optimizePeaks } from '../optimizePeaks';
+
+expect.extend({ toMatchCloseTo });
 
 describe('optimizePeaks', () => {
   it('Should throw because execution time is over timeout', () => {
