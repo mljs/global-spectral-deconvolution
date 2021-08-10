@@ -1,4 +1,4 @@
-import { getShapeGenerator } from 'ml-peak-shape-generator';
+import { getShape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 
 /**
@@ -172,7 +172,7 @@ export function gsd(data, options = {}) {
   }
 
   let widthProcessor = shape.kind
-    ? getShapeGenerator(shape.kind, shape.options).widthToFWHM
+    ? getShape1D(shape.kind, shape.options).widthToFWHM
     : (x) => x;
 
   let signals = [];

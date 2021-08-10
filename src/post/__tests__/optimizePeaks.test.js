@@ -10,11 +10,13 @@ describe('optimizePeaks', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
     const data = generateSpectrum(peaks, {
-      from: -0.5,
-      to: 0.5,
-      nbPoints: 101,
-      shape: {
-        kind: 'gaussian',
+      generator: {
+        from: -0.5,
+        to: 0.5,
+        nbPoints: 101,
+        shape: {
+          kind: 'gaussian',
+        },
       },
     });
 

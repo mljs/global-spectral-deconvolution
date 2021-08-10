@@ -68,11 +68,11 @@
     "nodemon": "^2.0.7",
     "prettier": "^2.3.0",
     "rollup": "^2.50.1",
-    "spectrum-generator": "^4.7.1",
+    "spectrum-generator": "^5.0.0",
     "xy-parser": "^3.1.1"
   },
   "dependencies": {
-    "ml-peak-shape-generator": "^1.0.0",
+    "ml-peak-shape-generator": "^2.0.1",
     "ml-savitzky-golay-generalized": "2.0.3",
     "ml-spectra-fitting": "^1.0.0",
     "ml-spectra-processing": "^6.6.0"

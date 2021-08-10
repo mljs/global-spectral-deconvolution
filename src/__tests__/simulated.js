@@ -10,10 +10,14 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     ];
 
     const data = generateSpectrum(peaks, {
-      from: -1,
-      to: 1,
-      nbPoints: 1001,
-      factor: 6,
+      generator: {
+        from: -1,
+        to: 1,
+        nbPoints: 1001,
+      },
+      peaks: {
+        factor: 6,
+      },
     });
 
     let peakList = gsd(data, {
@@ -49,7 +53,9 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.5, y: 1, width: 0.1 },
     ];
 
-    const data = generateSpectrum(peaks, { from: -1, to: 1, nbPoints: 10001 });
+    const data = generateSpectrum(peaks, {
+      generator: { from: -1, to: 1, nbPoints: 10001 },
+    });
 
     let peakList = gsd(data, {
       minMaxRatio: 0,
@@ -84,7 +90,9 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.5, y: 1, width: 0.1 },
     ];
 
-    const data = generateSpectrum(peaks, { from: -1, to: 1, nbPoints: 10001 });
+    const data = generateSpectrum(peaks, {
+      generator: { from: -1, to: 1, nbPoints: 10001 },
+    });
 
     let peakList = gsd(data, {
       minMaxRatio: 0,
@@ -116,11 +124,13 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
     const data = generateSpectrum(peaks, {
-      from: -0.5,
-      to: 0.5,
-      nbPoints: 10001,
-      shape: {
-        kind: 'gaussian',
+      generator: {
+        from: -0.5,
+        to: 0.5,
+        nbPoints: 10001,
+        shape: {
+          kind: 'gaussian',
+        },
       },
     });
 
