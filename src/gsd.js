@@ -131,7 +131,6 @@ export function gsd(data, options = {}) {
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
     // filter based on derivativeThreshold
-    // console.log('pasa', y[i], dY[i], ddY[i]);
     if (Math.abs(dY[i]) > derivativeThreshold) {
       // Minimum in first derivative
       if (
@@ -237,7 +236,7 @@ export function gsd(data, options = {}) {
     signals[j].base = noiseLevel;
   }
 
-  signals.sort(function (a, b) {
+  signals.sort((a, b) => {
     return a.x - b.x;
   });
 
