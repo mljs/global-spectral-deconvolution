@@ -34,19 +34,29 @@ interface GsdOptions {
    * @default {kind:'gaussian'}
    */
   shape?: { kind: string };
-  // /**
-  //  * Threshold to determine if some peak is candidate to clustering into range.
-  //  * @default 0.25
-  //  */
-  // broadWidth: number;
   /**
    * Options for savitz Golay
    */
   sgOptions?: { windowSize: number; polynomial: number };
   /**
    * filter based on intensity of the first derive.
-   * @default -1;
+   * @default -1
    */
+  /**
+   * Peaks are local maximum(true) or minimum(false)
+   * @default true
+   */
+  maxCriteria?: boolean;
+  /**
+   * Filters based on the amplitude of the first derivative
+   * @default -1
+   */
+  derivativeThreshold: number;
+  /**
+   * Factor to multiply the calculated height (usually 2)
+   * @default 0
+   */
+  heightFactor: number;
 }
 
 export interface Peak {
@@ -92,7 +102,7 @@ export interface OptimizationOptions {
    * Time limit to stop the optimization in seconds.
    * @default 10
    */
-  timeout?: number
+  timeout?: number;
 }
 
 export interface OptimizedPeak {
