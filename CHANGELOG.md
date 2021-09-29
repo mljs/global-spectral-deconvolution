@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.8.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.1...v6.8.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* make optional option for GSD ([d3657de](https://www.github.com/mljs/global-spectral-deconvolution/commit/d3657de8fb407043890e899494a221b862c30973))
+
 ### [6.8.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.0...v6.8.1) (2021-09-29)
 
 
