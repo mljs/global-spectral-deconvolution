@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.8.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.0...v6.8.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* add types in files ([28f9dcb](https://www.github.com/mljs/global-spectral-deconvolution/commit/28f9dcb1425c8d7b9940c333c6cf123834a8ab7e))
+
 ## [6.8.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.7.0...v6.8.0) (2021-09-23)
 
 
