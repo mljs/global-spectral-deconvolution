@@ -51,12 +51,12 @@ interface GsdOptions {
    * Filters based on the amplitude of the first derivative
    * @default -1
    */
-  derivativeThreshold: number;
+  derivativeThreshold?: number;
   /**
    * Factor to multiply the calculated height (usually 2)
    * @default 0
    */
-  heightFactor: number;
+  heightFactor?: number;
 }
 
 export interface Peak {
