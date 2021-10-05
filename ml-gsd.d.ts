@@ -1,26 +1,24 @@
-export interface XYNumberArray {
-  x: Array<number> | Float64Array;
-  y: Array<number> | Float64Array;
-}
+import type {DataXY} from 'cheminfo-types';
+export {DataXY} from 'cheminfo-types';
 
-interface GsdOptions {
+export interface GSDOptions {
   /**
    * Noise threshold in spectrum y units. Default is three/thresholdFactor times the absolute median of data.y.
    * @default `median(data.y) * (options.thresholdFactor || 3)`
    */
   noiseLevel?: number;
   /**
-   * Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
+   * Threshold to determine if a given GSDPeak should be considered as a noise, bases on its relative height compared to the highest GSDPeak.
    * @default 0.01
    */
   minMaxRatio?: number;
   /**
-   * If broadRatio is higher than 0, then all the peaks which second derivative smaller than broadRatio * maxAbsSecondDerivative will be marked with the soft mask equal to true.
+   * If broadRatio is higher than 0, then all the GSDPeaks which second derivative smaller than broadRatio * maxAbsSecondDerivative will be marked with the soft mask equal to true.
    * @default 0.00025
    */
   broadRatio?: number;
   /**
-   * Select the peak intensities from a smoothed version of the independent variables.
+   * Select the GSDPeak intensities from a smoothed version of the independent variables.
    * @default true
    */
   smoothY?: boolean;
@@ -43,7 +41,7 @@ interface GsdOptions {
    * @default -1
    */
   /**
-   * Peaks are local maximum(true) or minimum(false)
+   * GSDPeaks are local maximum(true) or minimum(false)
    * @default true
    */
   maxCriteria?: boolean;
@@ -59,25 +57,32 @@ interface GsdOptions {
   heightFactor?: number;
 }
 
-export interface Peak {
+export interface GSDPeak {
+  index: number;
   x: number;
   y: number;
   width: number;
-  left?: number;
-  right?: number;
+  left?: {
+    x?:number,
+    index?:number,
+  };
+  right?: {
+    x?:number,
+    index?:number,
+  };
   base?: number;
   soft?: boolean;
   kind?: string;
 }
 
-export interface OptimizePeaksOptions {
+export interface OptimizeGSDPeaksOptions {
   /**
-   * factor to determine the width at the moment to group the peaks in signals in 'GSD.optimizePeaks' function.
+   * factor to determine the width at the moment to group the GSDPeaks in signals in 'GSD.optimizeGSDPeaks' function.
    * @default 1
    */
   factorWidth?: number;
   /**
-   * times of width to use to optimize peaks
+   * times of width to use to optimize GSDPeaks
    * @default 2
    */
   factorLimits?: number;
@@ -105,27 +110,27 @@ export interface OptimizationOptions {
   timeout?: number;
 }
 
-export interface OptimizedPeak {
+export interface OptimizedGSDPeak {
   x: number;
   y: number;
   width: number;
   mu?: number;
 }
 
-export function gsd(data: XYNumberArray, options?: GsdOptions): Peak[];
+export function gsd(data: DataXY, options?: GSDOptions): GSDPeak[];
 
-export function optimizePeaks(
-  data: XYNumberArray,
-  peakList: Peak[],
-  options?: OptimizePeaksOptions,
-): OptimizedPeak[];
+export function optimizeGSDPeaks(
+  data: DataXY,
+  PeakList: GSDPeak[],
+  options?: OptimizeGSDPeaksOptions,
+): OptimizedGSDPeak[];
 
-export function joinBroadPeaks(
-  peakList: Peak[],
-  options?: JoinBroadPeaksOptions,
-): Peak[];
+export function joinBroadGSDPeaks(
+  PeakList: GSDPeak[],
+  options?: JoinBroadGSDPeaksOptions,
+): GSDPeak[];
 
-export interface JoinBroadPeaksOptions {
+export interface JoinBroadGSDPeaksOptions {
   /**
    * @default 0.25
    */
@@ -140,10 +145,10 @@ export interface JoinBroadPeaksOptions {
   optimization: OptimizationOptions;
 }
 
-export function groupPeaks(peakList: Peak[], factor?: number): Peak[][];
+export function groupGSDPeaks(PeakList: GSDPeak[], factor?: number): GSDPeak[][];
 
-export function broadenPeaks(
-  peakList: Peak[],
+export function broadenGSDPeaks(
+  PeakList: GSDPeak[],
   options?: {
     /**
      * @default 2
@@ -154,4 +159,4 @@ export function broadenPeaks(
      */
     overlap: boolean;
   },
-): Peak[];
+): GSDPeak[];
