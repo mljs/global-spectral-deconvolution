@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.9.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.2...v6.9.0) (2021-10-05)
+
+
+### Features
+
+* fix and improve type script definition ([e3148cd](https://www.github.com/mljs/global-spectral-deconvolution/commit/e3148cdc7989fcb17c11c0fceb6eda1710f2e497))
+* improve typescript definition ([3c772f7](https://www.github.com/mljs/global-spectral-deconvolution/commit/3c772f76dc3476e72f2f297a746fb314a0b5e609))
+
+
+### Bug Fixes
+
+* update dependencies and fix build ([48b4f41](https://www.github.com/mljs/global-spectral-deconvolution/commit/48b4f41e41db29fb21e54a86a1aeb02aa930aea0))
+
 ### [6.8.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.1...v6.8.2) (2021-09-29)
 
 
