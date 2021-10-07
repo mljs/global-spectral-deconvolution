@@ -1,5 +1,7 @@
-import type {DataXY} from 'cheminfo-types';
-export {DataXY} from 'cheminfo-types';
+export interface XYNumberArray {
+  x: Array<number> | Float64Array;
+  y: Array<number> | Float64Array;
+}
 
 export interface GSDOptions {
   /**
@@ -8,17 +10,17 @@ export interface GSDOptions {
    */
   noiseLevel?: number;
   /**
-   * Threshold to determine if a given GSDPeak should be considered as a noise, bases on its relative height compared to the highest GSDPeak.
+   * Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
    * @default 0.01
    */
   minMaxRatio?: number;
   /**
-   * If broadRatio is higher than 0, then all the GSDPeaks which second derivative smaller than broadRatio * maxAbsSecondDerivative will be marked with the soft mask equal to true.
+   * If broadRatio is higher than 0, then all the peaks which second derivative smaller than broadRatio * maxAbsSecondDerivative will be marked with the soft mask equal to true.
    * @default 0.00025
    */
   broadRatio?: number;
   /**
-   * Select the GSDPeak intensities from a smoothed version of the independent variables.
+   * Select the peak intensities from a smoothed version of the independent variables.
    * @default true
    */
   smoothY?: boolean;
@@ -41,7 +43,7 @@ export interface GSDOptions {
    * @default -1
    */
   /**
-   * GSDPeaks are local maximum(true) or minimum(false)
+   * Peaks are local maximum(true) or minimum(false)
    * @default true
    */
   maxCriteria?: boolean;
@@ -58,31 +60,31 @@ export interface GSDOptions {
 }
 
 export interface GSDPeak {
-  index: number;
+  ndex: number;
   x: number;
   y: number;
   width: number;
   left?: {
-    x?:number,
-    index?:number,
+    x?: number;
+    index?: number;
   };
   right?: {
-    x?:number,
-    index?:number,
+    x?: number;
+    index?: number;
   };
   base?: number;
   soft?: boolean;
   kind?: string;
 }
 
-export interface OptimizeGSDPeaksOptions {
+export interface OptimizePeaksOptions {
   /**
-   * factor to determine the width at the moment to group the GSDPeaks in signals in 'GSD.optimizeGSDPeaks' function.
+   * factor to determine the width at the moment to group the peaks in signals in 'GSD.optimizePeaks' function.
    * @default 1
    */
   factorWidth?: number;
   /**
-   * times of width to use to optimize GSDPeaks
+   * times of width to use to optimize peaks
    * @default 2
    */
   factorLimits?: number;
@@ -110,27 +112,27 @@ export interface OptimizationOptions {
   timeout?: number;
 }
 
-export interface OptimizedGSDPeak {
+export interface OptimizedPeak {
   x: number;
   y: number;
   width: number;
   mu?: number;
 }
 
-export function gsd(data: DataXY, options?: GSDOptions): GSDPeak[];
+export function gsd(data: XYNumberArray, options?: GSDOptions): GSDPeak[];
 
-export function optimizeGSDPeaks(
-  data: DataXY,
-  PeakList: GSDPeak[],
-  options?: OptimizeGSDPeaksOptions,
-): OptimizedGSDPeak[];
+export function optimizePeaks(
+  data: XYNumberArray,
+  peakList: GSDPeak[],
+  options?: OptimizePeaksOptions,
+): OptimizedPeak[];
 
-export function joinBroadGSDPeaks(
-  PeakList: GSDPeak[],
-  options?: JoinBroadGSDPeaksOptions,
+export function joinBroadPeaks(
+  peakList: GSDPeak[],
+  options?: JoinBroadPeaksOptions,
 ): GSDPeak[];
 
-export interface JoinBroadGSDPeaksOptions {
+export interface JoinBroadPeaksOptions {
   /**
    * @default 0.25
    */
@@ -145,10 +147,10 @@ export interface JoinBroadGSDPeaksOptions {
   optimization: OptimizationOptions;
 }
 
-export function groupGSDPeaks(PeakList: GSDPeak[], factor?: number): GSDPeak[][];
+export function groupPeaks(peakList: GSDPeak[], factor?: number): GSDPeak[][];
 
-export function broadenGSDPeaks(
-  PeakList: GSDPeak[],
+export function broadenPeaks(
+  peakList: GSDPeak[],
   options?: {
     /**
      * @default 2
