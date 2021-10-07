@@ -60,7 +60,7 @@ export interface GSDOptions {
 }
 
 export interface GSDPeak {
-  ndex: number;
+  index: number;
   x: number;
   y: number;
   width: number;
