@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.9.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.0...v6.9.1) (2021-10-07)
+
+
+### Bug Fixes
+
+* wrong search replace yield bad typescript definition ([fcfc3c6](https://www.github.com/mljs/global-spectral-deconvolution/commit/fcfc3c69b7f31058dae73005dca6ba6f672bdcff))
+
 ## [6.9.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.8.2...v6.9.0) (2021-10-05)
 
 
