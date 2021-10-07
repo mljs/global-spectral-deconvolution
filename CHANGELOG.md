@@ -1,5 +1,12 @@
 # Changelog
 
+### [6.9.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.1...v6.9.2) (2021-10-07)
+
+
+### Bug Fixes
+
+* GSDPeak index rather than ndex ([da4dfd3](https://www.github.com/mljs/global-spectral-deconvolution/commit/da4dfd32192d8aca72501a252d43ecbaf0a61f14))
+
 ### [6.9.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.0...v6.9.1) (2021-10-07)
 
 
