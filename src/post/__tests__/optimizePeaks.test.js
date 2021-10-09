@@ -20,13 +20,16 @@ describe('optimizePeaks', () => {
       },
     });
 
-    let result = optimizePeaks(data, [{ x: 0.01, y: 0.9, width: 0.11 }]);
+    let result = optimizePeaks(data, [
+      { x: 0.01, y: 0.9, shape: { width: 0.11 } },
+    ]);
     expect(result).toMatchCloseTo([
       {
         x: -3.419674049814014e-8,
         y: 0.999994064595118,
-        width: 0.12000070163648587,
-        group: 0,
+        shape: {
+          width: 0.12000070163648587,
+        },
       },
     ]);
 
@@ -39,7 +42,11 @@ describe('optimizePeaks', () => {
       },
     };
     expect(() =>
-      optimizePeaks(data, [{ x: 0.1, y: 0.9, width: 0.11 }], options),
+      optimizePeaks(
+        data,
+        [{ x: 0.1, y: 0.9, shape: { width: 0.11 } }],
+        options,
+      ),
     ).toThrow('The execution time is over to 0 seconds');
   });
 });

@@ -1,4 +1,5 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { getShape1D } from 'ml-peak-shape-generator';
 
 import { gsd } from '..';
 
@@ -37,16 +38,16 @@ describe('Simple shifted baseline test cases', () => {
         },
       },
     );
+    let widthToFWHM = getShape1D('gaussian').widthToFWHM;
     expect(peaks).toHaveLength(1);
     expect(peaks[0]).toMatchCloseTo({
-      index: 15,
       x: 15,
       y: 4.657142857142857,
-      width: 2,
-      soft: false,
-      left: { x: 14, index: 14 },
-      right: { x: 16, index: 16 },
-      base: 0.6695521174585716,
+      shape: {
+        width: widthToFWHM(2),
+        soft: false,
+        noiseLevel: 0.6695521174585716,
+      },
     });
   });
 
@@ -63,16 +64,16 @@ describe('Simple shifted baseline test cases', () => {
         },
       },
     );
+    let widthToFWHM = getShape1D('gaussian').widthToFWHM;
     expect(peaks).toHaveLength(1);
     expect(peaks[0]).toMatchCloseTo({
-      index: 15,
       x: 15,
       y: -4.657142857142857,
-      width: 2,
-      soft: false,
-      left: { x: 14, index: 14 },
-      right: { x: 16, index: 16 },
-      base: 0.6695521174585716,
+      shape: {
+        width: widthToFWHM(2),
+        soft: false,
+        noiseLevel: 0.6695521174585716,
+      },
     });
   });
 });
