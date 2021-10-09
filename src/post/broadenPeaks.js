@@ -10,29 +10,29 @@
 export function broadenPeaks(peakList, options = {}) {
   const { factor = 2, overlap = false } = options;
 
-  for (let peak of peakList) {
-    if (!peak.right || !peak.left) {
-      peak.from = peak.x - (peak.width / 2) * factor;
-      peak.to = peak.x + (peak.width / 2) * factor;
-    } else {
-      peak.from = peak.x - (peak.x - peak.left.x) * factor;
-      peak.to = peak.x + (peak.right.x - peak.x) * factor;
-    }
+  const peaks = JSON.parse(JSON.stringify(peakList));
+
+  for (let peak of peaks) {
+    peak.from = peak.x - (peak.shape.width / 2) * factor;
+    peak.to = peak.x + (peak.shape.width / 2) * factor;
   }
 
   if (!overlap) {
-    for (let i = 0; i < peakList.length - 1; i++) {
-      let peak = peakList[i];
-      let nextPeak = peakList[i + 1];
+    for (let i = 0; i < peaks.length - 1; i++) {
+      let peak = peaks[i];
+      let nextPeak = peaks[i + 1];
       if (peak.to > nextPeak.from) {
         peak.to = nextPeak.from = (peak.to + nextPeak.from) / 2;
       }
     }
   }
 
-  for (let peak of peakList) {
-    peak.width = peak.to - peak.from;
+  for (let peak of peaks) {
+    peak.shape.width = peak.to - peak.from;
   }
 
-  return peakList;
+  return peaks.map((peak) => {
+    const { x, y, shape } = peak;
+    return { x, y, shape };
+  });
 }
