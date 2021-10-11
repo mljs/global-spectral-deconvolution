@@ -20,6 +20,8 @@
     "eslint-fix": "npm run eslint -- --fix",
     "compile": "rollup -c",
     "prepack": "npm run compile",
+    "prettier": "prettier --check src",
+    "prettier-write": "prettier --write src",
     "test": "npm run test-coverage && npm run eslint",
     "test-only": "jest",
     "test-coverage": "jest --coverage"
@@ -77,7 +79,7 @@
     "cheminfo-types": "^0.5.0",
     "ml-peak-shape-generator": "^2.0.2",
     "ml-savitzky-golay-generalized": "2.0.3",
-    "ml-spectra-fitting": "^1.0.0",
+    "ml-spectra-fitting": "^2.0.0",
     "ml-spectra-processing": "^6.8.0"
   }
 }
