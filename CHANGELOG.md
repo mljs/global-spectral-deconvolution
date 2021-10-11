@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.2...v7.0.0) (2021-10-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* homogenize and generalize output (#63)
+
+### Features
+
+* homogenize and generalize output ([#63](https://www.github.com/mljs/global-spectral-deconvolution/issues/63)) ([2b3a403](https://www.github.com/mljs/global-spectral-deconvolution/commit/2b3a403747a8d83effb5bef8053863382d608546))
+
 ### [6.9.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.1...v6.9.2) (2021-10-07)
 
 
