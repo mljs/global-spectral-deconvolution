@@ -1,4 +1,5 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { getShape1D } from 'ml-peak-shape-generator';
 
 import { gsd } from '..';
 
@@ -25,6 +26,8 @@ describe('Simple test cases', () => {
     negY.push(0);
   }
 
+  let widthToFWHM = getShape1D('gaussian').widthToFWHM;
+
   it('gsd not realtop', () => {
     let peaks = gsd(
       { x, y },
@@ -39,8 +42,8 @@ describe('Simple test cases', () => {
     );
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
-    expect(peaks[0].base).toBeCloseTo(1.1956, 3);
-    expect(peaks[0].x).toStrictEqual(15);
+    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
+    expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
   it('gsd negative peak', () => {
@@ -57,8 +60,8 @@ describe('Simple test cases', () => {
       },
     );
     expect(peaks[0].y).toBeCloseTo(-4.657, 3);
-    expect(peaks[0].base).toBeCloseTo(1.1956, 3);
-    expect(peaks[0].x).toStrictEqual(15);
+    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
+    expect(peaks[0].x).toBeCloseTo(15,2);
   });
 
   it('gsd not realtop asymetric', () => {
@@ -79,18 +82,11 @@ describe('Simple test cases', () => {
     expect(peaks).toMatchCloseTo(
       [
         {
-          base: 1.2434539324230613,
-          index: 15,
-          left: {
-            index: 13,
-            x: 13,
+          shape: {
+            noiseLevel: 1.2434539324230613,
+            soft: false,
+            width: widthToFWHM(3),
           },
-          right: {
-            index: 16,
-            x: 16,
-          },
-          soft: false,
-          width: 3,
           x: 15,
           y: 5,
         },
@@ -116,18 +112,7 @@ describe('Simple test cases', () => {
     expect(peaks).toMatchCloseTo(
       [
         {
-          base: 1.2434539324230613,
-          index: 15,
-          left: {
-            index: 13,
-            x: 13,
-          },
-          right: {
-            index: 16,
-            x: 16,
-          },
-          soft: false,
-          width: 3,
+          shape: { noiseLevel: 1.2434539324230613, soft: false, width: widthToFWHM(3) },
           x: 14.5,
           y: 4.006546067576939,
         },

@@ -2,7 +2,7 @@ import { optimize } from 'ml-spectra-fitting';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
- * @param {Array} peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ * @param {Array} peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  * @param {object} [options = {}] - options
  * @param {number} [options.width=0.25] - width limit to join peaks.
  * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
@@ -21,13 +21,13 @@ export function joinBroadPeaks(peakList, options = {}) {
   let broadLines = [];
   // Optimize the possible broad lines
   let max = 0;
-
   let maxI = 0;
-
   let count = 1;
-  for (let i = peakList.length - 1; i >= 0; i--) {
-    if (peakList[i].soft) {
-      broadLines.push(peakList.splice(i, 1)[0]);
+
+  const peaks = JSON.parse(JSON.stringify(peakList));
+  for (let i = peaks.length - 1; i >= 0; i--) {
+    if (peaks[i].shape.soft) {
+      broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
   // Push a feke peak
@@ -53,9 +53,11 @@ export function joinBroadPeaks(peakList, options = {}) {
             {
               x: broadLines[maxI].x,
               y: max,
-              width: Math.abs(
-                candidates.x[0] - candidates.x[candidates.x.length - 1],
-              ),
+              shape: {
+                width: Math.abs(
+                  candidates.x[0] - candidates.x[candidates.x.length - 1],
+                ),
+              },
             },
           ],
           { shape, optimization },
@@ -64,12 +66,12 @@ export function joinBroadPeaks(peakList, options = {}) {
         peak[0].index = Math.floor(
           indexes.reduce((a, b) => a + b, 0) / indexes.length,
         );
-        peak[0].soft = false;
-        peakList.push(peak[0]);
+        peak[0].shape.soft = false;
+        peaks.push(peak[0]);
       } else {
         // Put back the candidates to the signals list
         indexes.forEach((index) => {
-          peakList.push(broadLines[index]);
+          peaks.push(broadLines[index]);
         });
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
@@ -79,9 +81,9 @@ export function joinBroadPeaks(peakList, options = {}) {
       count = 1;
     }
   }
-  peakList.sort((a, b) => {
+  peaks.sort((a, b) => {
     return a.x - b.x;
   });
 
-  return peakList;
+  return peaks;
 }

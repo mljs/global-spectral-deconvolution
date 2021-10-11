@@ -23,7 +23,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
       },
     );
 
-    joinBroadPeaks(pp, { width: 0.25 });
+    pp = joinBroadPeaks(pp, { width: 0.25 });
 
     expect(pp).toHaveLength(91);
   });

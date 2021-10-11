@@ -9,7 +9,6 @@ import SG from 'ml-savitzky-golay-generalized';
  * @param {object} [options={}] - Options object
  * @param {object} [options.shape={}] - Object that specified the kind of shape to calculate the FWHM instead of width between inflection points. see https://mljs.github.io/peak-shape-generator/#inflectionpointswidthtofwhm
  * @param {object} [options.shape.kind='gaussian']
- * @param {object} [options.shape.options={}]
  * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
  * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
  * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
@@ -32,7 +31,7 @@ export function gsd(data, options = {}) {
       windowSize: 9,
       polynomial: 3,
     },
-    shape = {},
+    shape = { kind: 'gaussian' },
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -170,9 +169,7 @@ export function gsd(data, options = {}) {
     }
   }
 
-  let widthProcessor = shape.kind
-    ? getShape1D(shape.kind, shape.options).widthToFWHM
-    : (x) => x;
+  let widthProcessor = getShape1D(shape.kind, shape.options).widthToFWHM;
 
   let signals = [];
   let lastK = -1;
@@ -209,17 +206,17 @@ export function gsd(data, options = {}) {
           y: maxCriteria
             ? yData[minddY[j]] + noiseLevel
             : -yData[minddY[j]] - noiseLevel,
-          width: widthProcessor(width),
-          soft: broadMask[j],
+          shape: {
+            kind: shape.kind,
+            width: widthProcessor(width),
+            soft: broadMask[j],
+          },
         });
-
-        signals[signals.length - 1].left = intervalL[possible];
-        signals[signals.length - 1].right = intervalR[possible];
 
         if (heightFactor) {
           let yLeft = yData[intervalL[possible].index];
           let yRight = yData[intervalR[possible].index];
-          signals[signals.length - 1].height =
+          signals[signals.length - 1].shape.height =
             heightFactor *
             (signals[signals.length - 1].y - (yLeft + yRight) / 2);
         }
@@ -233,7 +230,7 @@ export function gsd(data, options = {}) {
 
   // Correct the values to fit the original spectra data
   for (let j = 0; j < signals.length; j++) {
-    signals[j].base = noiseLevel;
+    signals[j].shape.noiseLevel = noiseLevel;
   }
 
   signals.sort((a, b) => {
