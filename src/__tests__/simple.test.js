@@ -43,7 +43,7 @@ describe('Simple test cases', () => {
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
     expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
-    expect(peaks[0].x).toStrictEqual(15);
+    expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
   it('gsd negative peak', () => {
@@ -61,7 +61,7 @@ describe('Simple test cases', () => {
     );
     expect(peaks[0].y).toBeCloseTo(-4.657, 3);
     expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
-    expect(peaks[0].x).toStrictEqual(15);
+    expect(peaks[0].x).toBeCloseTo(15,2);
   });
 
   it('gsd not realtop asymetric', () => {
