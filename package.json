@@ -4,9 +4,7 @@
   "description": "Global Spectra Deconvolution",
   "main": "lib/index.js",
   "module": "src/index.js",
-  "types": "ml-gsd.d.ts",
   "files": [
-    "ml-gsd.d.ts",
     "lib",
     "src"
   ],
