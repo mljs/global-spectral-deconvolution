@@ -1,5 +1,12 @@
 # Changelog
 
+### [7.0.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v7.0.0...v7.0.1) (2021-10-11)
+
+
+### Bug Fixes
+
+* remove type definition file ([efea5e2](https://www.github.com/mljs/global-spectral-deconvolution/commit/efea5e2443a7fd1298a4d4ba6fa5e6ab70bbe53b))
+
 ## [7.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v6.9.2...v7.0.0) (2021-10-11)
 
 
