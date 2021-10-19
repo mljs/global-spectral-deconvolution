@@ -1,6 +1,8 @@
-import { getShape1D } from 'ml-peak-shape-generator';
-import SG from 'ml-savitzky-golay-generalized';
+import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+import { Gaussian } from 'ml-peak-shape-generator/lib/shapes/1d/gaussian/Gaussian';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const SG = require('ml-savitzky-golay-generalized');
 /**
  * Global spectra deconvolution
  * @param {object} data - Object data with x and y arrays
@@ -24,14 +26,41 @@ import SG from 'ml-savitzky-golay-generalized';
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
-export function gsd(data, options = {}) {
+interface shapeType {
+  kind: ShapeKind,
+  options?: Shape1D,
+  height?: number,
+  width?: number,
+  soft?: boolean,
+  noiseLevel: number
+}
+interface optionsType {
+  noiseLevel:number,
+  sgOptions:{
+    windowSize:number,
+    polynomial:number
+  }
+  shape: shapeType,
+  smoothY: boolean,
+  heightFactor: number,
+  broadRatio: number,
+  maxCriteria: boolean,
+  minMaxRatio: number,
+  derivativeThreshold: number,
+  realTopDetection: boolean,
+}
+interface dataType {
+  x:number[],
+  y:number[]
+}
+export function gsd(data:dataType, options:optionsType) {
   let {
     noiseLevel,
     sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
-    shape = { kind: 'gaussian' },
+    shape = { kind: 'gaussian',options: Gaussian },
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -119,13 +148,16 @@ export function gsd(data, options = {}) {
       maxY = Math.abs(yData[i]);
     }
   }
-
-  let lastMax = null;
-  let lastMin = null;
-  let minddY = [];
-  let intervalL = [];
-  let intervalR = [];
-  let broadMask = [];
+  interface lastType {
+    x: number,
+    index: number
+  }
+  let lastMax: lastType | null = null;
+  let lastMin: lastType | null = null ;
+  let minddY: number[] = [];
+  let intervalL: lastType[] = [];
+  let intervalR: lastType[] = [];
+  let broadMask: boolean[] = [];
 
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
@@ -170,8 +202,13 @@ export function gsd(data, options = {}) {
   }
 
   let widthProcessor = getShape1D(shape.kind, shape.options).widthToFWHM;
-
-  let signals = [];
+  interface signalType {
+    index: number,
+    x: number,
+    y: number,
+    shape: shapeType
+  }
+  let signals: signalType[] = [];
   let lastK = -1;
   let possible, frequency, distanceJ, minDistance, gettingCloser;
   for (let j = 0; j < minddY.length; ++j) {
@@ -210,6 +247,7 @@ export function gsd(data, options = {}) {
             kind: shape.kind,
             width: widthProcessor(width),
             soft: broadMask[j],
+            noiseLevel: 0
           },
         });
 
@@ -229,9 +267,9 @@ export function gsd(data, options = {}) {
   }
 
   // Correct the values to fit the original spectra data
-  for (let j = 0; j < signals.length; j++) {
-    signals[j].shape.noiseLevel = noiseLevel;
-  }
+  signals.forEach(signal => {
+    signal.shape.noiseLevel = noiseLevel;
+  });
 
   signals.sort((a, b) => {
     return a.x - b.x;
@@ -240,7 +278,7 @@ export function gsd(data, options = {}) {
   return signals;
 }
 
-const isEqualSpaced = (x) => {
+const isEqualSpaced = (x:number[]) => {
   let tmp;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -256,7 +294,7 @@ const isEqualSpaced = (x) => {
   return (maxDx - minDx) / maxDx < 0.05;
 };
 
-const getNoiseLevel = (y) => {
+const getNoiseLevel = (y:number[]) => {
   let mean = 0;
 
   let stddev = 0;
@@ -281,11 +319,15 @@ const getNoiseLevel = (y) => {
 
   return stddev;
 };
-
-const determineRealTop = (peakList, x, y) => {
+interface peakType{
+  index: number,
+  x:number,
+  y:number
+}
+const determineRealTop = (peakList: peakType[], x:number[], y:number[]) => {
   let alpha, beta, gamma, p, currentPoint;
-  for (let j = 0; j < peakList.length; j++) {
-    currentPoint = peakList[j].index; // peakList[j][2];
+  peakList.forEach(peak => {
+    currentPoint = peak.index; // peakList[j][2];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
       y[currentPoint - 1] >= y[currentPoint - 2] &&
@@ -329,11 +371,11 @@ const determineRealTop = (peakList, x, y) => {
       p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
       // console.log(alpha, beta, gamma, `p: ${p}`);
       // console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
-      peakList[j].x =
+      peak.x =
         x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
-      peakList[j].y =
+      peak.y =
         y[currentPoint] -
         0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
     }
-  }
+  });
 };
