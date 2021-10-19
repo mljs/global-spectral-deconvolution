@@ -26,41 +26,58 @@ const SG = require('ml-savitzky-golay-generalized');
  * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
+
+interface peakType {
+  index: number;
+  x: number;
+  y: number;
+}
+interface signalType {
+  index: number;
+  x: number;
+  y: number;
+  shape: shapeType;
+}
+interface lastType {
+  x: number;
+  index: number;
+}
 interface shapeType {
-  kind: ShapeKind,
-  options?: Shape1D,
-  height?: number,
-  width?: number,
-  soft?: boolean,
-  noiseLevel: number
+  kind: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel: number;
 }
 interface optionsType {
-  noiseLevel:number,
-  sgOptions:{
-    windowSize:number,
-    polynomial:number
-  }
-  shape: shapeType,
-  smoothY: boolean,
-  heightFactor: number,
-  broadRatio: number,
-  maxCriteria: boolean,
-  minMaxRatio: number,
-  derivativeThreshold: number,
-  realTopDetection: boolean,
+  noiseLevel: number;
+  sgOptions: {
+    windowSize: number;
+    polynomial: number;
+  };
+  shape: shapeType;
+  smoothY: boolean;
+  heightFactor: number;
+  broadRatio: number;
+  maxCriteria: boolean;
+  minMaxRatio: number;
+  derivativeThreshold: number;
+  realTopDetection: boolean;
+  factor:number
 }
 interface dataType {
-  x:number[],
-  y:number[]
+  x: number[];
+  y: number[];
 }
-export function gsd(data:dataType, options:optionsType) {
+export function gsd(data: dataType, options: optionsType) {
   let {
     noiseLevel,
     sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
-    shape = { kind: 'gaussian',options: Gaussian },
+    shape = { kind: 'gaussian', options: Gaussian },
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -148,12 +165,8 @@ export function gsd(data:dataType, options:optionsType) {
       maxY = Math.abs(yData[i]);
     }
   }
-  interface lastType {
-    x: number,
-    index: number
-  }
   let lastMax: lastType | null = null;
-  let lastMin: lastType | null = null ;
+  let lastMin: lastType | null = null;
   let minddY: number[] = [];
   let intervalL: lastType[] = [];
   let intervalR: lastType[] = [];
@@ -202,12 +215,7 @@ export function gsd(data:dataType, options:optionsType) {
   }
 
   let widthProcessor = getShape1D(shape.kind, shape.options).widthToFWHM;
-  interface signalType {
-    index: number,
-    x: number,
-    y: number,
-    shape: shapeType
-  }
+
   let signals: signalType[] = [];
   let lastK = -1;
   let possible, frequency, distanceJ, minDistance, gettingCloser;
@@ -247,7 +255,7 @@ export function gsd(data:dataType, options:optionsType) {
             kind: shape.kind,
             width: widthProcessor(width),
             soft: broadMask[j],
-            noiseLevel: 0
+            noiseLevel: 0,
           },
         });
 
@@ -267,7 +275,7 @@ export function gsd(data:dataType, options:optionsType) {
   }
 
   // Correct the values to fit the original spectra data
-  signals.forEach(signal => {
+  signals.forEach((signal) => {
     signal.shape.noiseLevel = noiseLevel;
   });
 
@@ -278,7 +286,7 @@ export function gsd(data:dataType, options:optionsType) {
   return signals;
 }
 
-const isEqualSpaced = (x:number[]) => {
+const isEqualSpaced = (x: number[]) => {
   let tmp;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -294,7 +302,7 @@ const isEqualSpaced = (x:number[]) => {
   return (maxDx - minDx) / maxDx < 0.05;
 };
 
-const getNoiseLevel = (y:number[]) => {
+const getNoiseLevel = (y: number[]) => {
   let mean = 0;
 
   let stddev = 0;
@@ -319,14 +327,9 @@ const getNoiseLevel = (y:number[]) => {
 
   return stddev;
 };
-interface peakType{
-  index: number,
-  x:number,
-  y:number
-}
-const determineRealTop = (peakList: peakType[], x:number[], y:number[]) => {
+const determineRealTop = (peakList: peakType[], x: number[], y: number[]) => {
   let alpha, beta, gamma, p, currentPoint;
-  peakList.forEach(peak => {
+  peakList.forEach((peak) => {
     currentPoint = peak.index; // peakList[j][2];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
@@ -371,8 +374,7 @@ const determineRealTop = (peakList: peakType[], x:number[], y:number[]) => {
       p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
       // console.log(alpha, beta, gamma, `p: ${p}`);
       // console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
-      peak.x =
-        x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
+      peak.x = x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
       peak.y =
         y[currentPoint] -
         0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
