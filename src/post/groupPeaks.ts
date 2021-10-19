@@ -1,13 +1,30 @@
+import { Shape1D, ShapeKind } from "ml-peak-shape-generator";
+
 /**
  * Group peaks based on factor and add group property in peaks
  * @param {array} peakList
  * @param {number} factor
  */
-
-export function groupPeaks(peakList, factor = 1) {
+interface peakType {
+  index?: number;
+  x: number;
+  y: number;
+  shape: shapeType,
+  from?: number,
+  to?: number
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
+export function groupPeaks(peakList:peakType[], factor = 1) {
   if (peakList.length === 0) return [];
 
-  let peaks = JSON.parse(JSON.stringify(peakList));
+  let peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
   let previousPeak = { x: Number.NEGATIVE_INFINITY, shape: { width: 1 } };
