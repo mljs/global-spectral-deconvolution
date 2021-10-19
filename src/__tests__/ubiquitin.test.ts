@@ -1,10 +1,13 @@
 import { readFileSync } from 'fs';
 
+import { gsd } from '..';
+
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
-import { parseXY } from 'xy-parser';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { parseXY }=require('xy-parser');
 
-import { gsd } from '..';
+
 
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {

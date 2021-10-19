@@ -5,6 +5,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 let { gsd, joinBroadPeaks } = require('..');
 
 describe('Global spectra deconvolution NMR spectra', () => {

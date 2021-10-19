@@ -1,8 +1,29 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+
+
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 let { gsd, joinBroadPeaks } = require('..');
 
+interface peakType {
+  index?: number;
+  x: number;
+  y?: number;
+  shape?: shapeType,
+  from?: number,
+  to?: number
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should give 1 broad peak and around 14 other peaks', () => {
@@ -21,11 +42,11 @@ describe('Global spectra deconvolution NMR spectra', () => {
         },
       },
     );
-    const newResult = joinBroadPeaks(result, { width: 0.25, shape: { kind: 'lorentzian' } });
+    const newResult:peakType[] = joinBroadPeaks(result, { width: 0.25, shape: { kind: 'lorentzian' } });
     expect(newResult).toHaveLength(14);
     newResult.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {
-        expect(peak.shape.width).toBeCloseTo(0.39, 2);
+        expect((peak.shape as shapeType).width).toBeCloseTo(0.39, 2);
       }
     });
   });

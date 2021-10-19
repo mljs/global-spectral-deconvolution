@@ -27,7 +27,7 @@ interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width: number;
+  width?: number;
   soft?: boolean;
   noiseLevel?: number;
 }

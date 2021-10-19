@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { gsd } from '..';
 
-function lorentzian(x, x0 = 0, gamma = 1) {
+function lorentzian(x:number, x0 = 0, gamma = 1) {
   return (
     (gamma * gamma) / (Math.PI * gamma * (gamma * gamma + (x - x0) * (x - x0)))
   );

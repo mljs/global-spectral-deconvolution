@@ -1,8 +1,20 @@
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+
 import { gsd, optimizePeaks } from '..';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 let CC = require('chemcalc');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 let Stat = require('ml-stat');
 
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width?: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
   fwhm: 0.01,
@@ -12,7 +24,7 @@ let xy = spectrum.arrayXXYY;
 let x = xy[0];
 let y = xy[1];
 let max = Stat.array.max(y);
-let noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
+let noiseLevel = Stat.array.median(y.filter((a:number) => a > 0)) * 3;
 /*
 69.938 100
 71.935 63.99155
@@ -43,26 +55,26 @@ describe('Check the peak picking of a simulated mass spectrum', () => {
     });
     expect(result[0].x).toBeCloseTo(69.938, 1);
     expect(result[0].y).toBeCloseTo(max, 2);
-    expect(result[0].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[0].shape as shapeType).width).toBeCloseTo(0.01, 4);
 
     expect(result[1].x).toBeCloseTo(71.935, 2);
     expect(result[1].y).toBeCloseTo((63.99155 * max) / 100, 3);
-    expect(result[1].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[1].shape as shapeType).width).toBeCloseTo(0.01, 4);
 
     expect(result[2].x).toBeCloseTo(73.932, 1);
     expect(result[2].y).toBeCloseTo((10.2373 * max) / 100, 2);
-    expect(result[2].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[2].shape as shapeType).width).toBeCloseTo(0.01, 4);
 
     expect(result[3].x).toBeCloseTo(157.837, 1);
     expect(result[3].y).toBeCloseTo((51.39931 * max) / 100, 2);
-    expect(result[3].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[3].shape as shapeType).width).toBeCloseTo(0.01, 4);
 
     expect(result[4].x).toBeCloseTo(159.835, 1);
     expect(result[4].y).toBeCloseTo(max, 2);
-    expect(result[4].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[4].shape as shapeType).width).toBeCloseTo(0.01, 4);
 
     expect(result[5].x).toBeCloseTo(161.833, 1);
     expect(result[5].y).toBeCloseTo((48.63878 * max) / 100, 2);
-    expect(result[5].shape.width).toBeCloseTo(0.01, 4);
+    expect((result[5].shape as shapeType).width).toBeCloseTo(0.01, 4);
   });
 });

@@ -1,14 +1,22 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { getShape1D } from 'ml-peak-shape-generator';
+import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 
 import { gsd } from '..';
 
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width?: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
 expect.extend({ toMatchCloseTo });
 
 describe('Simple test cases', () => {
-  let x = [];
-  let y = [];
-  let negY = [];
+  let x:number[] = [];
+  let y:number[] = [];
+  let negY:number[] = [];
   for (let i = 0; i < 10; i++) {
     x.push(x.length);
     y.push(0);
@@ -42,7 +50,7 @@ describe('Simple test cases', () => {
     );
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
-    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
+    expect((peaks[0].shape as shapeType).noiseLevel).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
@@ -60,7 +68,7 @@ describe('Simple test cases', () => {
       },
     );
     expect(peaks[0].y).toBeCloseTo(-4.657, 3);
-    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
+    expect((peaks[0].shape as shapeType).noiseLevel).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toBeCloseTo(15,2);
   });
 

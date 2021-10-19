@@ -28,49 +28,46 @@ const SG = require('ml-savitzky-golay-generalized');
  */
 
 interface peakType {
-  index: number;
+  index?: number;
   x: number;
-  y: number;
-}
-interface signalType {
-  index: number;
-  x: number;
-  y: number;
-  shape: shapeType;
+  y?: number;
+  shape?: shapeType,
+  from?: number,
+  to?: number
 }
 interface lastType {
   x: number;
   index: number;
 }
 interface shapeType {
-  kind: ShapeKind;
+  kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width: number;
+  width?: number;
   soft?: boolean;
-  noiseLevel: number;
+  noiseLevel?: number;
 }
 interface optionsType {
-  noiseLevel: number;
-  sgOptions: {
+  noiseLevel?: number;
+  sgOptions?: {
     windowSize: number;
     polynomial: number;
   };
-  shape: shapeType;
-  smoothY: boolean;
-  heightFactor: number;
-  broadRatio: number;
-  maxCriteria: boolean;
-  minMaxRatio: number;
-  derivativeThreshold: number;
-  realTopDetection: boolean;
-  factor:number
+  shape?: shapeType;
+  smoothY?: boolean;
+  heightFactor?: number;
+  broadRatio?: number;
+  maxCriteria?: boolean;
+  minMaxRatio?: number;
+  derivativeThreshold?: number;
+  realTopDetection?: boolean;
+  factor?:number
 }
 interface dataType {
   x: number[];
   y: number[];
 }
-export function gsd(data: dataType, options: optionsType) {
+export function gsd(data: dataType, options:optionsType={}) {
   let {
     noiseLevel,
     sgOptions = {
@@ -214,9 +211,9 @@ export function gsd(data: dataType, options: optionsType) {
     }
   }
 
-  let widthProcessor = getShape1D(shape.kind, shape.options).widthToFWHM;
+  let widthProcessor = getShape1D(shape.kind as ShapeKind, shape.options).widthToFWHM;
 
-  let signals: signalType[] = [];
+  let signals: peakType[] = [];
   let lastK = -1;
   let possible, frequency, distanceJ, minDistance, gettingCloser;
   for (let j = 0; j < minddY.length; ++j) {
@@ -262,9 +259,9 @@ export function gsd(data: dataType, options: optionsType) {
         if (heightFactor) {
           let yLeft = yData[intervalL[possible].index];
           let yRight = yData[intervalR[possible].index];
-          signals[signals.length - 1].shape.height =
+          (signals[signals.length - 1].shape as shapeType).height =
             heightFactor *
-            (signals[signals.length - 1].y - (yLeft + yRight) / 2);
+            (signals[signals.length - 1].y as number - (yLeft + yRight) / 2);
         }
       }
     }
@@ -276,7 +273,7 @@ export function gsd(data: dataType, options: optionsType) {
 
   // Correct the values to fit the original spectra data
   signals.forEach((signal) => {
-    signal.shape.noiseLevel = noiseLevel;
+    (signal.shape as shapeType).noiseLevel= noiseLevel as number ;
   });
 
   signals.sort((a, b) => {
@@ -330,7 +327,7 @@ const getNoiseLevel = (y: number[]) => {
 const determineRealTop = (peakList: peakType[], x: number[], y: number[]) => {
   let alpha, beta, gamma, p, currentPoint;
   peakList.forEach((peak) => {
-    currentPoint = peak.index; // peakList[j][2];
+    currentPoint = peak.index as number; // peakList[j][2];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
       y[currentPoint - 1] >= y[currentPoint - 2] &&
