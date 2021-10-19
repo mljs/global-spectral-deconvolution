@@ -1,4 +1,7 @@
-import { optimize } from 'ml-spectra-fitting';
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { optimize } =require( 'ml-spectra-fitting');
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -12,21 +15,42 @@ import { optimize } from 'ml-spectra-fitting';
  * @param {number} [options.optimization.options.timeout = 10] - maximum time running before break in seconds.
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
-export function joinBroadPeaks(peakList, options = {}) {
+interface peakType {
+  index?: number;
+  x: number;
+  y?: number;
+  shape?: shapeType,
+  from?: number,
+  to?: number
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
+interface optionsType{
+  width?:number,
+  shape?:shapeType,
+  optimization?: { kind: string, timeout: number }
+}
+export function joinBroadPeaks(peakList:peakType[], options:optionsType = {}) {
   let {
     width = 0.25,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
   } = options;
-  let broadLines = [];
+  let broadLines:peakType[] = [];
   // Optimize the possible broad lines
   let max = 0;
   let maxI = 0;
   let count = 1;
 
-  const peaks = JSON.parse(JSON.stringify(peakList));
+  const peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
   for (let i = peaks.length - 1; i >= 0; i--) {
-    if (peaks[i].shape.soft) {
+    if ((peaks[i].shape as shapeType).soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
@@ -39,8 +63,8 @@ export function joinBroadPeaks(peakList, options = {}) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
-      if (broadLines[i].y > max) {
-        max = broadLines[i].y;
+      if (broadLines[i].y as number > max) {
+        max = broadLines[i].y as number;
         maxI = i;
       }
       indexes.push(i);
@@ -76,7 +100,7 @@ export function joinBroadPeaks(peakList, options = {}) {
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
-      max = broadLines[i].y;
+      max = broadLines[i].y as number;
       maxI = i;
       count = 1;
     }

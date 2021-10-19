@@ -1,7 +1,13 @@
-import { optimize } from 'ml-spectra-fitting';
-import { xGetFromToIndex } from 'ml-spectra-processing';
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 
 import { groupPeaks } from './groupPeaks';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { optimize } = require('ml-spectra-fitting');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { xGetFromToIndex } = require('ml-spectra-processing');
+
+
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)
@@ -19,8 +25,38 @@ import { groupPeaks } from './groupPeaks';
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  */
-
-export function optimizePeaks(data, peakList, options = {}) {
+interface dataType {
+  x: number[];
+  y: number[];
+}
+interface peakType {
+  index?: number;
+  x: number;
+  y?: number;
+  shape?: shapeType,
+  from?: number,
+  to?: number
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
+interface optionsType {
+  factorWidth?: number,
+  factorLimits?:number,
+    shape?: shapeType,
+    optimization?: {
+      kind: string,
+      options: {
+        timeout: number,
+      },
+    },
+}
+export function optimizePeaks(data:dataType, peakList:peakType[], options:optionsType = {}) {
   const {
     factorWidth = 1,
     factorLimits = 2,
@@ -42,13 +78,13 @@ export function optimizePeaks(data, peakList, options = {}) {
 
   let groups = groupPeaks(peakList, factorWidth);
 
-  let results = [];
+  let results:peakType[] = [];
   for (const peaks of groups) {
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
 
-    const from = firstPeak.x - firstPeak.shape.width * factorLimits;
-    const to = lastPeak.x + lastPeak.shape.width * factorLimits;
+    const from = firstPeak.x - (firstPeak.shape as shapeType).width * factorLimits;
+    const to = lastPeak.x + (lastPeak.shape as shapeType).width * factorLimits;
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
     const currentRange = {

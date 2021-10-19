@@ -8,8 +8,8 @@ import { Shape1D, ShapeKind } from "ml-peak-shape-generator";
 interface peakType {
   index?: number;
   x: number;
-  y: number;
-  shape: shapeType,
+  y?: number;
+  shape?: shapeType,
   from?: number,
   to?: number
 }
@@ -27,13 +27,13 @@ export function groupPeaks(peakList:peakType[], factor = 1) {
   let peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak = { x: Number.NEGATIVE_INFINITY, shape: { width: 1 } };
+  let previousPeak = ({ x: Number.NEGATIVE_INFINITY, shape: { width: 1 } } as peakType);
   let currentGroup = [previousPeak];
   let groups = [];
   for (let peak of peaks) {
     if (
       (peak.x - previousPeak.x) /
-        (peak.shape.width + previousPeak.shape.width) <=
+        ((peak.shape as shapeType).width + (previousPeak.shape as shapeType).width) <=
       factor / 2
     ) {
       currentGroup.push(peak);
