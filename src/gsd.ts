@@ -31,7 +31,7 @@ interface peakType {
   index?: number;
   x: number;
   y?: number;
-  shape?: shapeType,
+  shape: shapeType,
   from?: number,
   to?: number
 }
@@ -43,7 +43,7 @@ interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width?: number;
+  width: number;
   soft?: boolean;
   noiseLevel?: number;
 }
@@ -259,7 +259,7 @@ export function gsd(data: dataType, options:optionsType={}) {
         if (heightFactor) {
           let yLeft = yData[intervalL[possible].index];
           let yRight = yData[intervalR[possible].index];
-          (signals[signals.length - 1].shape as shapeType).height =
+          signals[signals.length - 1].shape.height =
             heightFactor *
             (signals[signals.length - 1].y as number - (yLeft + yRight) / 2);
         }
@@ -273,7 +273,7 @@ export function gsd(data: dataType, options:optionsType={}) {
 
   // Correct the values to fit the original spectra data
   signals.forEach((signal) => {
-    (signal.shape as shapeType).noiseLevel= noiseLevel as number ;
+    signal.shape.noiseLevel= noiseLevel as number ;
   });
 
   signals.sort((a, b) => {

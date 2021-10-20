@@ -9,7 +9,7 @@ interface peakType {
   index?: number;
   x: number;
   y?: number;
-  shape?: shapeType,
+  shape: shapeType,
   from?: number,
   to?: number
 }
@@ -17,7 +17,7 @@ interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width?: number;
+  width: number;
   soft?: boolean;
   noiseLevel?: number;
 }
@@ -33,7 +33,7 @@ export function groupPeaks(peakList:peakType[], factor = 1) {
   for (let peak of peaks) {
     if (
       (peak.x - previousPeak.x) /
-        ((peak.shape as shapeType).width as number + ((previousPeak.shape as shapeType).width as number)) <=
+        (peak.shape.width + previousPeak.shape.width) <=
       factor / 2
     ) {
       currentGroup.push(peak);

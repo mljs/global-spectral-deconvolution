@@ -19,7 +19,7 @@ interface peakType {
   index?: number;
   x: number;
   y?: number;
-  shape?: shapeType,
+  shape: shapeType,
   from?: number,
   to?: number
 }
@@ -27,7 +27,7 @@ interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width?: number;
+  width: number;
   soft?: boolean;
   noiseLevel?: number;
 }
@@ -50,15 +50,15 @@ export function joinBroadPeaks(peakList:peakType[], options:optionsType = {}) {
 
   const peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
   for (let i = peaks.length - 1; i >= 0; i--) {
-    if ((peaks[i].shape as shapeType).soft) {
+    if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE });
+  broadLines.push({ x: Number.MAX_VALUE ,shape:{ width : 0}});
 
   let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
-  let indexes = [0];
+  let indexes:number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);

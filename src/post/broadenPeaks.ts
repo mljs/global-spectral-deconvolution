@@ -12,7 +12,7 @@ import { Shape1D, ShapeKind } from "ml-peak-shape-generator";
 interface peakType {
   index?: number;
   x: number;
-  y: number;
+  y?: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -30,7 +30,7 @@ interface optionsType {
   overlap?: boolean
 }
 export function broadenPeaks(peakList: peakType[], options: optionsType={}) {
-  const { factor = 2, overlap = false } = options||{};
+  const { factor = 2, overlap = false } = options;
 
   const peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
 

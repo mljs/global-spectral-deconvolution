@@ -33,7 +33,7 @@ interface peakType {
   index?: number;
   x: number;
   y?: number;
-  shape?: shapeType,
+  shape: shapeType,
   from?: number,
   to?: number
 }
@@ -41,7 +41,7 @@ interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
-  width?: number;
+  width: number;
   soft?: boolean;
   noiseLevel?: number;
 }
@@ -61,7 +61,7 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
     factorWidth = 1,
     factorLimits = 2,
     shape = {
-      kind: 'gaussian',
+      kind: 'gaussian'
     },
     optimization = {
       kind: 'lm',
@@ -83,8 +83,8 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
 
-    const from = firstPeak.x - ((firstPeak.shape as shapeType).width as number) * factorLimits;
-    const to = lastPeak.x + ((lastPeak.shape as shapeType).width as number) * factorLimits;
+    const from = firstPeak.x - firstPeak.shape.width * factorLimits;
+    const to = lastPeak.x + lastPeak.shape.width * factorLimits;
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
     const currentRange = {

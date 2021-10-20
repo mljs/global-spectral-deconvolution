@@ -36,7 +36,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian',width:0 },
     });
 
     let optimizedPeaks = optimizePeaks(data, peakList);
@@ -72,24 +72,24 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian',width:0 },
     });
 
     expect(peakList[0].x).toBeCloseTo(-0.5, 2);
     expect(peakList[0].y).toBeCloseTo(1, 2);
-    expect((peakList[0].shape as shapeType).width).toBeCloseTo(0.2, 2); // inflection points in gaussian are higher tha FWHM
+    expect(peakList[0].shape.width).toBeCloseTo(0.2, 2); // inflection points in gaussian are higher tha FWHM
     expect(peakList[1].x).toBeCloseTo(0.5, 2);
     expect(peakList[1].y).toBeCloseTo(1, 2);
-    expect((peakList[1].shape as shapeType).width).toBeCloseTo(0.1, 2);
+    expect(peakList[1].shape.width).toBeCloseTo(0.1, 2);
 
     let optimizedPeaks = optimizePeaks(data, peakList);
 
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.5, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(1, 2);
-    expect((optimizedPeaks[0].shape as shapeType).width).toBeCloseTo(0.2, 2); // optimization by default expect a gaussian shape
+    expect(optimizedPeaks[0].shape.width).toBeCloseTo(0.2, 2); // optimization by default expect a gaussian shape
     expect(optimizedPeaks[1].x).toBeCloseTo(0.5, 2);
     expect(optimizedPeaks[1].y).toBeCloseTo(1, 2);
-    expect((optimizedPeaks[1].shape as shapeType).width).toBeCloseTo(0.1, 2);
+    expect(optimizedPeaks[1].shape.width).toBeCloseTo(0.1, 2);
   });
 
   it('Should provide 1 peak', () => {
@@ -102,6 +102,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
         nbPoints: 10001,
         shape: {
           kind: 'gaussian',
+          width:0
         },
       },
     });
@@ -111,7 +112,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian' ,width:0},
     });
 
     expect(peakList).toHaveLength(1);
