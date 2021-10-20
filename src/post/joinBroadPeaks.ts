@@ -1,7 +1,7 @@
 import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { optimize } =require( 'ml-spectra-fitting');
+const { optimize } = require('ml-spectra-fitting');
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -31,34 +31,34 @@ interface shapeType {
   soft?: boolean;
   noiseLevel?: number;
 }
-interface optionsType{
-  width?:number,
-  shape?:shapeType,
+interface optionsType {
+  width: number,
+  shape?: shapeType,
   optimization?: { kind: string, timeout: number }
 }
-export function joinBroadPeaks(peakList:peakType[], options:optionsType = {}) {
+export function joinBroadPeaks(peakList: peakType[], options: optionsType = { width: 0.25 }) {
   let {
     width = 0.25,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
   } = options;
-  let broadLines:peakType[] = [];
+  let broadLines: peakType[] = [];
   // Optimize the possible broad lines
   let max = 0;
   let maxI = 0;
   let count = 1;
 
-  const peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
+  const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
   for (let i = peaks.length - 1; i >= 0; i--) {
     if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE ,shape:{ width : 0}});
+  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 } });
 
   let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
-  let indexes:number[] = [0];
+  let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
