@@ -18,7 +18,7 @@ const { optimize } = require('ml-spectra-fitting');
 interface peakType {
   index?: number;
   x: number;
-  y?: number;
+  y: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -55,7 +55,7 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
     }
   }
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 } });
+  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 },y:0 });
 
   let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
   let indexes: number[] = [0];
@@ -63,8 +63,8 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
-      if (broadLines[i].y as number > max) {
-        max = broadLines[i].y as number;
+      if (broadLines[i].y > max) {
+        max = broadLines[i].y;
         maxI = i;
       }
       indexes.push(i);
@@ -100,7 +100,7 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
-      max = broadLines[i].y as number;
+      max = broadLines[i].y;
       maxI = i;
       count = 1;
     }

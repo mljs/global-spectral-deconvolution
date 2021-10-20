@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "outDir": "lib",
+    "noImplicitAny": false,
     "sourceMap": true,
     "strict": true,
     "target": "es2020"

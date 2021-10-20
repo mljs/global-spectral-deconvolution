@@ -76,12 +76,12 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
     data.y.reverse();
   }
 
-  let groups = groupPeaks(peakList, factorWidth);
+  let groups:peakType[][] = groupPeaks(peakList, factorWidth);
 
   let results:peakType[] = [];
   for (const peaks of groups) {
-    const firstPeak = peaks[0];
-    const lastPeak = peaks[peaks.length - 1];
+    const firstPeak:peakType = peaks[0];
+    const lastPeak:peakType = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;

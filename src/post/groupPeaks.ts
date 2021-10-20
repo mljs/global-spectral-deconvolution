@@ -22,14 +22,14 @@ interface shapeType {
   noiseLevel?: number;
 }
 export function groupPeaks(peakList:peakType[], factor = 1) {
-  if (peakList.length === 0) return [];
+  if (peakList.length === 0) return [] as peakType[][];
 
   let peaks:peakType[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak = ({ x: Number.NEGATIVE_INFINITY, shape: { width: 1 } } as peakType);
-  let currentGroup = [previousPeak];
-  let groups = [];
+  let previousPeak = ({ x: Number.NEGATIVE_INFINITY, shape: { width: 1 } });
+  let currentGroup:peakType[] = [previousPeak];
+  let groups:peakType[][] = [];
   for (let peak of peaks) {
     if (
       (peak.x - previousPeak.x) /
