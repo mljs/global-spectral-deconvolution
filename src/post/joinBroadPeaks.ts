@@ -17,9 +17,9 @@ interface peakType {
   index?: number;
   x: number;
   y: number;
-  shape: shapeType,
-  from?: number,
-  to?: number
+  shape: shapeType;
+  from?: number;
+  to?: number;
 }
 interface shapeType {
   kind?: ShapeKind;
@@ -30,32 +30,38 @@ interface shapeType {
   noiseLevel?: number;
 }
 interface optionsType {
-  width: number,
-  shape?: shapeType,
-  optimization?: { kind: string, timeout: number }
+  width?: number;
+  shape?: shapeType;
+  optimization?: { kind: string; timeout: number };
 }
-export function joinBroadPeaks(peakList: peakType[], options: optionsType = {width:0.25}) {
+export function joinBroadPeaks(
+  peakList: peakType[],
+  options: optionsType = {},
+) {
   let {
     width = 0.25,
-    shape = { kind: 'gaussian' },
+    shape = { kind: 'gaussian', width: 0 },
     optimization = { kind: 'lm', timeout: 10 },
-  } = options;
+  }: optionsType = options;
   let broadLines: peakType[] = [];
   // Optimize the possible broad lines
-  let max= 0;
+  let max = 0;
   let maxI = 0;
   let count = 1;
 
   const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
-  for (let i:number = peaks.length - 1; i >= 0; i--) {
+  for (let i: number = peaks.length - 1; i >= 0; i--) {
     if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 },y:0 });
+  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 }, y: 0 });
 
-  let candidates:{x:number[],y:number[]} = { x: [broadLines[0].x], y: [broadLines[0].y] };
+  let candidates: { x: number[]; y: number[] } = {
+    x: [broadLines[0].x],
+    y: [broadLines[0].y],
+  };
   let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
@@ -69,17 +75,18 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = {wid
       count++;
     } else {
       if (count && count > 2) {
-        let fitted:{peaks:peakType[]}= optimize(
+        let optimizeShape: shapeType = {
+          width: Math.abs(
+            candidates.x[0] - candidates.x[candidates.x.length - 1],
+          ),
+        };
+        let fitted: { peaks: peakType[] } = optimize(
           candidates,
           [
             {
               x: broadLines[maxI].x,
               y: max,
-              shape: {
-                width: Math.abs(
-                  candidates.x[0] - candidates.x[candidates.x.length - 1],
-                ),
-              },
+              shape: optimizeShape,
             },
           ],
           { shape, optimization },

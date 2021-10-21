@@ -4,8 +4,6 @@ import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import { groupPeaks } from './groupPeaks';
 
-
-
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)
  * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
@@ -30,9 +28,9 @@ interface peakType {
   index?: number;
   x: number;
   y: number;
-  shape: shapeType,
-  from?: number,
-  to?: number
+  shape: shapeType;
+  from?: number;
+  to?: number;
 }
 interface shapeType {
   kind?: ShapeKind;
@@ -43,22 +41,27 @@ interface shapeType {
   noiseLevel?: number;
 }
 interface optionsType {
-  factorWidth?: number,
-  factorLimits?:number,
-  shape?: shapeType,
+  factorWidth?: number;
+  factorLimits?: number;
+  shape?: shapeType;
   optimization?: {
-    kind: string,
+    kind: string;
     options: {
-      timeout: number,
-    },
-  },
+      timeout: number;
+    };
+  };
 }
-export function optimizePeaks(data:dataType, peakList:peakType[], options:optionsType = {}) {
+export function optimizePeaks(
+  data: dataType,
+  peakList: peakType[],
+  options: optionsType = {},
+) {
   const {
     factorWidth = 1,
     factorLimits = 2,
     shape = {
-      kind: 'gaussian'
+      kind: 'gaussian',
+      width: 0,
     },
     optimization = {
       kind: 'lm',
@@ -66,33 +69,38 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
         timeout: 10,
       },
     },
-  } = options;
+  }: optionsType = options;
 
   if (data && data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
 
-  let groups:peakType[][] = groupPeaks(peakList, factorWidth);
+  let groups: peakType[][] = groupPeaks(peakList, factorWidth);
 
-  let results:peakType[] = [];
+  let results: peakType[] = [];
   for (const peaks of groups) {
-    const firstPeak:peakType = peaks[0];
-    const lastPeak:peakType = peaks[peaks.length - 1];
+    const firstPeak: peakType = peaks[0];
+    const lastPeak: peakType = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;
-    const { fromIndex, toIndex }:{fromIndex:number,toIndex:number} = xGetFromToIndex(data.x, { from, to });
+    const { fromIndex, toIndex }: { fromIndex: number; toIndex: number } =
+      xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-    const currentRange:dataType = {
+    const currentRange: dataType = {
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
     if (currentRange && currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks }:{peaks: peakType[]} = optimize(currentRange, peaks, {
-        shape,
-        optimization,
-      });
+      let { peaks: optimizedPeaks }: { peaks: peakType[] } = optimize(
+        currentRange,
+        peaks,
+        {
+          shape,
+          optimization,
+        },
+      );
       results = results.concat(optimizedPeaks);
     } else {
       results = results.concat(peaks);
