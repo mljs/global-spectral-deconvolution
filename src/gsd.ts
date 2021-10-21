@@ -1,8 +1,6 @@
 import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import { Gaussian } from 'ml-peak-shape-generator/lib/shapes/1d/gaussian/Gaussian';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const SG = require('ml-savitzky-golay-generalized');
+import SG from 'ml-savitzky-golay-generalized';
 /**
  * Global spectra deconvolution
  * @param {object} data - Object data with x and y arrays

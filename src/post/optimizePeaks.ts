@@ -1,11 +1,8 @@
 import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+import { optimize } from 'ml-spectra-fitting';
+import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import { groupPeaks } from './groupPeaks';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { optimize } = require('ml-spectra-fitting');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { xGetFromToIndex } = require('ml-spectra-processing');
 
 
 

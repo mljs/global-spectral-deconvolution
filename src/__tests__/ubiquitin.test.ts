@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
 
+import { parseXY } from 'xy-parser';
+
 import { gsd } from '..';
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { parseXY }=require('xy-parser');
 
 
 

@@ -1,7 +1,5 @@
 import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { optimize } = require('ml-spectra-fitting');
+import { optimize } from 'ml-spectra-fitting';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -18,7 +16,7 @@ const { optimize } = require('ml-spectra-fitting');
 interface peakType {
   index?: number;
   x: number;
-  y: number;
+  y?: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -63,8 +61,8 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
-      if (broadLines[i].y > max) {
-        max = broadLines[i].y;
+      if (broadLines[i].y as number > max) {
+        max = broadLines[i].y as number;
         maxI = i;
       }
       indexes.push(i);
@@ -100,7 +98,7 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
-      max = broadLines[i].y;
+      max = broadLines[i].y as number;
       maxI = i;
       count = 1;
     }

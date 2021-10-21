@@ -3,10 +3,7 @@ import { join } from 'path';
 
 import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 
-
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-let { gsd, joinBroadPeaks } = require('..');
+import { gsd, joinBroadPeaks } from '..';
 
 interface peakType {
   index?: number;
@@ -42,7 +39,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
         },
       },
     );
-    const newResult:peakType[] = joinBroadPeaks(result, { width: 0.25, shape: { kind: 'lorentzian' } });
+    const newResult:peakType[] = joinBroadPeaks(result, { width: 0.25, shape: { kind: 'lorentzian',width:0 } });
     expect(newResult).toHaveLength(14);
     newResult.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {

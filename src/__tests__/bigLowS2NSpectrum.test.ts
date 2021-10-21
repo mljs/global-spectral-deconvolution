@@ -5,8 +5,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-let { gsd, joinBroadPeaks } = require('..');
+import { gsd, joinBroadPeaks } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   it('Should give 120 peaks', () => {
@@ -23,7 +22,6 @@ describe('Global spectra deconvolution NMR spectra', () => {
         sgOptions: { windowSize: 13, polynomial: 3 },
       },
     );
-
     pp = joinBroadPeaks(pp, { width: 0.25 });
 
     expect(pp).toHaveLength(91);

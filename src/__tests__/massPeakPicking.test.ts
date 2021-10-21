@@ -1,9 +1,7 @@
-import { gsd, optimizePeaks } from '..';
+import CC from 'chemcalc';
+import Stat from 'ml-stat';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-let CC = require('chemcalc');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-let Stat = require('ml-stat');
+import { gsd, optimizePeaks } from '..';
 
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
