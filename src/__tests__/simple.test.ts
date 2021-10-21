@@ -1,22 +1,14 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+import { getShape1D } from 'ml-peak-shape-generator';
 
 import { gsd } from '..';
 
-interface shapeType {
-  kind?: ShapeKind;
-  options?: Shape1D;
-  height?: number;
-  width?: number;
-  soft?: boolean;
-  noiseLevel?: number;
-}
 expect.extend({ toMatchCloseTo });
 
 describe('Simple test cases', () => {
-  let x:number[] = [];
-  let y:number[] = [];
-  let negY:number[] = [];
+  let x: number[] = [];
+  let y: number[] = [];
+  let negY: number[] = [];
   for (let i = 0; i < 10; i++) {
     x.push(x.length);
     y.push(0);
@@ -50,7 +42,7 @@ describe('Simple test cases', () => {
     );
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
-    expect((peaks[0].shape as shapeType).noiseLevel).toBeCloseTo(1.1956, 3);
+    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
@@ -68,8 +60,8 @@ describe('Simple test cases', () => {
       },
     );
     expect(peaks[0].y).toBeCloseTo(-4.657, 3);
-    expect((peaks[0].shape as shapeType).noiseLevel).toBeCloseTo(1.1956, 3);
-    expect(peaks[0].x).toBeCloseTo(15,2);
+    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
+    expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
   it('gsd not realtop asymetric', () => {
@@ -120,7 +112,11 @@ describe('Simple test cases', () => {
     expect(peaks).toMatchCloseTo(
       [
         {
-          shape: { noiseLevel: 1.2434539324230613, soft: false, width: widthToFWHM(3) },
+          shape: {
+            noiseLevel: 1.2434539324230613,
+            soft: false,
+            width: widthToFWHM(3),
+          },
           x: 14.5,
           y: 4.006546067576939,
         },

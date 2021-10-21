@@ -1,5 +1,4 @@
 import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
-import { Gaussian } from 'ml-peak-shape-generator/lib/shapes/1d/gaussian/Gaussian';
 import SG from 'ml-savitzky-golay-generalized';
 /**
  * Global spectra deconvolution
@@ -74,7 +73,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
       windowSize: 9,
       polynomial: 3,
     },
-    shape = { kind: 'gaussian', options: new Gaussian(), width: 0 },
+    shape = { kind: 'gaussian', width: 0 },
     smoothY = true,
     heightFactor = 0,
     broadRatio = 0.0,
@@ -82,7 +81,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
     minMaxRatio = 0.00025,
     derivativeThreshold = -1,
     realTopDetection = false,
-  }: optionsType = options;
+  } = options;
 
   let { y: yIn, x }: dataType = data;
 
