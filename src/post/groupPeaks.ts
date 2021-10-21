@@ -22,7 +22,7 @@ interface shapeType {
   noiseLevel?: number;
 }
 export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
-  if (peakList && peakList.length === 0) return [] as peakType[][];
+  if (peakList && peakList.length === 0) return [];
 
   let peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
@@ -34,7 +34,7 @@ export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
   };
   let currentGroup: peakType[] = [previousPeak];
   let groups: peakType[][] = [];
-  for (let peak of peaks) {
+  for (const peak of peaks) {
     if (
       (peak.x - previousPeak.x) /
         (peak.shape.width + previousPeak.shape.width) <=

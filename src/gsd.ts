@@ -278,9 +278,9 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   }
 
   // Correct the values to fit the original spectra data
-  signals.forEach((signal) => {
+  for (const signal of signals) {
     signal.shape.noiseLevel = noiseLevel;
-  });
+  }
 
   signals.sort((a, b) => {
     return a.x - b.x;
@@ -340,7 +340,7 @@ const determineRealTop = (
     gamma: number,
     p: number,
     currentPoint: number;
-  peakList.forEach((peak) => {
+  for (const peak of peakList) {
     currentPoint = peak.index as number; // peakList[j][2];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
@@ -390,5 +390,5 @@ const determineRealTop = (
         y[currentPoint] -
         0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
     }
-  });
+  }
 };

@@ -85,10 +85,9 @@ export function optimizePeaks(
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;
-    const { fromIndex, toIndex }: { fromIndex: number; toIndex: number } =
-      xGetFromToIndex(data.x, { from, to });
+    const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-    const currentRange: dataType = {
+    const currentRange = {
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
