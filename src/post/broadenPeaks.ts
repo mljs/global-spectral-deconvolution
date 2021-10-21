@@ -12,7 +12,7 @@ import { Shape1D, ShapeKind } from "ml-peak-shape-generator";
 interface peakType {
   index?: number;
   x: number;
-  y?: number;
+  y: number;
   shape: shapeType,
   from?: number,
   to?: number

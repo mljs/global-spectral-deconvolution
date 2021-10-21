@@ -28,7 +28,7 @@ import SG from 'ml-savitzky-golay-generalized';
 interface peakType {
   index?: number;
   x: number;
-  y?: number;
+  y: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -107,7 +107,7 @@ export function gsd(data: dataType, options:optionsType={}) {
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
   let yData = y;
-  let dY, ddY;
+  let dY:number[], ddY:number[];
   const { windowSize, polynomial } = sgOptions;
 
   if (equalSpaced) {
@@ -148,7 +148,7 @@ export function gsd(data: dataType, options:optionsType={}) {
     });
   }
 
-  const xData = x;
+  const xData:number[] = x;
   const dX = x[1] - x[0];
   let maxDdy = 0;
   let maxY = 0;
@@ -259,7 +259,7 @@ export function gsd(data: dataType, options:optionsType={}) {
           let yRight = yData[intervalR[possible].index];
           signals[signals.length - 1].shape.height =
             heightFactor *
-            (signals[signals.length - 1].y as number - (yLeft + yRight) / 2);
+            (signals[signals.length - 1].y - (yLeft + yRight) / 2);
         }
       }
     }
@@ -271,7 +271,7 @@ export function gsd(data: dataType, options:optionsType={}) {
 
   // Correct the values to fit the original spectra data
   signals.forEach((signal) => {
-    signal.shape.noiseLevel= noiseLevel as number ;
+    signal.shape.noiseLevel= noiseLevel ;
   });
 
   signals.sort((a, b) => {

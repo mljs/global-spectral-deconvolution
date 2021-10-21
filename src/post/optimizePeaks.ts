@@ -29,7 +29,7 @@ interface dataType {
 interface peakType {
   index?: number;
   x: number;
-  y?: number;
+  y: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -46,12 +46,12 @@ interface optionsType {
   factorWidth?: number,
   factorLimits?:number,
   shape?: shapeType,
-    optimization?: {
-      kind?: string,
-      options?: {
-        timeout: number,
-      },
+  optimization?: {
+    kind: string,
+    options: {
+      timeout: number,
     },
+  },
 }
 export function optimizePeaks(data:dataType, peakList:peakType[], options:optionsType = {}) {
   const {
@@ -68,7 +68,7 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
     },
   } = options;
 
-  if (data.x[0] > data.x[1]) {
+  if (data && data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
@@ -82,14 +82,14 @@ export function optimizePeaks(data:dataType, peakList:peakType[], options:option
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;
-    const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
+    const { fromIndex, toIndex }:{fromIndex:number,toIndex:number} = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-    const currentRange = {
+    const currentRange:dataType = {
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
-    if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
+    if (currentRange && currentRange.x.length > 5) {
+      let { peaks: optimizedPeaks }:{peaks: peakType[]} = optimize(currentRange, peaks, {
         shape,
         optimization,
       });

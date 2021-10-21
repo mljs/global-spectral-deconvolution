@@ -16,7 +16,7 @@ import { optimize } from 'ml-spectra-fitting';
 interface peakType {
   index?: number;
   x: number;
-  y?: number;
+  y: number;
   shape: shapeType,
   from?: number,
   to?: number
@@ -34,7 +34,7 @@ interface optionsType {
   shape?: shapeType,
   optimization?: { kind: string, timeout: number }
 }
-export function joinBroadPeaks(peakList: peakType[], options: optionsType = { width: 0.25 }) {
+export function joinBroadPeaks(peakList: peakType[], options: optionsType = {width:0.25}) {
   let {
     width = 0.25,
     shape = { kind: 'gaussian' },
@@ -42,12 +42,12 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
   } = options;
   let broadLines: peakType[] = [];
   // Optimize the possible broad lines
-  let max = 0;
+  let max= 0;
   let maxI = 0;
   let count = 1;
 
   const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
-  for (let i = peaks.length - 1; i >= 0; i--) {
+  for (let i:number = peaks.length - 1; i >= 0; i--) {
     if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
@@ -55,21 +55,21 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
   // Push a feke peak
   broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 },y:0 });
 
-  let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
+  let candidates:{x:number[],y:number[]} = { x: [broadLines[0].x], y: [broadLines[0].y] };
   let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
-      if (broadLines[i].y as number > max) {
-        max = broadLines[i].y as number;
+      if (broadLines[i].y > max) {
+        max = broadLines[i].y;
         maxI = i;
       }
       indexes.push(i);
       count++;
     } else {
-      if (count > 2) {
-        let fitted = optimize(
+      if (count && count > 2) {
+        let fitted:{peaks:peakType[]}= optimize(
           candidates,
           [
             {
@@ -98,7 +98,7 @@ export function joinBroadPeaks(peakList: peakType[], options: optionsType = { wi
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
-      max = broadLines[i].y as number;
+      max = broadLines[i].y;
       maxI = i;
       count = 1;
     }
