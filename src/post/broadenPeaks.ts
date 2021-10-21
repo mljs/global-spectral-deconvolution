@@ -29,7 +29,10 @@ interface optionsType {
   factor?: number;
   overlap?: boolean;
 }
-export function broadenPeaks(peakList: peakType[], options: optionsType = {}) {
+export function broadenPeaks(
+  peakList: peakType[],
+  options: optionsType = {},
+): peakType[] {
   const { factor = 2, overlap = false }: optionsType = options;
 
   const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
@@ -54,8 +57,8 @@ export function broadenPeaks(peakList: peakType[], options: optionsType = {}) {
     peak.shape.width = (peak.to as number) - (peak.from as number);
   }
 
-  return peaks.map((peak: peakType) => {
-    const { x, y, shape } = peak;
-    return { x, y, shape };
+  return peaks.map((peak: peakType): peakType => {
+    const { x, y, shape }: peakType = peak;
+    return { x, y, shape } as peakType;
   });
 }

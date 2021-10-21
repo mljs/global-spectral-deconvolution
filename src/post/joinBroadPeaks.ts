@@ -37,7 +37,7 @@ interface optionsType {
 export function joinBroadPeaks(
   peakList: peakType[],
   options: optionsType = {},
-) {
+): peakType[] {
   let {
     width = 0.25,
     shape = { kind: 'gaussian', width: 0 },
@@ -88,8 +88,8 @@ export function joinBroadPeaks(
               y: max,
               shape: optimizeShape,
             },
-          ],
-          { shape, optimization },
+          ] as peakType[],
+          { shape, optimization } as optionsType,
         );
         let { peaks: peak } = fitted;
         peak[0].index = Math.floor(
@@ -99,7 +99,8 @@ export function joinBroadPeaks(
         peaks.push(peak[0]);
       } else {
         // Put back the candidates to the signals list
-        indexes.forEach((index) => {
+
+        indexes.forEach((index): void => {
           peaks.push(broadLines[index]);
         });
       }

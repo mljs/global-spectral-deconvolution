@@ -65,7 +65,7 @@ interface dataType {
   x: number[];
   y: number[];
 }
-export function gsd(data: dataType, options: optionsType = {}) {
+export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -294,7 +294,7 @@ export function gsd(data: dataType, options: optionsType = {}) {
   return signals;
 }
 
-const isEqualSpaced = (x: number[]) => {
+const isEqualSpaced = (x: number[]): boolean => {
   let tmp: number;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -310,7 +310,7 @@ const isEqualSpaced = (x: number[]) => {
   return (maxDx - minDx) / maxDx < 0.05;
 };
 
-const getNoiseLevel = (y: number[]) => {
+const getNoiseLevel = (y: number[]): number => {
   let mean = 0;
 
   let stddev = 0;
@@ -335,7 +335,11 @@ const getNoiseLevel = (y: number[]) => {
 
   return stddev;
 };
-const determineRealTop = (peakList: peakType[], x: number[], y: number[]) => {
+const determineRealTop = (
+  peakList: peakType[],
+  x: number[],
+  y: number[],
+): void => {
   let alpha: number,
     beta: number,
     gamma: number,

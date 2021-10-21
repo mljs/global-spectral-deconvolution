@@ -55,7 +55,7 @@ export function optimizePeaks(
   data: dataType,
   peakList: peakType[],
   options: optionsType = {},
-) {
+): peakType[] {
   const {
     factorWidth = 1,
     factorLimits = 2,
@@ -99,7 +99,7 @@ export function optimizePeaks(
         {
           shape,
           optimization,
-        },
+        } as optionsType,
       );
       results = results.concat(optimizedPeaks);
     } else {
