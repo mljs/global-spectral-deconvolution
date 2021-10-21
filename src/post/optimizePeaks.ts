@@ -71,7 +71,7 @@ export function optimizePeaks(
     },
   }: optionsType = options;
 
-  if (data && data.x[0] > data.x[1]) {
+  if (data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
@@ -92,14 +92,14 @@ export function optimizePeaks(
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
-    if (currentRange && currentRange.x.length > 5) {
+    if (currentRange.x.length > 5) {
       let { peaks: optimizedPeaks }: { peaks: peakType[] } = optimize(
         currentRange,
         peaks,
         {
           shape,
           optimization,
-        } as optionsType,
+        },
       );
       results = results.concat(optimizedPeaks);
     } else {

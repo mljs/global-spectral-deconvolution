@@ -45,12 +45,14 @@ interface shapeType {
   soft?: boolean;
   noiseLevel?: number;
 }
+interface sgOptionType {
+  windowSize: number;
+  polynomial: number;
+  derivative?: number;
+}
 interface optionsType {
   noiseLevel?: number;
-  sgOptions?: {
-    windowSize: number;
-    polynomial: number;
-  };
+  sgOptions?: sgOptionType;
   shape?: shapeType;
   smoothY?: boolean;
   heightFactor?: number;
@@ -108,13 +110,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   // we can assume it to be equally spaced variable
   let yData = y;
   let dY: number[], ddY: number[];
-  const {
-    windowSize,
-    polynomial,
-  }: {
-    windowSize: number;
-    polynomial: number;
-  } = sgOptions;
+  const { windowSize, polynomial }: sgOptionType = sgOptions;
 
   if (equalSpaced) {
     if (smoothY) {
@@ -122,36 +118,36 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
         windowSize,
         polynomial,
         derivative: 0,
-      });
+      } as sgOptionType);
     }
     dY = SG(y, x[1] - x[0], {
       windowSize,
       polynomial,
       derivative: 1,
-    });
+    } as sgOptionType);
     ddY = SG(y, x[1] - x[0], {
       windowSize,
       polynomial,
       derivative: 2,
-    });
+    } as sgOptionType);
   } else {
     if (smoothY) {
       yData = SG(y, x, {
         windowSize,
         polynomial,
         derivative: 0,
-      });
+      } as sgOptionType);
     }
     dY = SG(y, x, {
       windowSize,
       polynomial,
       derivative: 1,
-    });
+    } as sgOptionType);
     ddY = SG(y, x, {
       windowSize,
       polynomial,
       derivative: 2,
-    });
+    } as sgOptionType);
   }
 
   const xData: number[] = x;
