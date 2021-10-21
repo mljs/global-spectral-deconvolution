@@ -30,17 +30,17 @@ interface shapeType {
   noiseLevel?: number;
 }
 interface optionsType {
-  width?: number;
+  width: number;
   shape?: shapeType;
   optimization?: { kind: string; timeout: number };
 }
 export function joinBroadPeaks(
   peakList: peakType[],
-  options: optionsType = {},
+  options: optionsType = { width: 0.25 },
 ): peakType[] {
   let {
     width = 0.25,
-    shape = { kind: 'gaussian', width: 0 },
+    shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
   } = options;
   let broadLines: peakType[] = [];
