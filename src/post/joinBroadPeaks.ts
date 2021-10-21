@@ -64,7 +64,11 @@ export function joinBroadPeaks(
   };
   let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
-    if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
+    if (
+      broadLines &&
+      width &&
+      Math.abs(broadLines[i - 1].x - broadLines[i].x) < width
+    ) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
       if (broadLines[i].y > max) {
@@ -74,13 +78,13 @@ export function joinBroadPeaks(
       indexes.push(i);
       count++;
     } else {
-      if (count > 2) {
+      if (count && count > 2) {
         let optimizeShape: shapeType = {
           width: Math.abs(
             candidates.x[0] - candidates.x[candidates.x.length - 1],
           ),
         };
-        let fitted: { peaks: peakType[] } = optimize(
+        let fitted = optimize(
           candidates,
           [
             {
