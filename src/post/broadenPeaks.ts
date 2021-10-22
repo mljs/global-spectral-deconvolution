@@ -21,10 +21,10 @@ export function broadenPeaks(
 
   const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
 
-  for (let peak of peaks) {
+  peaks.forEach((peak) => {
     peak.from = peak.x - (peak.shape.width / 2) * factor;
     peak.to = peak.x + (peak.shape.width / 2) * factor;
-  }
+  });
 
   if (!overlap) {
     for (let i = 0; i < peaks.length - 1; i++) {

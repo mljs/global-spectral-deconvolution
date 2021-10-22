@@ -19,7 +19,8 @@ export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
   };
   let currentGroup: peakType[] = [previousPeak];
   let groups: peakType[][] = [];
-  for (const peak of peaks) {
+
+  peaks.forEach((peak) => {
     if (
       (peak.x - previousPeak.x) /
         (peak.shape.width + previousPeak.shape.width) <=
@@ -31,7 +32,7 @@ export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
       groups.push(currentGroup);
     }
     previousPeak = peak;
-  }
+  });
 
   return groups;
 }

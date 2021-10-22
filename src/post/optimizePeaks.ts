@@ -60,7 +60,8 @@ export function optimizePeaks(
   let groups: peakType[][] = groupPeaks(peakList, factorWidth);
 
   let results: peakType[] = [];
-  for (const peaks of groups) {
+
+  groups.forEach((peaks) => {
     const firstPeak: peakType = peaks[0];
     const lastPeak: peakType = peaks[peaks.length - 1];
 
@@ -82,9 +83,8 @@ export function optimizePeaks(
         },
       );
       results = results.concat(optimizedPeaks);
-    } else {
-      results = results.concat(peaks);
-    }
-  }
+      // eslint-disable-next-line curly
+    } else results = results.concat(peaks);
+  });
   return results;
 }
