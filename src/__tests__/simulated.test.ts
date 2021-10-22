@@ -1,3 +1,4 @@
+import { DataXY, DoubleArray } from 'cheminfo-types';
 import { generateSpectrum } from 'spectrum-generator';
 
 import { gsd, optimizePeaks } from '..';
@@ -9,7 +10,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.1, y: 0.2, width: 0.01 },
     ];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
       generator: {
         from: -1,
         to: 1,
@@ -51,7 +52,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.5, y: 1, width: 0.1 },
     ];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
       generator: { from: -1, to: 1, nbPoints: 10001 },
     });
 

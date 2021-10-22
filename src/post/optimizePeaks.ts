@@ -54,7 +54,7 @@ export function optimizePeaks(
     },
   }: optionsType = options;
 
-  if (data && data.x[0] > data.x[1]) {
+  if (data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }

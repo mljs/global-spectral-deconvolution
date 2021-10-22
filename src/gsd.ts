@@ -104,7 +104,7 @@ export function gsd(
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
   let yData = y;
-  let dY: number[], ddY: number[];
+  let dY, ddY;
   const { windowSize, polynomial } = sgOptions;
 
   if (equalSpaced) {
