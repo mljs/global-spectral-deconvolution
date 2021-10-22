@@ -1,7 +1,6 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
-import { dataType } from '../../gsd';
 import { optimizePeaks } from '../optimizePeaks';
 
 expect.extend({ toMatchCloseTo });
@@ -19,7 +18,7 @@ describe('optimizePeaks', () => {
           kind: 'gaussian',
         },
       },
-    }) as dataType;
+    }) as { x: number[]; y: number[] };
 
     let result = optimizePeaks(data, [
       { x: 0.01, y: 0.9, shape: { width: 0.11 } },

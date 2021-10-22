@@ -62,7 +62,7 @@ interface optionsType {
   realTopDetection?: boolean;
   factor?: number;
 }
-export interface dataType {
+interface dataType {
   x: number[];
   y: number[];
 }
