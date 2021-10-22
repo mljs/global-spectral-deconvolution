@@ -4,6 +4,11 @@ import { parseXY } from 'xy-parser';
 
 import { gsd } from '..';
 
+// var gsd = require("../src/index");
+// var optimizePeaks = require("../src/optimize");
+
+
+
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
     let spectrum = parseXY(

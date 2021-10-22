@@ -20,6 +20,7 @@ let noiseLevel = Stat.array.median(y.filter((a: number) => a > 0)) * 3;
 157.837 51.39931
 159.835 100
 161.833 48.63878
+
 */
 
 describe('Check the peak picking of a simulated mass spectrum', () => {

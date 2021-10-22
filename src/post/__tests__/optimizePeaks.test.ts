@@ -1,7 +1,7 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
-import { dataType } from '../..';
+import { dataType } from '../../gsd';
 import { optimizePeaks } from '../optimizePeaks';
 
 expect.extend({ toMatchCloseTo });

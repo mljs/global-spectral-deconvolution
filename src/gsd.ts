@@ -24,7 +24,7 @@ import SG from 'ml-savitzky-golay-generalized';
  * @return {Array<object>}
  */
 
-export interface peakType {
+interface peakType {
   index?: number;
   x: number;
   y: number;
@@ -36,7 +36,7 @@ interface lastType {
   x: number;
   index: number;
 }
-export interface shapeType {
+interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
@@ -49,7 +49,7 @@ interface sgOptionType {
   polynomial: number;
   derivative?: number;
 }
-export interface optionsType {
+interface optionsType {
   noiseLevel?: number;
   sgOptions?: sgOptionType;
   shape?: shapeType;

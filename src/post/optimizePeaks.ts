@@ -1,7 +1,6 @@
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
-
-import { dataType, peakType, shapeType } from '..';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -21,7 +20,26 @@ import { groupPeaks } from './groupPeaks';
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  */
-
+interface dataType {
+  x: number[];
+  y: number[];
+}
+interface peakType {
+  index?: number;
+  x: number;
+  y: number;
+  shape: shapeType;
+  from?: number;
+  to?: number;
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
 interface optionsType {
   factorWidth?: number;
   factorLimits?: number;
@@ -83,9 +101,8 @@ export function optimizePeaks(
         },
       );
       results = results.concat(optimizedPeaks);
-    } else {
-      results = results.concat(peaks);
-    }
+      // eslint-disable-next-line curly
+    } else results = results.concat(peaks);
   }
   return results;
 }

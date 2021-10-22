@@ -1,10 +1,26 @@
-import { peakType } from '..';
+import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+
 /**
  * Group peaks based on factor and add group property in peaks
  * @param {array} peakList
  * @param {number} factor
  */
-
+interface peakType {
+  index?: number;
+  x: number;
+  y: number;
+  shape: shapeType;
+  from?: number;
+  to?: number;
+}
+interface shapeType {
+  kind?: ShapeKind;
+  options?: Shape1D;
+  height?: number;
+  width: number;
+  soft?: boolean;
+  noiseLevel?: number;
+}
 export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
   if (peakList && peakList.length === 0) return [];
 
