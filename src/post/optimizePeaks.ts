@@ -1,8 +1,7 @@
-import { DataXY, DoubleArray } from 'cheminfo-types';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { shapeType, peakType } from '..';
+import { shapeType, peakType, dataType } from '../gsd';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -34,7 +33,7 @@ interface optionsType {
   };
 }
 export function optimizePeaks(
-  data: DataXY<DoubleArray>,
+  data: dataType,
   peakList: peakType[],
   options: optionsType = {},
 ): peakType[] {
@@ -53,7 +52,7 @@ export function optimizePeaks(
     },
   }: optionsType = options;
 
-  if (data && data.x[0] > data.x[1]) {
+  if (data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
@@ -73,7 +72,7 @@ export function optimizePeaks(
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
-    if (currentRange && currentRange.x.length > 5) {
+    if (currentRange.x.length > 5) {
       let { peaks: optimizedPeaks }: { peaks: peakType[] } = optimize(
         currentRange,
         peaks,

@@ -1,4 +1,3 @@
-import { DataXY, DoubleArray } from 'cheminfo-types';
 import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 /**
@@ -63,11 +62,11 @@ export interface optionsType {
   realTopDetection?: boolean;
   factor?: number;
 }
-
-export function gsd(
-  data: DataXY<DoubleArray>,
-  options: optionsType = {},
-): peakType[] {
+export interface dataType {
+  x: number[];
+  y: number[];
+}
+export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -84,7 +83,7 @@ export function gsd(
     realTopDetection = false,
   } = options;
 
-  let { y: yIn, x }: DataXY<DoubleArray> = data;
+  let { y: yIn, x } = data;
 
   const y = yIn.slice();
   let equalSpaced = isEqualSpaced(x);
@@ -109,7 +108,7 @@ export function gsd(
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
   let yData = y;
-  let dY, ddY;
+  let dY: number[], ddY: number[];
   const { windowSize, polynomial } = sgOptions;
 
   if (equalSpaced) {
@@ -124,30 +123,30 @@ export function gsd(
       windowSize,
       polynomial,
       derivative: 1,
-    } as sgOptionType);
+    });
     ddY = SG(y, x[1] - x[0], {
       windowSize,
       polynomial,
       derivative: 2,
-    } as sgOptionType);
+    });
   } else {
     if (smoothY) {
       yData = SG(y, x, {
         windowSize,
         polynomial,
         derivative: 0,
-      } as sgOptionType);
+      });
     }
     dY = SG(y, x, {
       windowSize,
       polynomial,
       derivative: 1,
-    } as sgOptionType);
+    });
     ddY = SG(y, x, {
       windowSize,
       polynomial,
       derivative: 2,
-    } as sgOptionType);
+    });
   }
 
   const xData = x;
@@ -290,7 +289,7 @@ export function gsd(
   return signals;
 }
 
-const isEqualSpaced = (x: DoubleArray): boolean => {
+const isEqualSpaced = (x: number[]): boolean => {
   let tmp: number;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -306,7 +305,7 @@ const isEqualSpaced = (x: DoubleArray): boolean => {
   return (maxDx - minDx) / maxDx < 0.05;
 };
 
-const getNoiseLevel = (y: DoubleArray): number => {
+const getNoiseLevel = (y: number[]): number => {
   let mean = 0;
 
   let stddev = 0;
@@ -315,7 +314,7 @@ const getNoiseLevel = (y: DoubleArray): number => {
     mean += y[i];
   }
   mean /= length;
-  let averageDeviations: DoubleArray = new Array(length);
+  let averageDeviations: number[] = new Array(length);
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
   }
@@ -333,8 +332,8 @@ const getNoiseLevel = (y: DoubleArray): number => {
 };
 const determineRealTop = (
   peakList: peakType[],
-  x: DoubleArray,
-  y: DoubleArray,
+  x: number[],
+  y: number[],
 ): void => {
   let alpha: number,
     beta: number,

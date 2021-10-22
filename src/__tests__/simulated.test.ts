@@ -1,6 +1,4 @@
-import { DataXY, DoubleArray } from 'cheminfo-types';
-
-import { gsd, optimizePeaks } from '..';
+import { dataType, gsd, optimizePeaks } from '..';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateSpectrum } = require('spectrum-generator');
@@ -12,7 +10,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.1, y: 0.2, width: 0.01 },
     ];
 
-    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
+    const data: dataType = generateSpectrum(peaks, {
       generator: {
         from: -1,
         to: 1,
@@ -54,7 +52,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.5, y: 1, width: 0.1 },
     ];
 
-    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
+    const data: dataType = generateSpectrum(peaks, {
       generator: { from: -1, to: 1, nbPoints: 10001 },
     });
 
@@ -86,7 +84,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
   it('Should provide 1 peak', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
-    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
+    const data: dataType = generateSpectrum(peaks, {
       generator: {
         from: -0.5,
         to: 0.5,

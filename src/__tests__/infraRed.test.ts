@@ -1,13 +1,11 @@
 import { readFileSync } from 'fs';
 
-import { DataXY, DoubleArray } from 'cheminfo-types';
-
-import { gsd } from '..';
+import { dataType, gsd } from '../gsd';
 
 describe('Global spectra deconvolution Infrared spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should get the correct result', () => {
-    let spectrum: DataXY<DoubleArray> = JSON.parse(
+    let spectrum: dataType = JSON.parse(
       readFileSync(`${__dirname}/data/infraRed.json`, 'utf-8'),
     );
     gsd(spectrum, {

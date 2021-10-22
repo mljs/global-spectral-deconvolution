@@ -1,4 +1,4 @@
-import { peakType } from '..';
+import { peakType } from '../gsd';
 
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks

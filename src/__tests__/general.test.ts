@@ -1,9 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { DataXY, DoubleArray } from 'cheminfo-types';
-
-import { gsd } from '..';
+import { gsd } from '../gsd';
 
 function lorentzian(x: number, x0 = 0, gamma = 1) {
   return (
@@ -14,7 +12,7 @@ function lorentzian(x: number, x0 = 0, gamma = 1) {
 describe('Global spectra deconvolution simple simulated spectrum', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should provide the right result ...', () => {
-    let spectrum: DataXY<DoubleArray> = JSON.parse(
+    let spectrum: number[][] = JSON.parse(
       readFileSync(join(__dirname, '/data//C2.json'), 'utf8'),
     );
     let result = gsd(
