@@ -101,9 +101,8 @@ export function joinBroadPeaks(
         );
         peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      }
-      // Put back the candidates to the signals list
-      else {
+      } else {
+        // Put back the candidates to the signals list
         for (const index of indexes) {
           peaks.push(broadLines[index]);
         }
