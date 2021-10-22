@@ -9,7 +9,7 @@ import { gsd, joinBroadPeaks } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   it('Should give 120 peaks', () => {
-    let spectrum: number[][] = JSON.parse(
+    let spectrum= JSON.parse(
       readFileSync(join(__dirname, '/data/bigLowS2NSpectrum.json'), 'utf8'),
     );
 

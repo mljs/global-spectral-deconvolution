@@ -1,21 +1,16 @@
+import { DataXY, DoubleArray } from 'cheminfo-types';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
 import { optimizePeaks } from '../optimizePeaks';
 
-
-
-interface dataType {
-  x: number[];
-  y: number[];
-}
 expect.extend({ toMatchCloseTo });
 
 describe('optimizePeaks', () => {
   it('Should throw because execution time is over timeout', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataXY<DoubleArray> = generateSpectrum(peaks, {
       generator: {
         from: -0.5,
         to: 0.5,
@@ -24,7 +19,7 @@ describe('optimizePeaks', () => {
           kind: 'gaussian',
         },
       },
-    }) as dataType;
+    });
 
     let result = optimizePeaks(data, [
       { x: 0.01, y: 0.9, shape: { width: 0.11 } },

@@ -1,4 +1,4 @@
-import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+import { peakType } from '..';
 
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks
@@ -9,22 +9,6 @@ import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
  * @param {boolean} [options.overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
-interface peakType {
-  index?: number;
-  x: number;
-  y: number;
-  shape: shapeType;
-  from?: number;
-  to?: number;
-}
-interface shapeType {
-  kind?: ShapeKind;
-  options?: Shape1D;
-  height?: number;
-  width: number;
-  soft?: boolean;
-  noiseLevel?: number;
-}
 interface optionsType {
   factor?: number;
   overlap?: boolean;

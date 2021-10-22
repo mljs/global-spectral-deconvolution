@@ -1,5 +1,6 @@
-import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
+
+import { peakType, shapeType } from '..';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -13,22 +14,7 @@ import { optimize } from 'ml-spectra-fitting';
  * @param {number} [options.optimization.options.timeout = 10] - maximum time running before break in seconds.
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
-interface peakType {
-  index?: number;
-  x: number;
-  y: number;
-  shape: shapeType;
-  from?: number;
-  to?: number;
-}
-interface shapeType {
-  kind?: ShapeKind;
-  options?: Shape1D;
-  height?: number;
-  width: number;
-  soft?: boolean;
-  noiseLevel?: number;
-}
+
 interface optionsType {
   width?: number;
   shape?: shapeType;

@@ -1,4 +1,5 @@
 import CC from 'chemcalc';
+import { DoubleArray } from 'cheminfo-types';
 import Stat from 'ml-stat';
 
 import { gsd, optimizePeaks } from '..';
@@ -9,8 +10,8 @@ let spectrum = CC.analyseMF('Cl2.Br2', {
   gaussianWidth: 11,
 });
 let xy = spectrum.arrayXXYY;
-let x: number[] = xy[0];
-let y: number[] = xy[1];
+let x: DoubleArray = xy[0];
+let y: DoubleArray = xy[1];
 let max = Stat.array.max(y);
 let noiseLevel = Stat.array.median(y.filter((a: number) => a > 0)) * 3;
 /*
