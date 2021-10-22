@@ -1,4 +1,3 @@
-/* eslint-disable curly */
 import { optimize } from 'ml-spectra-fitting';
 
 import { shapeType, peakType } from '..';
@@ -89,10 +88,11 @@ export function joinBroadPeaks(
         peaks.push(peak[0]);
       }
       // Put back the candidates to the signals list
-      else
+      else {
         for (const index of indexes) {
           peaks.push(broadLines[index]);
         }
+      }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;

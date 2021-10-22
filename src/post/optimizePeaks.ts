@@ -83,9 +83,9 @@ export function optimizePeaks(
         },
       );
       results = results.concat(optimizedPeaks);
+    } else {
+      results = results.concat(peaks);
     }
-    // eslint-disable-next-line curly
-    else results = results.concat(peaks);
   }
   return results;
 }
