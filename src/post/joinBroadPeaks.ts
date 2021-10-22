@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 
@@ -101,12 +102,13 @@ export function joinBroadPeaks(
         );
         peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      } else {
-        // Put back the candidates to the signals list
+      }
+      // Put back the candidates to the signals list
+      else
         for (const index of indexes) {
           peaks.push(broadLines[index]);
         }
-      }
+
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;
