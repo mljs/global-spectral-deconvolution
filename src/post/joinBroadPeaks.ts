@@ -26,9 +26,9 @@ export function joinBroadPeaks(
   options: optionsType = {},
 ): peakType[] {
   let {
-    width = 0.25,
-    shape = { kind: 'gaussian' },
+    shape = { kind: 'gaussian', width: 0 },
     optimization = { kind: 'lm', timeout: 10 },
+    width = 0.25,
   } = options;
   let broadLines: peakType[] = [];
   // Optimize the possible broad lines
@@ -67,7 +67,7 @@ export function joinBroadPeaks(
             candidates.x[0] - candidates.x[candidates.x.length - 1],
           ),
         };
-        let { peaks: peak } = optimize(
+        let fitted = optimize(
           candidates,
           [
             {
@@ -78,6 +78,7 @@ export function joinBroadPeaks(
           ],
           { shape, optimization },
         );
+        let { peaks: peak } = fitted;
         peak[0].index = Math.floor(
           indexes.reduce((a, b) => a + b, 0) / indexes.length,
         );
