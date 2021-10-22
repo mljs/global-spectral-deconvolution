@@ -9,6 +9,7 @@ import { peakType } from '..';
  * @param {boolean} [options.overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
+
 interface optionsType {
   factor?: number;
   overlap?: boolean;

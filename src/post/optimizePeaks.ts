@@ -1,8 +1,7 @@
-import { DataXY, DoubleArray } from 'cheminfo-types';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { peakType, shapeType } from '..';
+import { dataType, peakType, shapeType } from '..';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -35,7 +34,7 @@ interface optionsType {
   };
 }
 export function optimizePeaks(
-  data: DataXY<DoubleArray>,
+  data: dataType,
   peakList: peakType[],
   options: optionsType = {},
 ): peakType[] {

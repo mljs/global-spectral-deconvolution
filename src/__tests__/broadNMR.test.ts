@@ -6,7 +6,7 @@ import { gsd, joinBroadPeaks } from '..';
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should give 1 broad peak and around 14 other peaks', () => {
-    let spectrum = JSON.parse(
+    let spectrum: number[][] = JSON.parse(
       readFileSync(join(__dirname, '/data/broadNMR.json'), 'utf-8'),
     );
     let result = gsd(

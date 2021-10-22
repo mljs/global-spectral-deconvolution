@@ -1,7 +1,7 @@
 /* eslint-disable curly */
 import { optimize } from 'ml-spectra-fitting';
 
-import { peakType, shapeType } from '..';
+import { shapeType, peakType } from '..';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -15,7 +15,6 @@ import { peakType, shapeType } from '..';
  * @param {number} [options.optimization.options.timeout = 10] - maximum time running before break in seconds.
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
-
 interface optionsType {
   width?: number;
   shape?: shapeType;
@@ -26,7 +25,7 @@ export function joinBroadPeaks(
   options: optionsType = {},
 ): peakType[] {
   let {
-    shape = { kind: 'gaussian', width: 0 },
+    shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
     width = 0.25,
   } = options;
@@ -58,7 +57,7 @@ export function joinBroadPeaks(
     ) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
-      if (broadLines && broadLines[i].y > max) {
+      if (broadLines[i].y > max) {
         max = broadLines[i].y;
         maxI = i;
       }
@@ -66,7 +65,7 @@ export function joinBroadPeaks(
       count++;
     } else {
       if (count && count > 2) {
-        let optimizeShape = {
+        let optimizeShape: shapeType = {
           width: Math.abs(
             candidates.x[0] - candidates.x[candidates.x.length - 1],
           ),
@@ -90,7 +89,10 @@ export function joinBroadPeaks(
         peaks.push(peak[0]);
       }
       // Put back the candidates to the signals list
-      else for (const index of indexes) peaks.push(broadLines[index]);
+      else
+        for (const index of indexes) {
+          peaks.push(broadLines[index]);
+        }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;

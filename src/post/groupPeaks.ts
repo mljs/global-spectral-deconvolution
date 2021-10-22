@@ -1,5 +1,4 @@
 import { peakType } from '..';
-
 /**
  * Group peaks based on factor and add group property in peaks
  * @param {array} peakList

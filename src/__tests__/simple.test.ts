@@ -1,4 +1,3 @@
-import { DoubleArray } from 'cheminfo-types';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { getShape1D } from 'ml-peak-shape-generator';
 
@@ -7,9 +6,9 @@ import { gsd } from '..';
 expect.extend({ toMatchCloseTo });
 
 describe('Simple test cases', () => {
-  let x: DoubleArray = [];
-  let y: DoubleArray = [];
-  let negY: DoubleArray = [];
+  let x: number[] = [];
+  let y: number[] = [];
+  let negY: number[] = [];
   for (let i = 0; i < 10; i++) {
     x.push(x.length);
     y.push(0);
