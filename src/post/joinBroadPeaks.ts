@@ -104,7 +104,9 @@ export function joinBroadPeaks(
       }
       // Put back the candidates to the signals list
       else {
-        indexes.forEach((index) => peaks.push(broadLines[index]));
+        for (const index of indexes) {
+          peaks.push(broadLines[index]);
+        }
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
