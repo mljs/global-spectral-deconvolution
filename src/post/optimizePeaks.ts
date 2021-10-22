@@ -74,7 +74,7 @@ export function optimizePeaks(
       x: data.x.slice(fromIndex, toIndex),
       y: data.y.slice(fromIndex, toIndex),
     };
-    if (currentRange && currentRange.x.length > 5) {
+    if (currentRange.x.length > 5) {
       let { peaks: optimizedPeaks }: { peaks: peakType[] } = optimize(
         currentRange,
         peaks,
@@ -84,9 +84,9 @@ export function optimizePeaks(
         },
       );
       results = results.concat(optimizedPeaks);
-    } else {
-      results = results.concat(peaks);
     }
+    // eslint-disable-next-line curly
+    else results = results.concat(peaks);
   }
   return results;
 }
