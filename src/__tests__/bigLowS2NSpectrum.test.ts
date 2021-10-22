@@ -5,11 +5,13 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+import { DataXY, DoubleArray } from 'cheminfo-types';
+
 import { gsd, joinBroadPeaks } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   it('Should give 120 peaks', () => {
-    let spectrum: number[][] = JSON.parse(
+    let spectrum: DataXY<DoubleArray> = JSON.parse(
       readFileSync(join(__dirname, '/data/bigLowS2NSpectrum.json'), 'utf8'),
     );
 

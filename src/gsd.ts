@@ -1,3 +1,4 @@
+import { DataXY, DoubleArray } from 'cheminfo-types';
 import { getShape1D, Shape1D, ShapeKind } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 /**
@@ -24,7 +25,7 @@ import SG from 'ml-savitzky-golay-generalized';
  * @return {Array<object>}
  */
 
-interface peakType {
+export interface peakType {
   index?: number;
   x: number;
   y: number;
@@ -32,11 +33,11 @@ interface peakType {
   from?: number;
   to?: number;
 }
-interface lastType {
+export interface lastType {
   x: number;
   index: number;
 }
-interface shapeType {
+export interface shapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
@@ -49,7 +50,7 @@ interface sgOptionType {
   polynomial: number;
   derivative?: number;
 }
-interface optionsType {
+export interface optionsType {
   noiseLevel?: number;
   sgOptions?: sgOptionType;
   shape?: shapeType;
@@ -62,11 +63,11 @@ interface optionsType {
   realTopDetection?: boolean;
   factor?: number;
 }
-interface dataType {
-  x: number[];
-  y: number[];
-}
-export function gsd(data: dataType, options: optionsType = {}): peakType[] {
+
+export function gsd(
+  data: DataXY<DoubleArray>,
+  options: optionsType = {},
+): peakType[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -83,7 +84,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
     realTopDetection = false,
   } = options;
 
-  let { y: yIn, x }: dataType = data;
+  let { y: yIn, x }: DataXY<DoubleArray> = data;
 
   const y = yIn.slice();
   let equalSpaced = isEqualSpaced(x);
@@ -108,8 +109,8 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
   let yData = y;
-  let dY: number[], ddY: number[];
-  const { windowSize, polynomial }: sgOptionType = sgOptions;
+  let dY, ddY;
+  const { windowSize, polynomial } = sgOptions;
 
   if (equalSpaced) {
     if (smoothY) {
@@ -117,7 +118,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
         windowSize,
         polynomial,
         derivative: 0,
-      } as sgOptionType);
+      });
     }
     dY = SG(y, x[1] - x[0], {
       windowSize,
@@ -149,7 +150,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
     } as sgOptionType);
   }
 
-  const xData: number[] = x;
+  const xData = x;
   const dX = x[1] - x[0];
   let maxDdy = 0;
   let maxY = 0;
@@ -289,7 +290,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
   return signals;
 }
 
-const isEqualSpaced = (x: number[]): boolean => {
+const isEqualSpaced = (x: DoubleArray): boolean => {
   let tmp: number;
   let maxDx = 0;
   let minDx = Number.MAX_SAFE_INTEGER;
@@ -305,7 +306,7 @@ const isEqualSpaced = (x: number[]): boolean => {
   return (maxDx - minDx) / maxDx < 0.05;
 };
 
-const getNoiseLevel = (y: number[]): number => {
+const getNoiseLevel = (y: DoubleArray): number => {
   let mean = 0;
 
   let stddev = 0;
@@ -314,7 +315,7 @@ const getNoiseLevel = (y: number[]): number => {
     mean += y[i];
   }
   mean /= length;
-  let averageDeviations: number[] = new Array(length);
+  let averageDeviations: DoubleArray = new Array(length);
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
   }
@@ -332,8 +333,8 @@ const getNoiseLevel = (y: number[]): number => {
 };
 const determineRealTop = (
   peakList: peakType[],
-  x: number[],
-  y: number[],
+  x: DoubleArray,
+  y: DoubleArray,
 ): void => {
   let alpha: number,
     beta: number,

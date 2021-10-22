@@ -3,12 +3,6 @@ import { generateSpectrum } from 'spectrum-generator';
 
 import { optimizePeaks } from '../optimizePeaks';
 
-
-
-interface dataType {
-  x: number[];
-  y: number[];
-}
 expect.extend({ toMatchCloseTo });
 
 describe('optimizePeaks', () => {
@@ -24,7 +18,7 @@ describe('optimizePeaks', () => {
           kind: 'gaussian',
         },
       },
-    }) as dataType;
+    });
 
     let result = optimizePeaks(data, [
       { x: 0.01, y: 0.9, shape: { width: 0.11 } },

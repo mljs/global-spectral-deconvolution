@@ -1,11 +1,13 @@
 import { readFileSync } from 'fs';
 
+import { DataXY, DoubleArray } from 'cheminfo-types';
+
 import { gsd } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Ethylvinylether should have 21 peaks', () => {
-    let spectrum: number[][] = JSON.parse(
+    let spectrum: DataXY<DoubleArray> = JSON.parse(
       readFileSync(`${__dirname}/data/ethylvinylether.json`, 'utf-8'),
     );
     let result = gsd(

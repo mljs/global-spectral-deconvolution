@@ -1,6 +1,8 @@
-import { Shape1D, ShapeKind } from 'ml-peak-shape-generator';
+import { DataXY, DoubleArray } from 'cheminfo-types';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
+
+import { shapeType, peakType } from '..';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -20,26 +22,6 @@ import { groupPeaks } from './groupPeaks';
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  */
-interface dataType {
-  x: number[];
-  y: number[];
-}
-interface peakType {
-  index?: number;
-  x: number;
-  y: number;
-  shape: shapeType;
-  from?: number;
-  to?: number;
-}
-interface shapeType {
-  kind?: ShapeKind;
-  options?: Shape1D;
-  height?: number;
-  width: number;
-  soft?: boolean;
-  noiseLevel?: number;
-}
 interface optionsType {
   factorWidth?: number;
   factorLimits?: number;
@@ -52,7 +34,7 @@ interface optionsType {
   };
 }
 export function optimizePeaks(
-  data: dataType,
+  data: DataXY<DoubleArray>,
   peakList: peakType[],
   options: optionsType = {},
 ): peakType[] {
