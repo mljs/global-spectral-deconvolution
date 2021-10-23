@@ -60,6 +60,9 @@ export function joinBroadPeaks(
       indexes.push(i);
       count++;
     } else {
+      const pushPeak: (index: number, key?: number) => void = (index) => {
+        peaks.push(broadLines[index]);
+      };
       if (count > 2) {
         let optimizeShape: shapeType = {
           width: Math.abs(
@@ -85,7 +88,7 @@ export function joinBroadPeaks(
         peaks.push(peak[0]);
       } // Put back the candidates to the signals list
       else {
-        indexes.map((index) => peaks.push(broadLines[index]));
+        indexes.forEach(pushPeak);
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
