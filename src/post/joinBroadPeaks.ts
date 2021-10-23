@@ -27,8 +27,8 @@ export function joinBroadPeaks(
   let {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
-    width = 0.25,
   } = options;
+  let { width = 0.25 } = options;
   let broadLines: peakType[] = [];
   // Optimize the possible broad lines
   let max = 0;
@@ -60,9 +60,6 @@ export function joinBroadPeaks(
       indexes.push(i);
       count++;
     } else {
-      const pushPeak: (index: number, key?: number) => void = (index) => {
-        peaks.push(broadLines[index]);
-      };
       if (count > 2) {
         let optimizeShape: shapeType = {
           width: Math.abs(
@@ -86,10 +83,14 @@ export function joinBroadPeaks(
         );
         peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      } // Put back the candidates to the signals list
-      else {
-        indexes.forEach(pushPeak);
       }
+      // Put back the candidates to the signals list
+      else {
+        indexes.forEach((index) => {
+          peaks.push(broadLines[index]);
+        });
+      }
+
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;
