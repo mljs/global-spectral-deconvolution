@@ -83,11 +83,9 @@ export function joinBroadPeaks(
         );
         peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      } else {
-        // Put back the candidates to the signals list
-        indexes.forEach((index) => {
-          peaks.push(broadLines[index]);
-        });
+      } // Put back the candidates to the signals list
+      else {
+        indexes.map((index) => peaks.push(broadLines[index]));
       }
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
