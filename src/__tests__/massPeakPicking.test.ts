@@ -1,14 +1,14 @@
 import CC from 'chemcalc';
 import Stat from 'ml-stat';
 
-import { dataType, gsd, optimizePeaks } from '..';
+import { DataType, gsd, optimizePeaks } from '..';
 
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
   fwhm: 0.01,
   gaussianWidth: 11,
 });
-let xy: dataType = spectrum.arrayXXYY;
+let xy: DataType = spectrum.arrayXXYY;
 let x: number[] = xy[0];
 let y: number[] = xy[1];
 let max = Stat.array.max(y);

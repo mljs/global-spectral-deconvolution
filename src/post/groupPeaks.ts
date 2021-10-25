@@ -4,21 +4,21 @@
  * @param {number} factor
  */
 
-import { peakType } from '..';
+import { PeakType } from '..';
 
-export function groupPeaks(peakList: peakType[], factor = 1): peakType[][] {
+export function groupPeaks(peakList: PeakType[], factor = 1): PeakType[][] {
   if (peakList && peakList.length === 0) return [];
 
-  let peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
+  let peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak: peakType = {
+  let previousPeak: PeakType = {
     x: Number.NEGATIVE_INFINITY,
     shape: { width: 1 },
     y: 0,
   };
-  let currentGroup: peakType[] = [previousPeak];
-  let groups: peakType[][] = [];
+  let currentGroup: PeakType[] = [previousPeak];
+  let groups: PeakType[][] = [];
 
   peaks.forEach((peak) => {
     if (

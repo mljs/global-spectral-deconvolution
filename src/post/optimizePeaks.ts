@@ -1,7 +1,7 @@
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { shapeType, peakType, dataType } from '../gsd';
+import { ShapeType, PeakType, DataType } from '../gsd';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -21,10 +21,10 @@ import { groupPeaks } from './groupPeaks';
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  */
-interface optionsType {
+interface OptionsType {
   factorWidth?: number;
   factorLimits?: number;
-  shape?: shapeType;
+  shape?: ShapeType;
   optimization?: {
     kind: string;
     options: {
@@ -33,10 +33,10 @@ interface optionsType {
   };
 }
 export function optimizePeaks(
-  data: dataType,
-  peakList: peakType[],
-  options: optionsType = {},
-): peakType[] {
+  data: DataType,
+  peakList: PeakType[],
+  options: OptionsType = {},
+): PeakType[] {
   const {
     factorWidth = 1,
     factorLimits = 2,
@@ -50,20 +50,20 @@ export function optimizePeaks(
         timeout: 10,
       },
     },
-  }: optionsType = options;
+  }: OptionsType = options;
 
   if (data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
 
-  let groups: peakType[][] = groupPeaks(peakList, factorWidth);
+  let groups: PeakType[][] = groupPeaks(peakList, factorWidth);
 
-  let results: peakType[] = [];
+  let results: PeakType[] = [];
 
   groups.forEach((peaks) => {
-    const firstPeak: peakType = peaks[0];
-    const lastPeak: peakType = peaks[peaks.length - 1];
+    const firstPeak: PeakType = peaks[0];
+    const lastPeak: PeakType = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;
@@ -74,7 +74,7 @@ export function optimizePeaks(
       y: data.y.slice(fromIndex, toIndex),
     };
     if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks }: { peaks: peakType[] } = optimize(
+      let { peaks: optimizedPeaks }: { peaks: PeakType[] } = optimize(
         currentRange,
         peaks,
         {

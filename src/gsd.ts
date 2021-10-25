@@ -24,19 +24,19 @@ import SG from 'ml-savitzky-golay-generalized';
  * @return {Array<object>}
  */
 
-export interface peakType {
+export interface PeakType {
   index?: number;
   x: number;
   y: number;
-  shape: shapeType;
+  shape: ShapeType;
   from?: number;
   to?: number;
 }
-export interface lastType {
+export interface LastType {
   x: number;
   index: number;
 }
-export interface shapeType {
+export interface ShapeType {
   kind?: ShapeKind;
   options?: Shape1D;
   height?: number;
@@ -44,15 +44,13 @@ export interface shapeType {
   soft?: boolean;
   noiseLevel?: number;
 }
-interface sgOptionType {
-  windowSize: number;
-  polynomial: number;
-  derivative?: number;
-}
-export interface optionsType {
+export interface OptionsType {
   noiseLevel?: number;
-  sgOptions?: sgOptionType;
-  shape?: shapeType;
+  sgOptions?: {
+    windowSize: number;
+    polynomial: number;
+  };
+  shape?: ShapeType;
   smoothY?: boolean;
   heightFactor?: number;
   broadRatio?: number;
@@ -62,11 +60,11 @@ export interface optionsType {
   realTopDetection?: boolean;
   factor?: number;
 }
-export interface dataType {
+export interface DataType {
   x: number[];
   y: number[];
 }
-export function gsd(data: dataType, options: optionsType = {}): peakType[] {
+export function gsd(data: DataType, options: OptionsType = {}): PeakType[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -161,11 +159,11 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
       maxY = Math.abs(yData[i]);
     }
   }
-  let lastMax: lastType | null = null;
-  let lastMin: lastType | null = null;
+  let lastMax: LastType | null = null;
+  let lastMin: LastType | null = null;
   let minddY: number[] = [];
-  let intervalL: lastType[] = [];
-  let intervalR: lastType[] = [];
+  let intervalL: LastType[] = [];
+  let intervalR: LastType[] = [];
   let broadMask: boolean[] = [];
 
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
@@ -215,7 +213,7 @@ export function gsd(data: dataType, options: optionsType = {}): peakType[] {
     shape.options,
   ).widthToFWHM;
 
-  let signals: peakType[] = [];
+  let signals: PeakType[] = [];
   let lastK = -1;
   let possible: number,
     frequency: number,
@@ -331,7 +329,7 @@ const getNoiseLevel = (y: number[]): number => {
   return stddev;
 };
 const determineRealTop = (
-  peakList: peakType[],
+  peakList: PeakType[],
   x: number[],
   y: number[],
 ): void => {

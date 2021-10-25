@@ -2,14 +2,14 @@ import { readFileSync } from 'fs';
 
 import { parseXY } from 'xy-parser';
 
-import { dataType, gsd } from '../gsd';
+import { DataType, gsd } from '../gsd';
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
 
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
-    let spectrum: dataType = parseXY(
+    let spectrum: DataType = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
     );
     // var d = new Date();

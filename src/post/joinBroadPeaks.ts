@@ -1,6 +1,6 @@
 import { optimize } from 'ml-spectra-fitting';
 
-import { shapeType, peakType } from '../gsd';
+import { ShapeType, PeakType } from '../gsd';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -15,27 +15,27 @@ import { shapeType, peakType } from '../gsd';
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
 
-interface optionsType {
+interface OptionsType {
   width?: number;
-  shape?: shapeType;
+  shape?: ShapeType;
   optimization?: { kind: string; timeout: number };
 }
 export function joinBroadPeaks(
-  peakList: peakType[],
-  options: optionsType = {},
-): peakType[] {
+  peakList: PeakType[],
+  options: OptionsType = {},
+): PeakType[] {
   let {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
   } = options;
   let { width = 0.25 } = options;
-  let broadLines: peakType[] = [];
+  let broadLines: PeakType[] = [];
   // Optimize the possible broad lines
   let max = 0;
   let maxI = 0;
   let count = 1;
 
-  const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
+  const peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
   for (let i: number = peaks.length - 1; i >= 0; i--) {
     if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
@@ -61,7 +61,7 @@ export function joinBroadPeaks(
       count++;
     } else {
       if (count > 2) {
-        let optimizeShape: shapeType = {
+        let optimizeShape: ShapeType = {
           width: Math.abs(
             candidates.x[0] - candidates.x[candidates.x.length - 1],
           ),

@@ -1,4 +1,4 @@
-import { peakType } from '../gsd';
+import { PeakType } from '../gsd';
 
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks
@@ -9,17 +9,17 @@ import { peakType } from '../gsd';
  * @param {boolean} [options.overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
-interface optionsType {
+interface OptionsType {
   factor?: number;
   overlap?: boolean;
 }
 export function broadenPeaks(
-  peakList: peakType[],
-  options: optionsType = {},
-): peakType[] {
-  const { factor = 2, overlap = false }: optionsType = options;
+  peakList: PeakType[],
+  options: OptionsType = {},
+): PeakType[] {
+  const { factor = 2, overlap = false }: OptionsType = options;
 
-  const peaks: peakType[] = JSON.parse(JSON.stringify(peakList));
+  const peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
 
   peaks.forEach((peak) => {
     peak.from = peak.x - (peak.shape.width / 2) * factor;
@@ -41,8 +41,8 @@ export function broadenPeaks(
     peak.shape.width = (peak.to as number) - (peak.from as number);
   }
 
-  return peaks.map((peak: peakType): peakType => {
-    const { x, y, shape }: peakType = peak;
-    return { x, y, shape } as peakType;
+  return peaks.map((peak: PeakType): PeakType => {
+    const { x, y, shape }: PeakType = peak;
+    return { x, y, shape } as PeakType;
   });
 }
