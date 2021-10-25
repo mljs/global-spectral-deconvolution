@@ -5,6 +5,9 @@ on:
     branches: master
   pull_request:
 
+env:
+  NODE_VERSION: 16.x
+
 jobs:
   nodejs:
     uses: zakodium/workflows/.github/workflows/nodejs.yml@nodejs-v1
