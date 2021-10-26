@@ -1,18 +1,18 @@
-import { gsd, optimizePeaks } from '..';
+import CC from 'chemcalc';
+import Stat from 'ml-stat';
 
-let CC = require('chemcalc');
-let Stat = require('ml-stat');
+import { DataType, gsd, optimizePeaks } from '..';
 
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',
   fwhm: 0.01,
   gaussianWidth: 11,
 });
-let xy = spectrum.arrayXXYY;
-let x = xy[0];
-let y = xy[1];
+let xy: DataType = spectrum.arrayXXYY;
+let x: number[] = xy[0];
+let y: number[] = xy[1];
 let max = Stat.array.max(y);
-let noiseLevel = Stat.array.median(y.filter((a) => a > 0)) * 3;
+let noiseLevel = Stat.array.median(y.filter((a: number) => a > 0)) * 3;
 /*
 69.938 100
 71.935 63.99155
@@ -39,6 +39,7 @@ describe('Check the peak picking of a simulated mass spectrum', () => {
       factorWidth: 4,
       shape: {
         kind: 'gaussian',
+        width: 0,
       },
     });
     expect(result[0].x).toBeCloseTo(69.938, 1);

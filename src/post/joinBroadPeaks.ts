@@ -1,5 +1,7 @@
 import { optimize } from 'ml-spectra-fitting';
 
+import { ShapeType, PeakType } from '../gsd';
+
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
  * @param {Array} peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
@@ -12,29 +14,41 @@ import { optimize } from 'ml-spectra-fitting';
  * @param {number} [options.optimization.options.timeout = 10] - maximum time running before break in seconds.
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
-export function joinBroadPeaks(peakList, options = {}) {
+
+interface OptionsType {
+  width?: number;
+  shape?: ShapeType;
+  optimization?: { kind: string; timeout: number };
+}
+export function joinBroadPeaks(
+  peakList: PeakType[],
+  options: OptionsType = {},
+): PeakType[] {
   let {
-    width = 0.25,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
   } = options;
-  let broadLines = [];
+  let { width = 0.25 } = options;
+  let broadLines: PeakType[] = [];
   // Optimize the possible broad lines
   let max = 0;
   let maxI = 0;
   let count = 1;
 
-  const peaks = JSON.parse(JSON.stringify(peakList));
-  for (let i = peaks.length - 1; i >= 0; i--) {
+  const peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
+  for (let i: number = peaks.length - 1; i >= 0; i--) {
     if (peaks[i].shape.soft) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE });
+  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 }, y: 0 });
 
-  let candidates = { x: [broadLines[0].x], y: [broadLines[0].y] };
-  let indexes = [0];
+  let candidates: { x: number[]; y: number[] } = {
+    x: [broadLines[0].x],
+    y: [broadLines[0].y],
+  };
+  let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
       candidates.x.push(broadLines[i].x);
@@ -47,17 +61,18 @@ export function joinBroadPeaks(peakList, options = {}) {
       count++;
     } else {
       if (count > 2) {
+        let optimizeShape: ShapeType = {
+          width: Math.abs(
+            candidates.x[0] - candidates.x[candidates.x.length - 1],
+          ),
+        };
         let fitted = optimize(
           candidates,
           [
             {
               x: broadLines[maxI].x,
               y: max,
-              shape: {
-                width: Math.abs(
-                  candidates.x[0] - candidates.x[candidates.x.length - 1],
-                ),
-              },
+              shape: optimizeShape,
             },
           ],
           { shape, optimization },
@@ -68,12 +83,14 @@ export function joinBroadPeaks(peakList, options = {}) {
         );
         peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      } else {
-        // Put back the candidates to the signals list
+      }
+      // Put back the candidates to the signals list
+      else {
         indexes.forEach((index) => {
           peaks.push(broadLines[index]);
         });
       }
+
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
       indexes = [i];
       max = broadLines[i].y;

@@ -1,6 +1,8 @@
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
+import { ShapeType, PeakType, DataType } from '../gsd';
+
 import { groupPeaks } from './groupPeaks';
 
 /**
@@ -19,13 +21,28 @@ import { groupPeaks } from './groupPeaks';
  * @param {object} [options.optimization.options={}] - options for the specific kind of algorithm.
  * @param {number} [options.optimization.options.timeout=10] - maximum time running before break in seconds.
  */
-
-export function optimizePeaks(data, peakList, options = {}) {
+interface OptionsType {
+  factorWidth?: number;
+  factorLimits?: number;
+  shape?: ShapeType;
+  optimization?: {
+    kind: string;
+    options: {
+      timeout: number;
+    };
+  };
+}
+export function optimizePeaks(
+  data: DataType,
+  peakList: PeakType[],
+  options: OptionsType = {},
+): PeakType[] {
   const {
     factorWidth = 1,
     factorLimits = 2,
     shape = {
       kind: 'gaussian',
+      width: 0,
     },
     optimization = {
       kind: 'lm',
@@ -33,19 +50,20 @@ export function optimizePeaks(data, peakList, options = {}) {
         timeout: 10,
       },
     },
-  } = options;
+  }: OptionsType = options;
 
   if (data.x[0] > data.x[1]) {
     data.x.reverse();
     data.y.reverse();
   }
 
-  let groups = groupPeaks(peakList, factorWidth);
+  let groups: PeakType[][] = groupPeaks(peakList, factorWidth);
 
-  let results = [];
-  for (const peaks of groups) {
-    const firstPeak = peaks[0];
-    const lastPeak = peaks[peaks.length - 1];
+  let results: PeakType[] = [];
+
+  groups.forEach((peaks) => {
+    const firstPeak: PeakType = peaks[0];
+    const lastPeak: PeakType = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.shape.width * factorLimits;
     const to = lastPeak.x + lastPeak.shape.width * factorLimits;
@@ -56,14 +74,17 @@ export function optimizePeaks(data, peakList, options = {}) {
       y: data.y.slice(fromIndex, toIndex),
     };
     if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
-        shape,
-        optimization,
-      });
+      let { peaks: optimizedPeaks }: { peaks: PeakType[] } = optimize(
+        currentRange,
+        peaks,
+        {
+          shape,
+          optimization,
+        },
+      );
       results = results.concat(optimizedPeaks);
-    } else {
-      results = results.concat(peaks);
-    }
-  }
+      // eslint-disable-next-line curly
+    } else results = results.concat(peaks);
+  });
   return results;
 }

@@ -1,5 +1,6 @@
-import { gsd, optimizePeaks } from '..';
+import { DataType, gsd, optimizePeaks } from '..';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateSpectrum } = require('spectrum-generator');
 
 describe('Global spectra deconvolution with simulated spectra', () => {
@@ -9,7 +10,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.1, y: 0.2, width: 0.01 },
     ];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataType = generateSpectrum(peaks, {
       generator: {
         from: -1,
         to: 1,
@@ -25,7 +26,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian', width: 0 },
     });
 
     let optimizedPeaks = optimizePeaks(data, peakList);
@@ -36,7 +37,6 @@ describe('Global spectra deconvolution with simulated spectra', () => {
     expect(peakList[1].x).toBeCloseTo(0.1, 2);
     expect(peakList[1].y).toBeCloseTo(0.2, 2);
     expect(peakList[1].shape.width).toBeCloseTo(0.01, 2);
-
 
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.1, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(0.2, 2);
@@ -52,7 +52,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       { x: 0.5, y: 1, width: 0.1 },
     ];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataType = generateSpectrum(peaks, {
       generator: { from: -1, to: 1, nbPoints: 10001 },
     });
 
@@ -61,7 +61,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian', width: 0 },
     });
 
     expect(peakList[0].x).toBeCloseTo(-0.5, 2);
@@ -84,13 +84,14 @@ describe('Global spectra deconvolution with simulated spectra', () => {
   it('Should provide 1 peak', () => {
     const peaks = [{ x: 0, y: 1, width: 0.12 }];
 
-    const data = generateSpectrum(peaks, {
+    const data: DataType = generateSpectrum(peaks, {
       generator: {
         from: -0.5,
         to: 0.5,
         nbPoints: 10001,
         shape: {
           kind: 'gaussian',
+          width: 0,
         },
       },
     });
@@ -100,7 +101,7 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian' },
+      shape: { kind: 'gaussian', width: 0 },
     });
 
     expect(peakList).toHaveLength(1);

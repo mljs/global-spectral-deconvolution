@@ -10,7 +10,7 @@ import { join } from 'path';
 
 import { generateSpectrum } from 'spectrum-generator';
 
-import { gsd, optimizePeaks } from '../src';
+import { DataType, gsd, optimizePeaks } from '../src';
 
 const peaks = [
   { x: -0.1, y: 0.2, width: 0.3 },
@@ -20,14 +20,18 @@ const peaks = [
 const from = -1;
 const to = 1;
 
-const original = generateSpectrum(peaks, { from, to, nbPoints: 101 });
+const original = generateSpectrum(peaks, {
+  from,
+  to,
+  nbPoints: 101,
+});
 
 let peakList = gsd(original, {
   minMaxRatio: 0,
   realTopDetection: false,
   smoothY: false,
   heightFactor: 1,
-  shape: { kind: 'gaussian' },
+  shape: { kind: 'gaussian', width: 0 },
 });
 
 let optimizedPeaks = optimizePeaks(original, peakList);
@@ -63,8 +67,8 @@ let reconstructed = generateSpectrum(optimizedPeaks, {
   to,
   nbPoints: 5001,
 });
-reconstructed.x = Array.from(reconstructed.x)
-reconstructed.y = Array.from(reconstructed.y)
+reconstructed.x = Array.from(reconstructed.x);
+reconstructed.y = Array.from(reconstructed.y);
 
 original.x = Array.from(original.x);
 original.y = Array.from(original.y);

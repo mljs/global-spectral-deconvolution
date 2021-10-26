@@ -5,11 +5,11 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-let { gsd, joinBroadPeaks } = require('..');
+import { gsd, joinBroadPeaks } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   it('Should give 120 peaks', () => {
-    let spectrum = JSON.parse(
+    let spectrum: number[][] = JSON.parse(
       readFileSync(join(__dirname, '/data/bigLowS2NSpectrum.json'), 'utf8'),
     );
 
@@ -22,7 +22,6 @@ describe('Global spectra deconvolution NMR spectra', () => {
         sgOptions: { windowSize: 13, polynomial: 3 },
       },
     );
-
     pp = joinBroadPeaks(pp, { width: 0.25 });
 
     expect(pp).toHaveLength(91);

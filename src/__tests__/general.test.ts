@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { gsd } from '..';
+import { gsd } from '../gsd';
 
-function lorentzian(x, x0 = 0, gamma = 1) {
+function lorentzian(x: number, x0 = 0, gamma = 1) {
   return (
     (gamma * gamma) / (Math.PI * gamma * (gamma * gamma + (x - x0) * (x - x0)))
   );
@@ -12,7 +12,7 @@ function lorentzian(x, x0 = 0, gamma = 1) {
 describe('Global spectra deconvolution simple simulated spectrum', () => {
   // Test case obtained from Pag 443, Chap 8.
   it('Should provide the right result ...', () => {
-    let spectrum = JSON.parse(
+    let spectrum: number[][] = JSON.parse(
       readFileSync(join(__dirname, '/data//C2.json'), 'utf8'),
     );
     let result = gsd(
@@ -35,8 +35,8 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
   it('Should give 10 peaks', () => {
     const size = 300;
     const fourth = size / 11;
-    let times = new Array(size);
-    let tic = new Array(size);
+    let times: number[] = new Array(size);
+    let tic: number[] = new Array(size);
 
     for (let i = 0; i < size; ++i) {
       times[i] = i;
