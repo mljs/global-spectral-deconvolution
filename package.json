@@ -14,13 +14,13 @@
     "jest": true
   },
   "scripts": {
-    "build": "rollup -c && cheminfo-build --entry src/index.js --root GSD",
+    "build": "npm run tsc-esm && cheminfo-build --entry lib-esm/index.js --root GSD",
     "check-types": "tsc --noEmit",
     "clean": "rimraf lib lib-esm",
     "example": "nodemon -w src -w examples/example.js -r esm examples/example.js",
     "eslint": "eslint src --cache",
     "eslint-fix": "npm run eslint -- --fix",
-    "prepack": "npm run compile && npm run tsc",
+    "prepack": "npm run tsc",
     "prettier": "prettier --check src",
     "prettier-write": "prettier --write src",
     "test": "npm run test-only && npm run eslint && npm run check-types",
