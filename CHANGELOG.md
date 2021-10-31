@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v7.0.1...v8.0.0) (2021-10-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* setup typescript (#66)
+
+### Features
+
+* setup typescript ([#66](https://www.github.com/mljs/global-spectral-deconvolution/issues/66)) ([4e61017](https://www.github.com/mljs/global-spectral-deconvolution/commit/4e610172b9ebd36f232f2b99585e8c2481b78502))
+
 ### [7.0.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v7.0.0...v7.0.1) (2021-10-11)
 
 ### Bug Fixes
