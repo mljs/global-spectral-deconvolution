@@ -62,9 +62,7 @@
     "chemcalc": "^3.4.1",
     "cheminfo-build": "^1.1.11",
     "eslint": "^8.1.0",
-    "eslint-config-cheminfo-typescript": "^10.1.1",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jest": "^25.2.2",
+    "eslint-config-cheminfo-typescript": "^10.2.2",
     "esm": "^3.2.25",
     "jest": "^27.3.1",
     "jest-matcher-deep-close-to": "^3.0.2",
@@ -79,7 +77,7 @@
     "xy-parser": "^3.2.0"
   },
   "dependencies": {
-    "cheminfo-types": "^0.6.0",
+    "cheminfo-types": "^0.7.0",
     "ml-peak-shape-generator": "^2.0.2",
     "ml-savitzky-golay-generalized": "2.0.3",
     "ml-spectra-fitting": "^2.0.0",
