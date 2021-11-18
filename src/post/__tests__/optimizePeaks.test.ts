@@ -1,4 +1,3 @@
-import { DataXY } from 'cheminfo-types';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
@@ -19,7 +18,7 @@ describe('optimizePeaks', () => {
           kind: 'gaussian',
         },
       },
-    }) as DataXY;
+    });
 
     let result = optimizePeaks(data, [{ x: 0.01, y: 0.9, width: 0.11 }]);
     expect(result).toMatchCloseTo([
