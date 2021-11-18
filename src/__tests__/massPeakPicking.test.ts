@@ -1,10 +1,9 @@
 import CC from 'chemcalc';
+import type { DataXY } from 'cheminfo-types';
+import { Gaussian } from 'ml-peak-shape-generator';
 import Stat from 'ml-stat';
 
-import type { DataXY } from 'cheminfo-types';
 import { gsd, optimizePeaks } from '..';
-
-import { Gaussian } from 'ml-peak-shape-generator'
 
 let spectrum = CC.analyseMF('Cl2.Br2', {
   isotopomers: 'arrayXXYY',

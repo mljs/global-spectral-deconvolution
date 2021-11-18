@@ -1,11 +1,10 @@
-import { optimize } from 'ml-spectra-fitting';
-import type { Shape1D } from 'ml-peak-shape-generator';
-import type { Peak1D } from '../gsd';
 import type { DataXY } from 'cheminfo-types';
-
+import type { Shape1D } from 'ml-peak-shape-generator';
+import SG from 'ml-savitzky-golay-generalized';
+import { optimize } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
-import SG from 'ml-savitzky-golay-generalized';
+import type { Peak1D } from '../gsd';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -32,7 +31,7 @@ interface OptionsType extends Partial<GetSoftMaskOptions> {
   width?: number;
   shape?: Shape1D;
   optimization?: { kind: string; timeout: number };
-  mask?: Boolean[];
+  mask?: boolean[];
 }
 
 export function joinBroadPeaks(
@@ -150,8 +149,8 @@ function getSoftMask(
   });
 
   let maxDdy = 0;
-  for (let i = 0; i < ddY.length; i++) {
-    if (Math.abs(ddY[i]) > maxDdy) maxDdy = Math.abs(ddY[i]);
+  for (const ddYIndex of ddY) {
+    if (Math.abs(ddYIndex) > maxDdy) maxDdy = Math.abs(ddYIndex);
   }
 
   const broadMask: boolean[] = [];

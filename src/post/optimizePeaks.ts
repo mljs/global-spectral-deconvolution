@@ -1,12 +1,12 @@
+import type { DataXY } from 'cheminfo-types';
+import type { Shape1D } from 'ml-peak-shape-generator';
+import { getShape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import type { Peak1D } from '../gsd';
-import type { Shape1D } from 'ml-peak-shape-generator';
-import type { DataXY } from 'cheminfo-types';
 
 import { groupPeaks } from './groupPeaks';
-import { getShape1D } from 'ml-peak-shape-generator';
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)

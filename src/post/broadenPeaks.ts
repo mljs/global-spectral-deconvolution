@@ -38,15 +38,14 @@ export function broadenPeaks(
     for (let i = 0; i < peaks.length - 1; i++) {
       let peak = peaks[i];
       let nextPeak = peaks[i + 1];
-      if ((peak.to as number) > (nextPeak.from as number)) {
-        peak.to = nextPeak.from =
-          ((peak.to as number) + (nextPeak.from as number)) / 2;
+      if (peak.to > nextPeak.from) {
+        peak.to = nextPeak.from = (peak.to + nextPeak.from) / 2;
       }
     }
   }
 
   for (let peak of peaks) {
-    peak.width = (peak.to as number) - (peak.from as number);
+    peak.width = peak.to - peak.from;
   }
 
   return peaks.map((peak: Peak1D) => {

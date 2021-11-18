@@ -1,5 +1,5 @@
-import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import type { DataXY, DoubleArray } from 'cheminfo-types';
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 /**
  * Global spectra deconvolution
@@ -153,7 +153,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let minddY: number[] = [];
   let intervalL: LastType[] = [];
   let intervalR: LastType[] = [];
-  let broadMask: boolean[] = [];
 
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
@@ -205,8 +204,9 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     distanceJ: number,
     minDistance: number,
     gettingCloser: boolean;
-  for (let j = 0; j < minddY.length; ++j) {
-    frequency = xData[minddY[j]];
+
+  for (const minddYIndex of minddY) {
+    frequency = xData[minddYIndex];
     possible = -1;
     let k = lastK + 1;
     minDistance = Number.MAX_VALUE;
@@ -229,14 +229,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     }
 
     if (possible !== -1) {
-      if (Math.abs(yData[minddY[j]]) > minMaxRatio * maxY) {
+      if (Math.abs(yData[minddYIndex]) > minMaxRatio * maxY) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         signals.push({
-          index: minddY[j],
+          index: minddYIndex,
           x: frequency,
           y: maxCriteria
-            ? yData[minddY[j]] + noiseLevel
-            : -yData[minddY[j]] - noiseLevel,
+            ? yData[minddYIndex] + noiseLevel
+            : -yData[minddYIndex] - noiseLevel,
           width: width,
           fwhm: widthProcessor(width),
           shape,

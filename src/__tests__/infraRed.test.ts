@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs';
+
 import type { DataXY } from 'cheminfo-types';
+
 import { gsd } from '../gsd';
 
 describe('Global spectra deconvolution Infrared spectra', () => {

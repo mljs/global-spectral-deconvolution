@@ -1,5 +1,6 @@
-import { gsd, optimizePeaks } from '..';
 import type { DataXY } from 'cheminfo-types';
+
+import { gsd, optimizePeaks } from '..';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateSpectrum } = require('spectrum-generator');

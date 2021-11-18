@@ -11,17 +11,17 @@ describe('broadenPeaks', () => {
       {
         x: 5,
         y: 10,
-        width: 7.5
+        width: 7.5,
       },
       {
         x: 10,
         y: 10,
-        width: 7.5
+        width: 7.5,
       },
       {
         x: 30,
         y: 10,
-        width: 10
+        width: 10,
       },
     ]);
   });

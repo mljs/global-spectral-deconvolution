@@ -1,7 +1,8 @@
 import { readFileSync } from 'fs';
 
-import { parseXY } from 'xy-parser';
 import type { DataXY } from 'cheminfo-types';
+import { parseXY } from 'xy-parser';
+
 import { gsd } from '../gsd';
 
 // var gsd = require("../src/index");
