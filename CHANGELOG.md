@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v8.0.0...v9.0.0) (2021-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* change peak shape structure (#68)
+
+### Features
+
+* change peak shape structure ([#68](https://www.github.com/mljs/global-spectral-deconvolution/issues/68)) ([f97285c](https://www.github.com/mljs/global-spectral-deconvolution/commit/f97285c139ea424fbb9bf037b51cf78ec12e0653))
+
 ## [8.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v7.0.1...v8.0.0) (2021-10-31)
 
 
