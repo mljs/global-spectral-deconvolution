@@ -9,8 +9,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 
 import { generateSpectrum } from 'spectrum-generator';
-
-import { DataType, gsd, optimizePeaks } from '../src';
+import { gsd, optimizePeaks } from '../src';
 
 const peaks = [
   { x: -0.1, y: 0.2, width: 0.3 },
@@ -31,7 +30,7 @@ let peakList = gsd(original, {
   realTopDetection: false,
   smoothY: false,
   heightFactor: 1,
-  shape: { kind: 'gaussian', width: 0 },
+  shape: { kind: 'gaussian' },
 });
 
 let optimizedPeaks = optimizePeaks(original, peakList);

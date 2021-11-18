@@ -1,29 +1,37 @@
-import { PeakType } from '../gsd';
+import type { Peak1D } from '../gsd';
 
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks
  * Because peaks may not be symmetric after we add 2 properties, from and to.
- * @param {Array} peakList
- * @param {object} [options={}]
- * @param {number} [options.factor=2]
- * @param {boolean} [options.overlap=false] by default we don't allow overlap
  * @return {Array} peakList
  */
-interface OptionsType {
+interface BroadenPeaksOptions {
+  /**
+   * @default 2
+   */
   factor?: number;
+  /**
+   * by default we don't allow overlap
+   * @default false
+   */
   overlap?: boolean;
 }
-export function broadenPeaks(
-  peakList: PeakType[],
-  options: OptionsType = {},
-): PeakType[] {
-  const { factor = 2, overlap = false }: OptionsType = options;
 
-  const peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
+interface InternPeak1D extends Peak1D {
+  from: number;
+  to: number;
+}
+export function broadenPeaks(
+  peakList: Peak1D[],
+  options: BroadenPeaksOptions = {},
+): Peak1D[] {
+  const { factor = 2, overlap = false } = options;
+
+  const peaks: InternPeak1D[] = JSON.parse(JSON.stringify(peakList));
 
   peaks.forEach((peak) => {
-    peak.from = peak.x - (peak.shape.width / 2) * factor;
-    peak.to = peak.x + (peak.shape.width / 2) * factor;
+    peak.from = peak.x - (peak.width / 2) * factor;
+    peak.to = peak.x + (peak.width / 2) * factor;
   });
 
   if (!overlap) {
@@ -38,11 +46,13 @@ export function broadenPeaks(
   }
 
   for (let peak of peaks) {
-    peak.shape.width = (peak.to as number) - (peak.from as number);
+    peak.width = (peak.to as number) - (peak.from as number);
   }
 
-  return peaks.map((peak: PeakType): PeakType => {
-    const { x, y, shape }: PeakType = peak;
-    return { x, y, shape } as PeakType;
+  return peaks.map((peak: Peak1D) => {
+    const { x, y, width, shape } = peak;
+    const peakResult: Peak1D = { x, y, width };
+    if (shape) peakResult.shape = shape;
+    return peakResult;
   });
 }

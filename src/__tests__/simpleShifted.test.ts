@@ -38,16 +38,14 @@ describe('Simple shifted baseline test cases', () => {
         },
       },
     );
-    let widthToFWHM = getShape1D('gaussian').widthToFWHM;
+    let widthToFWHM = getShape1D({ kind: 'gaussian' }).widthToFWHM;
     expect(peaks).toHaveLength(1);
     expect(peaks[0]).toMatchCloseTo({
       x: 15,
       y: 4.657142857142857,
-      shape: {
-        width: widthToFWHM(2),
-        soft: false,
-        noiseLevel: 0.6695521174585716,
-      },
+      width: 2,
+      fwhm: widthToFWHM(2),
+      shape: { kind: 'gaussian' },
     });
   });
 
@@ -64,16 +62,14 @@ describe('Simple shifted baseline test cases', () => {
         },
       },
     );
-    let widthToFWHM = getShape1D('gaussian').widthToFWHM;
+    let widthToFWHM = getShape1D({ kind: 'gaussian' }).widthToFWHM;
     expect(peaks).toHaveLength(1);
     expect(peaks[0]).toMatchCloseTo({
       x: 15,
       y: -4.657142857142857,
-      shape: {
-        width: widthToFWHM(2),
-        soft: false,
-        noiseLevel: 0.6695521174585716,
-      },
+      width: 2,
+      fwhm: widthToFWHM(2),
+      shape: { kind: 'gaussian' },
     });
   });
 });
