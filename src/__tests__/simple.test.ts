@@ -26,7 +26,7 @@ describe('Simple test cases', () => {
     negY.push(0);
   }
 
-  let widthToFWHM = getShape1D('gaussian').widthToFWHM;
+  let widthToFWHM = getShape1D({ kind: 'gaussian' }).widthToFWHM;
 
   it('gsd not realtop', () => {
     let peaks = gsd(
@@ -42,7 +42,6 @@ describe('Simple test cases', () => {
     );
 
     expect(peaks[0].y).toBeCloseTo(4.657, 3);
-    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
@@ -60,7 +59,6 @@ describe('Simple test cases', () => {
       },
     );
     expect(peaks[0].y).toBeCloseTo(-4.657, 3);
-    expect(peaks[0].shape.noiseLevel).toBeCloseTo(1.1956, 3);
     expect(peaks[0].x).toBeCloseTo(15, 2);
   });
 
@@ -82,13 +80,11 @@ describe('Simple test cases', () => {
     expect(peaks).toMatchCloseTo(
       [
         {
-          shape: {
-            noiseLevel: 1.2434539324230613,
-            soft: false,
-            width: widthToFWHM(3),
-          },
+          width: 3,
+          fwhm: widthToFWHM(3),
           x: 15,
           y: 5,
+          shape: { kind: 'gaussian' },
         },
       ],
       2,
@@ -112,13 +108,11 @@ describe('Simple test cases', () => {
     expect(peaks).toMatchCloseTo(
       [
         {
-          shape: {
-            noiseLevel: 1.2434539324230613,
-            soft: false,
-            width: widthToFWHM(3),
-          },
+          width: 3,
+          fwhm: widthToFWHM(3),
           x: 14.5,
           y: 4.006546067576939,
+          shape: { kind: 'gaussian' },
         },
       ],
       2,

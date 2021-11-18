@@ -1,6 +1,10 @@
+import type { DataXY } from 'cheminfo-types';
+import type { Shape1D } from 'ml-peak-shape-generator';
+import SG from 'ml-savitzky-golay-generalized';
 import { optimize } from 'ml-spectra-fitting';
+import { xFindClosestIndex } from 'ml-spectra-processing';
 
-import { ShapeType, PeakType } from '../gsd';
+import type { Peak1D } from '../gsd';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -15,34 +19,59 @@ import { ShapeType, PeakType } from '../gsd';
  * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
  */
 
-interface OptionsType {
-  width?: number;
-  shape?: ShapeType;
-  optimization?: { kind: string; timeout: number };
+interface GetSoftMaskOptions {
+  sgOptions: {
+    windowSize: number;
+    polynomial: number;
+  };
+  broadRatio: number;
 }
+
+interface OptionsType extends Partial<GetSoftMaskOptions> {
+  width?: number;
+  shape?: Shape1D;
+  optimization?: { kind: string; timeout: number };
+  mask?: boolean[];
+}
+
 export function joinBroadPeaks(
-  peakList: PeakType[],
+  data: DataXY,
+  peakList: Peak1D[],
   options: OptionsType = {},
-): PeakType[] {
+): Peak1D[] {
   let {
+    mask,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', timeout: 10 },
+    sgOptions = {
+      windowSize: 9,
+      polynomial: 3,
+    },
+    broadRatio = 0.0025,
   } = options;
   let { width = 0.25 } = options;
-  let broadLines: PeakType[] = [];
-  // Optimize the possible broad lines
+
   let max = 0;
   let maxI = 0;
   let count = 1;
+  const broadLines: Peak1D[] = [];
+  const peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  const broadMask = !mask
+    ? getSoftMask(data, peaks, { sgOptions, broadRatio })
+    : mask;
 
-  const peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
+  if (broadMask.length !== peaks.length) {
+    throw new Error('mask length does not match the length of peaksList');
+  }
+
   for (let i: number = peaks.length - 1; i >= 0; i--) {
-    if (peaks[i].shape.soft) {
+    if (broadMask[i]) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
+
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE, shape: { width: 0 }, y: 0 });
+  broadLines.push({ x: Number.MAX_VALUE, y: 0, width: 0 });
 
   let candidates: { x: number[]; y: number[] } = {
     x: [broadLines[0].x],
@@ -61,31 +90,22 @@ export function joinBroadPeaks(
       count++;
     } else {
       if (count > 2) {
-        let optimizeShape: ShapeType = {
-          width: Math.abs(
-            candidates.x[0] - candidates.x[candidates.x.length - 1],
-          ),
-        };
         let fitted = optimize(
           candidates,
           [
             {
               x: broadLines[maxI].x,
               y: max,
-              shape: optimizeShape,
+              width: candidates.x[0] - candidates.x[candidates.x.length - 1],
+              shape,
             },
           ],
           { shape, optimization },
         );
         let { peaks: peak } = fitted;
-        peak[0].index = Math.floor(
-          indexes.reduce((a, b) => a + b, 0) / indexes.length,
-        );
-        peak[0].shape.soft = false;
         peaks.push(peak[0]);
-      }
-      // Put back the candidates to the signals list
-      else {
+      } else {
+        // Put back the candidates to the signals list
         indexes.forEach((index) => {
           peaks.push(broadLines[index]);
         });
@@ -103,4 +123,42 @@ export function joinBroadPeaks(
   });
 
   return peaks;
+}
+
+function getSoftMask(
+  data: DataXY,
+  peakList: Peak1D[],
+  options: GetSoftMaskOptions,
+) {
+  const { sgOptions, broadRatio } = options;
+
+  const { windowSize, polynomial } = sgOptions;
+
+  const yData = new Float64Array(data.y);
+  const xData = new Float64Array(data.x);
+
+  if (xData[1] - xData[0] < 0) {
+    yData.reverse();
+    xData.reverse();
+  }
+
+  const ddY = SG(yData, xData[1] - xData[0], {
+    windowSize,
+    polynomial,
+    derivative: 2,
+  });
+
+  let maxDdy = 0;
+  for (const ddYIndex of ddY) {
+    if (Math.abs(ddYIndex) > maxDdy) maxDdy = Math.abs(ddYIndex);
+  }
+
+  const broadMask: boolean[] = [];
+  for (let peak of peakList) {
+    const { x: xValue } = peak;
+    const index = xFindClosestIndex(xData, xValue, { sorted: true });
+    broadMask.push(Math.abs(ddY[index]) <= broadRatio * maxDdy);
+  }
+
+  return broadMask;
 }

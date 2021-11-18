@@ -1,7 +1,3 @@
-/**
- * Created by acastillo on 2/2/16.
- */
-
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -18,11 +14,14 @@ describe('Global spectra deconvolution NMR spectra', () => {
       {
         noiseLevel: 57000.21889405926, // 1049200.537996172/2,
         minMaxRatio: 0.01,
-        broadRatio: 0.0025,
         sgOptions: { windowSize: 13, polynomial: 3 },
       },
     );
-    pp = joinBroadPeaks(pp, { width: 0.25 });
+
+    pp = joinBroadPeaks({ x: spectrum[0], y: spectrum[1] }, pp, {
+      broadRatio: 0.0025,
+      sgOptions: { windowSize: 13, polynomial: 3 },
+    });
 
     expect(pp).toHaveLength(91);
   });

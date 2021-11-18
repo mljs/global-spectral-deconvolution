@@ -1,29 +1,31 @@
+import type { Peak1D } from '../gsd';
+
 /**
  * Group peaks based on factor and add group property in peaks
- * @param {array} peakList
- * @param {number} factor
  */
 
-import { PeakType } from '..';
+export interface GroupPeaksOptions {
+  factor?: number;
+  width?: number;
+}
 
-export function groupPeaks(peakList: PeakType[], factor = 1): PeakType[][] {
+export function groupPeaks(peakList: Peak1D[], factor = 1): Peak1D[][] {
   if (peakList && peakList.length === 0) return [];
 
-  let peaks: PeakType[] = JSON.parse(JSON.stringify(peakList));
+  let peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak: PeakType = {
+  let previousPeak: Peak1D = {
     x: Number.NEGATIVE_INFINITY,
-    shape: { width: 1 },
     y: 0,
+    width: 1,
   };
-  let currentGroup: PeakType[] = [previousPeak];
-  let groups: PeakType[][] = [];
+  let currentGroup: Peak1D[] = [previousPeak];
+  let groups: Peak1D[][] = [];
 
   peaks.forEach((peak) => {
     if (
-      (peak.x - previousPeak.x) /
-        (peak.shape.width + previousPeak.shape.width) <=
+      (peak.x - previousPeak.x) / (peak.width + previousPeak.width) <=
       factor / 2
     ) {
       currentGroup.push(peak);

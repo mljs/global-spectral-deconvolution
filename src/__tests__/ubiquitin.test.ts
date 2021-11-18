@@ -1,15 +1,16 @@
 import { readFileSync } from 'fs';
 
+import type { DataXY } from 'cheminfo-types';
 import { parseXY } from 'xy-parser';
 
-import { DataType, gsd } from '../gsd';
+import { gsd } from '../gsd';
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
 
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
-    let spectrum: DataType = parseXY(
+    let spectrum: DataXY = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
     );
     // var d = new Date();
@@ -22,7 +23,6 @@ describe('Global spectra deconvolution ubiquitin', () => {
     let result = gsd(spectrum, {
       noiseLevel: noiseLevel,
       minMaxRatio: 0.0,
-      broadRatio: 0,
       smoothY: false,
       realTopDetection: true,
       sgOptions: { windowSize: 7, polynomial: 3 },

@@ -14,21 +14,30 @@ describe('Global spectra deconvolution NMR spectra', () => {
       {
         noiseLevel: 1049200.537996172 / 2,
         minMaxRatio: 0.01,
-        broadRatio: 0.0025,
         sgOptions: {
           windowSize: 9,
           polynomial: 3,
         },
       },
     );
-    const newResult = joinBroadPeaks(result, {
-      width: 0.25,
-      shape: { kind: 'lorentzian', width: 0 },
-    });
+
+    const newResult = joinBroadPeaks(
+      { x: spectrum[0], y: spectrum[1] },
+      result,
+      {
+        width: 0.25,
+        broadRatio: 0.0025,
+        shape: { kind: 'lorentzian' },
+        sgOptions: {
+          windowSize: 9,
+          polynomial: 3,
+        },
+      },
+    );
     expect(newResult).toHaveLength(14);
     newResult.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {
-        expect(peak.shape.width).toBeCloseTo(0.39, 2);
+        expect(peak.width).toBeCloseTo(0.39, 2);
       }
     });
   });

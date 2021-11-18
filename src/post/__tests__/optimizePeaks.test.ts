@@ -1,7 +1,6 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
-import { DataType } from '../../gsd';
 import { optimizePeaks } from '../optimizePeaks';
 
 expect.extend({ toMatchCloseTo });
@@ -19,17 +18,16 @@ describe('optimizePeaks', () => {
           kind: 'gaussian',
         },
       },
-    }) as DataType;
+    });
 
-    let result = optimizePeaks(data, [
-      { x: 0.01, y: 0.9, shape: { width: 0.11 } },
-    ]);
+    let result = optimizePeaks(data, [{ x: 0.01, y: 0.9, width: 0.11 }]);
     expect(result).toMatchCloseTo([
       {
         x: -3.419674049814014e-8,
         y: 0.999994064595118,
+        fwhm: 0.12000070163648587,
         shape: {
-          width: 0.12000070163648587,
+          kind: 'gaussian',
         },
       },
     ]);
@@ -43,11 +41,7 @@ describe('optimizePeaks', () => {
       },
     };
     expect(() =>
-      optimizePeaks(
-        data,
-        [{ x: 0.1, y: 0.9, shape: { width: 0.11 } }],
-        options,
-      ),
+      optimizePeaks(data, [{ x: 0.1, y: 0.9, width: 0.11 }], options),
     ).toThrow('The execution time is over to 0 seconds');
   });
 });

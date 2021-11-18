@@ -1,4 +1,6 @@
-import { DataType, gsd, optimizePeaks } from '..';
+import type { DataXY } from 'cheminfo-types';
+
+import { gsd, optimizePeaks } from '..';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateSpectrum } = require('spectrum-generator');
@@ -6,11 +8,11 @@ const { generateSpectrum } = require('spectrum-generator');
 describe('Global spectra deconvolution with simulated spectra', () => {
   it('Overlapping peaks', () => {
     const peaks = [
-      { x: -0.1, y: 0.2, width: 0.03 },
-      { x: 0.1, y: 0.2, width: 0.01 },
+      { x: -0.1, y: 0.2, fwhm: 0.03 },
+      { x: 0.1, y: 0.2, fwhm: 0.01 },
     ];
 
-    const data: DataType = generateSpectrum(peaks, {
+    const data: DataXY = generateSpectrum(peaks, {
       generator: {
         from: -1,
         to: 1,
@@ -26,33 +28,33 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian', width: 0 },
+      shape: { kind: 'gaussian' },
     });
 
     let optimizedPeaks = optimizePeaks(data, peakList);
 
     expect(peakList[0].x).toBeCloseTo(-0.1, 2);
     expect(peakList[0].y).toBeCloseTo(0.2, 2);
-    expect(peakList[0].shape.width).toBeCloseTo(0.03, 2);
+    expect(peakList[0].fwhm).toBeCloseTo(0.03, 2);
     expect(peakList[1].x).toBeCloseTo(0.1, 2);
     expect(peakList[1].y).toBeCloseTo(0.2, 2);
-    expect(peakList[1].shape.width).toBeCloseTo(0.01, 2);
+    expect(peakList[1].fwhm).toBeCloseTo(0.01, 2);
 
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.1, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(0.2, 2);
-    expect(optimizedPeaks[0].shape.width).toBeCloseTo(0.03, 2);
+    expect(optimizedPeaks[0].fwhm).toBeCloseTo(0.03, 2);
     expect(optimizedPeaks[1].x).toBeCloseTo(0.1, 2);
     expect(optimizedPeaks[1].y).toBeCloseTo(0.2, 2);
-    expect(optimizedPeaks[1].shape.width).toBeCloseTo(0.01, 2);
+    expect(optimizedPeaks[1].fwhm).toBeCloseTo(0.01, 2);
   });
 
   it('Check gaussian shapes with shape specification', () => {
     const peaks = [
-      { x: -0.5, y: 1, width: 0.2 },
-      { x: 0.5, y: 1, width: 0.1 },
+      { x: -0.5, y: 1, fwhm: 0.2 },
+      { x: 0.5, y: 1, fwhm: 0.1 },
     ];
 
-    const data: DataType = generateSpectrum(peaks, {
+    const data: DataXY = generateSpectrum(peaks, {
       generator: { from: -1, to: 1, nbPoints: 10001 },
     });
 
@@ -61,37 +63,36 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian', width: 0 },
+      shape: { kind: 'gaussian' },
     });
 
     expect(peakList[0].x).toBeCloseTo(-0.5, 2);
     expect(peakList[0].y).toBeCloseTo(1, 2);
-    expect(peakList[0].shape.width).toBeCloseTo(0.2, 2); // inflection points in gaussian are higher tha FWHM
+    expect(peakList[0].fwhm).toBeCloseTo(0.2, 2); // inflection points in gaussian are higher tha FWHM
     expect(peakList[1].x).toBeCloseTo(0.5, 2);
     expect(peakList[1].y).toBeCloseTo(1, 2);
-    expect(peakList[1].shape.width).toBeCloseTo(0.1, 2);
+    expect(peakList[1].fwhm).toBeCloseTo(0.1, 2);
 
     let optimizedPeaks = optimizePeaks(data, peakList);
 
     expect(optimizedPeaks[0].x).toBeCloseTo(-0.5, 2);
     expect(optimizedPeaks[0].y).toBeCloseTo(1, 2);
-    expect(optimizedPeaks[0].shape.width).toBeCloseTo(0.2, 2); // optimization by default expect a gaussian shape
+    expect(optimizedPeaks[0].fwhm).toBeCloseTo(0.2, 2); // optimization by default expect a gaussian shape
     expect(optimizedPeaks[1].x).toBeCloseTo(0.5, 2);
     expect(optimizedPeaks[1].y).toBeCloseTo(1, 2);
-    expect(optimizedPeaks[1].shape.width).toBeCloseTo(0.1, 2);
+    expect(optimizedPeaks[1].fwhm).toBeCloseTo(0.1, 2);
   });
 
   it('Should provide 1 peak', () => {
-    const peaks = [{ x: 0, y: 1, width: 0.12 }];
+    const peaks = [{ x: 0, y: 1, fwhm: 0.12 }];
 
-    const data: DataType = generateSpectrum(peaks, {
+    const data: DataXY = generateSpectrum(peaks, {
       generator: {
         from: -0.5,
         to: 0.5,
         nbPoints: 10001,
         shape: {
           kind: 'gaussian',
-          width: 0,
         },
       },
     });
@@ -101,12 +102,12 @@ describe('Global spectra deconvolution with simulated spectra', () => {
       realTopDetection: false,
       smoothY: false,
       heightFactor: 1,
-      shape: { kind: 'gaussian', width: 0 },
+      shape: { kind: 'gaussian' },
     });
 
     expect(peakList).toHaveLength(1);
     expect(peakList[0].x).toBeCloseTo(0, 2);
     expect(peakList[0].y).toBeCloseTo(1, 2);
-    expect(peakList[0].shape.width).toBeCloseTo(0.12, 3);
+    expect(peakList[0].fwhm).toBeCloseTo(0.12, 3);
   });
 });
