@@ -79,7 +79,7 @@
   },
   "dependencies": {
     "cheminfo-types": "^0.8.0",
-    "ml-peak-shape-generator": "^3.0.1",
+    "ml-peak-shape-generator": "^3.0.2",
     "ml-savitzky-golay-generalized": "2.0.3",
     "ml-spectra-fitting": "^3.0.0",
     "ml-spectra-processing": "^6.8.0"
