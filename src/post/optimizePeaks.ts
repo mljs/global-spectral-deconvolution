@@ -5,6 +5,7 @@ import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import type { Peak1D } from '../gsd';
+import type { IOptimizationOptions } from 'ml-spectra-fitting';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -14,7 +15,7 @@ import { groupPeaks } from './groupPeaks';
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
-interface OptimizePeaksOptions {
+export interface IOptimizePeaksOptions {
   /**
    * times of width to group peaks.
    * @default 1
@@ -32,29 +33,13 @@ interface OptimizePeaksOptions {
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
-  optimization?: {
-    /**
-     * kind of algorithm. By default it's levenberg-marquardt.
-     * @default 'lm'
-     */
-    kind: string;
-    /**
-     * options for the specific kind of algorithm.
-     */
-    options: {
-      /**
-       * maximum time running before break in seconds.
-       * @default 10
-       */
-      timeout: number;
-    };
-  };
+  optimization?: IOptimizationOptions;
 }
 
 export function optimizePeaks(
   data: DataXY,
   peakList: Peak1D[],
-  options: OptimizePeaksOptions = {},
+  options: IOptimizePeaksOptions = {},
 ): Peak1D[] {
   const {
     factorWidth = 1,
@@ -68,7 +53,7 @@ export function optimizePeaks(
         timeout: 10,
       },
     },
-  }: OptimizePeaksOptions = options;
+  }: IOptimizePeaksOptions = options;
 
   if (data.x[0] > data.x[1]) {
     data.x.reverse();
@@ -108,7 +93,7 @@ export function optimizePeaks(
       y: data.y.slice(fromIndex, toIndex),
     };
     if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks }: { peaks: Peak1D[] } = optimize(
+      let { peaks: optimizedPeaks } = optimize(
         currentRange,
         peaks,
         {
