@@ -5,7 +5,7 @@ import type { Peak1D } from '../gsd';
  * Because peaks may not be symmetric after we add 2 properties, from and to.
  * @return {Array} peakList
  */
-interface BroadenPeaksOptions {
+export interface IBroadenPeaksOptions {
   /**
    * @default 2
    */
@@ -23,7 +23,7 @@ interface InternPeak1D extends Peak1D {
 }
 export function broadenPeaks(
   peakList: Peak1D[],
-  options: BroadenPeaksOptions = {},
+  options: IBroadenPeaksOptions = {},
 ): Peak1D[] {
   const { factor = 2, overlap = false } = options;
 

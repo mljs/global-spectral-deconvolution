@@ -2,21 +2,14 @@ import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 import { optimize } from 'ml-spectra-fitting';
+import type { IOptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
 import type { Peak1D } from '../gsd';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
- * @param {Array} peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- * @param {object} [options = {}] - options
- * @param {number} [options.width=0.25] - width limit to join peaks.
- * @param {object} [options.shape={}] - it's specify the kind of shape used to fitting.
- * @param {string} [options.shape.kind = 'gaussian'] - kind of shape; lorentzian, gaussian and pseudovoigt are supported.
- * @param {object} [options.optimization = {}] - it's specify the kind and options of the algorithm use to optimize parameters.
- * @param {string} [options.optimization.kind = 'lm'] - kind of algorithm. By default it's levenberg-marquardt.
- * @param {number} [options.optimization.options.timeout = 10] - maximum time running before break in seconds.
- * @param {object} [options.optimization.options = {}] - options for the specific kind of algorithm.
+ * @param peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
 
 interface GetSoftMaskOptions {
@@ -24,48 +17,62 @@ interface GetSoftMaskOptions {
     windowSize: number;
     polynomial: number;
   };
+  /**
+   * broadRatio
+   * @default 0.0025
+   */
   broadRatio: number;
 }
 
-interface OptionsType extends Partial<GetSoftMaskOptions> {
-  width?: number;
+export interface IJoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
+  /**
+   * width limit to join peaks.
+   * @default 0.25
+   */
+  broadWidth?: number;
+  /**
+   * it's specify the kind of shape used to fitting.
+   */
   shape?: Shape1D;
-  optimization?: { kind: string; timeout: number };
-  mask?: boolean[];
+  /**
+   * it's specify the kind and options of the algorithm use to optimize parameters.
+   */
+  optimization?: IOptimizationOptions;
+  broadMask?: boolean[];
 }
 
 export function joinBroadPeaks(
   data: DataXY,
   peakList: Peak1D[],
-  options: OptionsType = {},
+  options: IJoinBroadPeaksOptions = {},
 ): Peak1D[] {
   let {
-    mask,
+    broadMask,
     shape = { kind: 'gaussian' },
-    optimization = { kind: 'lm', timeout: 10 },
+    optimization = { kind: 'lm', options: { timeout: 10 } },
     sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
     broadRatio = 0.0025,
+    broadWidth = 0.25
   } = options;
-  let { width = 0.25 } = options;
 
   let max = 0;
   let maxI = 0;
   let count = 1;
   const broadLines: Peak1D[] = [];
   const peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
-  const broadMask = !mask
+  const mask = !broadMask
     ? getSoftMask(data, peaks, { sgOptions, broadRatio })
-    : mask;
+    : broadMask;
 
-  if (broadMask.length !== peaks.length) {
+  if (mask.length !== peaks.length) {
     throw new Error('mask length does not match the length of peaksList');
   }
 
   for (let i: number = peaks.length - 1; i >= 0; i--) {
-    if (broadMask[i]) {
+    if (mask[i]) {
       broadLines.push(peaks.splice(i, 1)[0]);
     }
   }
@@ -79,7 +86,7 @@ export function joinBroadPeaks(
   };
   let indexes: number[] = [0];
   for (let i = 1; i < broadLines.length; i++) {
-    if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
+    if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < broadWidth) {
       candidates.x.push(broadLines[i].x);
       candidates.y.push(broadLines[i].y);
       if (broadLines[i].y > max) {
