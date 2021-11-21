@@ -25,7 +25,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
       { x: spectrum[0], y: spectrum[1] },
       result,
       {
-        width: 0.25,
+        broadWidth: 0.25,
         broadRatio: 0.0025,
         shape: { kind: 'lorentzian' },
         sgOptions: {
