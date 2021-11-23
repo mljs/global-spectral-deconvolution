@@ -26,19 +26,19 @@ import SG from 'ml-savitzky-golay-generalized';
  */
 
 export interface Peak1D {
-  index?: number;
   x: number;
   y: number;
   width: number;
   fwhm?: number;
   shape?: Shape1D;
 }
-export interface LastType {
+
+interface LastType {
   x: number;
   index: number;
 }
 
-export interface GSDOptions {
+export interface IGSDOptions {
   noiseLevel?: number;
   sgOptions?: {
     windowSize: number;
@@ -54,7 +54,7 @@ export interface GSDOptions {
   factor?: number;
 }
 
-export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
+export function gsd(data: DataXY, options: IGSDOptions = {}): Peak1D[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -195,16 +195,17 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     }
   }
 
-  let widthProcessor = getShape1D(shape).widthToFWHM;
+  let widthToFWHM = getShape1D(shape).widthToFWHM;
 
-  let signals: Peak1D[] = [];
   let lastK = -1;
-  let possible: number,
-    frequency: number,
-    distanceJ: number,
-    minDistance: number,
-    gettingCloser: boolean;
+  let possible: number;
+  let frequency: number;
+  let distanceJ: number;
+  let minDistance: number;
+  let gettingCloser: boolean;
 
+  const peaks: Peak1D[] = [];
+  const indexes: number[] = [];
   for (const minddYIndex of minddY) {
     frequency = xData[minddYIndex];
     possible = -1;
@@ -231,14 +232,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     if (possible !== -1) {
       if (Math.abs(yData[minddYIndex]) > minMaxRatio * maxY) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
-        signals.push({
-          index: minddYIndex,
+        indexes.push(minddYIndex);
+        peaks.push({
           x: frequency,
           y: maxCriteria
             ? yData[minddYIndex] + noiseLevel
             : -yData[minddYIndex] - noiseLevel,
           width: width,
-          fwhm: widthProcessor(width),
+          fwhm: widthToFWHM(width),
           shape,
         });
       }
@@ -246,14 +247,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   }
 
   if (realTopDetection) {
-    determineRealTop(signals, xData, yData);
+    determineRealTop({ peaks, x: xData, y: yData, indexes });
   }
 
-  signals.sort((a, b) => {
+  peaks.sort((a, b) => {
     return a.x - b.x;
   });
 
-  return signals;
+  return peaks;
 }
 
 const isEqualSpaced = (x: DoubleArray): boolean => {
@@ -297,18 +298,20 @@ const getNoiseLevel = (y: DoubleArray): number => {
 
   return stddev;
 };
-const determineRealTop = (
-  peakList: Peak1D[],
-  x: DoubleArray,
-  y: DoubleArray,
-): void => {
-  let alpha: number,
-    beta: number,
-    gamma: number,
-    p: number,
-    currentPoint: number;
-  for (const peak of peakList) {
-    currentPoint = peak.index as number; // peakList[j][2];
+const determineRealTop = (options: {
+  peaks: Peak1D[];
+  x: DoubleArray;
+  y: DoubleArray;
+  indexes: number[];
+}): void => {
+  const { peaks, x, y, indexes } = options;
+  let alpha: number;
+  let beta: number;
+  let gamma: number;
+  let p: number;
+  for (let i = 0; i < peaks.length; i++) {
+    const peak = peaks[i];
+    let currentPoint = indexes[i];
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
       y[currentPoint - 1] >= y[currentPoint - 2] &&
@@ -350,8 +353,6 @@ const determineRealTop = (
       beta = 20 * Math.log10(y[currentPoint]);
       gamma = 20 * Math.log10(y[currentPoint + 1]);
       p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
-      // console.log(alpha, beta, gamma, `p: ${p}`);
-      // console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
       peak.x = x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
       peak.y =
         y[currentPoint] -

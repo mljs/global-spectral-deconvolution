@@ -42,10 +42,11 @@ describe('Check the peak picking of a simulated mass spectrum', () => {
         kind: 'gaussian',
       },
     });
+    const gaussian = new Gaussian();
     expect(result[0].x).toBeCloseTo(69.938, 1);
     expect(result[0].y).toBeCloseTo(max, 2);
     expect(result[0].fwhm).toBeCloseTo(0.01, 4);
-    expect(result[0].width).toBeCloseTo(Gaussian.fwhmToWidth(0.01), 4);
+    expect(result[0].width).toBeCloseTo(gaussian.fwhmToWidth(0.01), 4);
 
     expect(result[1].x).toBeCloseTo(71.935, 2);
     expect(result[1].y).toBeCloseTo((63.99155 * max) / 100, 3);
