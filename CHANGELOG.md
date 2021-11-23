@@ -1,5 +1,12 @@
 # Changelog
 
+### [9.0.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.0...v9.0.1) (2021-11-23)
+
+
+### Bug Fixes
+
+* update PSG n spectra-fitting ([#70](https://www.github.com/mljs/global-spectral-deconvolution/issues/70)) ([ac23217](https://www.github.com/mljs/global-spectral-deconvolution/commit/ac23217cc1c73f513b772661ad2712b727fa02e7))
+
 ## [9.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v8.0.0...v9.0.0) (2021-11-18)
 
 
