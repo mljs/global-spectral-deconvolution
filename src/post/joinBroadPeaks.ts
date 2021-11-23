@@ -55,7 +55,7 @@ export function joinBroadPeaks(
       polynomial: 3,
     },
     broadRatio = 0.0025,
-    broadWidth = 0.25
+    broadWidth = 0.25,
   } = options;
 
   let max = 0;
