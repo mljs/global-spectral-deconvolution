@@ -1,5 +1,13 @@
 # Changelog
 
+### [9.0.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.1...v9.0.2) (2021-11-29)
+
+
+### Bug Fixes
+
+* eslint and update workflows ([81ffdff](https://www.github.com/mljs/global-spectral-deconvolution/commit/81ffdfffa49f114b93fd52218d8eef159bb2946a))
+* update ml-peak-shape-generator to 4.0.1 ([ed2b98a](https://www.github.com/mljs/global-spectral-deconvolution/commit/ed2b98a7f6ae5fcff395a18e5f18a99321a0ed7b))
+
 ### [9.0.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.0...v9.0.1) (2021-11-23)
 
 
