@@ -10,14 +10,11 @@ import { gsd } from '../gsd';
 
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
-    let spectrum: DataXY = parseXY(
+    let spectrum = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
-    );
-    // var d = new Date();
-    // var n = d.getTime();
-    // var spectrum=parser.parse(fs.readFileSync('./ubiquitin.txt', 'utf-8'), {arrayType: 'xxyy'});
-    // d = new Date();
-    // console.log("Parsing time: "+(d.getTime()-n));
+      { keepInfo: false }
+    ) as DataXY;
+
     let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
 
     let result = gsd(spectrum, {
