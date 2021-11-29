@@ -7,9 +7,9 @@
 
 Global Spectra Deconvolution + Peak optimizer
 
-`gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
+`gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y fwhm and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
 
-The second algorithm (`optimizePeaks`) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used.
+The second algorithm (`optimizePeaks`) will optimize the width and FWHM to match the original peak.
 
 ## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
@@ -18,10 +18,6 @@ The second algorithm (`optimizePeaks`) will optimize the width as a FWHM to matc
 #### minMaxRatio=0.00025 (0-1)
 
 Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
-
-#### broadRatio=0.00 (0-1)
-
-If `broadRatio` is higher than 0, then all the peaks which second derivative smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
 
 #### noiseLevel=0 (-inf, inf)
 
@@ -60,6 +56,10 @@ By default we enlarge of a factor 2 and we don't allow overlap.
 
 ### GSD.joinBroadPeaks
 
+#### broadRatio=0.00 (0-1)
+
+If `broadRatio` is higher than 0, then all the peaks which second derivative smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
+
 ### GSD.optimizePeaks
 
 ## Example
@@ -79,11 +79,11 @@ let peaks = gsd(data, {
   smoothY: false,
   sgOptions: { windowSize: 7, polynomial: 3 },
 });
-console.log(peaks); // array of peaks {x,y,width}, width = distance between inflection points
+console.log(peaks); // array of peaks {x, y, width, fwhw}, width = distance between inflection points
 // GSD
 
 let optimized = optimizePeaks(data, peaks);
-console.log(optimized); // array of peaks {x,y,width}, width = FWHM
+console.log(optimized); // array of peaks {x, y, width, fwhm}.
 ```
 
 ## License
