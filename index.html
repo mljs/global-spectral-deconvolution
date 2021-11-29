@@ -1,45 +1,94 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset='utf-8'>
-  <title>ml-gsd 9.0.1 | Documentation</title>
-  <meta name='description' content='Global Spectra Deconvolution'>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' rel='stylesheet'>
-  <link href='assets/style.css' rel='stylesheet'>
-  <link href='assets/github.css' rel='stylesheet'>
-  <link href='assets/split.css' rel='stylesheet'>
-</head>
-<body class='documentation m0'>
-    <div class='flex'>
-      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
-        <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'>ml-gsd</h3>
-          <div class='mb1'><code>9.0.1</code></div>
-          <input
-            placeholder='Filter'
-            id='filter-input'
-            class='col12 block input'
-            spellcheck='false'
-            autocapitalize='off'
-            autocorrect='off'
-            type='text' />
-          <div id='toc'>
-            <ul class='list-reset h5 py1-ul'>
-              
-            </ul>
-          </div>
-          <div class='mt1 h6 quiet'>
-            <a href='https://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
-          </div>
-        </div>
-      </div>
-      <div id='split-right' class='relative overflow-auto height-viewport-100'>
-        
-      </div>
-    </div>
-  <script src='assets/anchor.js'></script>
-  <script src='assets/split.js'></script>
-  <script src='assets/site.js'></script>
-</body>
-</html>
+<!DOCTYPE html><html class="default no-js"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ml-gsd</title><meta name="description" content="Documentation for ml-gsd"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">ml-gsd</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>ml-gsd</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#global-spectral-deconvolution" id="global-spectral-deconvolution" style="color: inherit; text-decoration: none;">
+  <h1>global-spectral-deconvolution</h1>
+</a>
+<p><a href="https://npmjs.org/package/ml-gsd"><img src="https://img.shields.io/npm/v/ml-gsd.svg" alt="NPM version"></a>
+<a href="https://github.com/mljs/global-spectral-deconvolution/actions?query=workflow%3A%22Node.js+CI%22"><img src="https://github.com/mljs/global-spectral-deconvolution/workflows/Node.js%20CI/badge.svg?branch=master" alt="build status"></a>
+<a href="https://codecov.io/gh/mljs/global-spectral-deconvolution"><img src="https://img.shields.io/codecov/c/github/mljs/global-spectral-deconvolution.svg" alt="Test coverage"></a>
+<a href="https://npmjs.org/package/ml-gsd"><img src="https://img.shields.io/npm/dm/ml-gsd.svg" alt="npm download"></a></p>
+<p>Global Spectra Deconvolution + Peak optimizer</p>
+<p><code>gsd</code>is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y and width}. However this width is based on the inflection point and may be different from the &#39;fwhm&#39; (Full Width Half Maximum).</p>
+<p>The second algorithm (<code>optimizePeaks</code>) will optimize the width as a FWHM to match the original peak. After optimization the width with therefore be always FWHM whichever is the function used.</p>
+
+<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">
+  <h2><a href="http://mljs.github.io/global-spectral-deconvolution/">API documentation</a></h2>
+</a>
+
+<a href="#parameters" id="parameters" style="color: inherit; text-decoration: none;">
+  <h2>Parameters</h2>
+</a>
+
+<a href="#minmaxratio000025-0-1" id="minmaxratio000025-0-1" style="color: inherit; text-decoration: none;">
+  <h4>minMaxRatio=0.00025 (0-1)</h4>
+</a>
+<p>Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.</p>
+
+<a href="#broadratio000-0-1" id="broadratio000-0-1" style="color: inherit; text-decoration: none;">
+  <h4>broadRatio=0.00 (0-1)</h4>
+</a>
+<p>If <code>broadRatio</code> is higher than 0, then all the peaks which second derivative smaller than <code>broadRatio * maxAbsSecondDerivative</code> will be marked with the soft mask equal to true.</p>
+
+<a href="#noiselevel0--inf-inf" id="noiselevel0--inf-inf" style="color: inherit; text-decoration: none;">
+  <h4>noiseLevel=0 (-inf, inf)</h4>
+</a>
+<p>Noise threshold in spectrum units</p>
+
+<a href="#maxcriteriatrue-truefalse" id="maxcriteriatrue-truefalse" style="color: inherit; text-decoration: none;">
+  <h4>maxCriteria=true [true||false]</h4>
+</a>
+<p>Peaks are local maximum(true) or minimum(false)</p>
+
+<a href="#smoothytrue-truefalse" id="smoothytrue-truefalse" style="color: inherit; text-decoration: none;">
+  <h4>smoothY=true [true||false]</h4>
+</a>
+<p>Select the peak intensities from a smoothed version of the independent variables?</p>
+
+<a href="#realtopdetectionfalse-truefalse" id="realtopdetectionfalse-truefalse" style="color: inherit; text-decoration: none;">
+  <h4>realTopDetection=false [true||false]</h4>
+</a>
+<p>Use a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak?</p>
+
+<a href="#sgoptionswindowsize-5-polynomial-3" id="sgoptionswindowsize-5-polynomial-3" style="color: inherit; text-decoration: none;">
+  <h4>sgOptions={windowSize: 5, polynomial: 3}</h4>
+</a>
+<p>Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of the polynomial to use in the approximations. It should be bigger than 2.</p>
+
+<a href="#heightfactor0" id="heightfactor0" style="color: inherit; text-decoration: none;">
+  <h4>heightFactor=0</h4>
+</a>
+<p>Factor to multiply the calculated height (usually 2).</p>
+
+<a href="#derivativethreshold0" id="derivativethreshold0" style="color: inherit; text-decoration: none;">
+  <h4>derivativeThreshold=0</h4>
+</a>
+<p>Filters based on the amplitude of the first derivative</p>
+
+<a href="#post-methods" id="post-methods" style="color: inherit; text-decoration: none;">
+  <h2>Post methods</h2>
+</a>
+
+<a href="#gsdbroadenpeakspeaklist-factor2-overlapfalse" id="gsdbroadenpeakspeaklist-factor2-overlapfalse" style="color: inherit; text-decoration: none;">
+  <h3>GSD.broadenPeaks(peakList, {factor=2, overlap=false})</h3>
+</a>
+<p>We enlarge the peaks and add the properties from and to.
+By default we enlarge of a factor 2 and we don&#39;t allow overlap.</p>
+
+<a href="#gsdjoinbroadpeaks" id="gsdjoinbroadpeaks" style="color: inherit; text-decoration: none;">
+  <h3>GSD.joinBroadPeaks</h3>
+</a>
+
+<a href="#gsdoptimizepeaks" id="gsdoptimizepeaks" style="color: inherit; text-decoration: none;">
+  <h3>GSD.optimizePeaks</h3>
+</a>
+
+<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+  <h2>Example</h2>
+</a>
+<pre><code class="language-js"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">IsotopicDistribution</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;mf-global&#39;</span><span class="hl-1">;</span><br/><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">gsd</span><span class="hl-1">, </span><span class="hl-2">optimizePeaks</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;../src&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">// generate a sample spectrum of the form {x:[], y:[]}</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">data</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">IsotopicDistribution</span><span class="hl-1">(</span><span class="hl-3">&#39;C&#39;</span><span class="hl-1">).</span><span class="hl-7">getGaussian</span><span class="hl-1">();</span><br/><br/><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-2">peaks</span><span class="hl-1"> = </span><span class="hl-7">gsd</span><span class="hl-1">(</span><span class="hl-2">data</span><span class="hl-1">, {</span><br/><span class="hl-1">  </span><span class="hl-2">noiseLevel:</span><span class="hl-1"> </span><span class="hl-8">0</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">minMaxRatio:</span><span class="hl-1"> </span><span class="hl-8">0.00025</span><span class="hl-1">, </span><span class="hl-4">// Threshold to determine if a given peak should be considered as a noise</span><br/><span class="hl-1">  </span><span class="hl-2">realTopDetection:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">maxCriteria:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1">, </span><span class="hl-4">// inverted:false</span><br/><span class="hl-1">  </span><span class="hl-2">smoothY:</span><span class="hl-1"> </span><span class="hl-5">false</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">sgOptions:</span><span class="hl-1"> { </span><span class="hl-2">windowSize:</span><span class="hl-1"> </span><span class="hl-8">7</span><span class="hl-1">, </span><span class="hl-2">polynomial:</span><span class="hl-1"> </span><span class="hl-8">3</span><span class="hl-1"> },</span><br/><span class="hl-1">});</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">(</span><span class="hl-2">peaks</span><span class="hl-1">); </span><span class="hl-4">// array of peaks {x,y,width}, width = distance between inflection points</span><br/><span class="hl-4">// GSD</span><br/><br/><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-2">optimized</span><span class="hl-1"> = </span><span class="hl-7">optimizePeaks</span><span class="hl-1">(</span><span class="hl-2">data</span><span class="hl-1">, </span><span class="hl-2">peaks</span><span class="hl-1">);</span><br/><span class="hl-2">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">(</span><span class="hl-2">optimized</span><span class="hl-1">); </span><span class="hl-4">// array of peaks {x,y,width}, width = FWHM</span>
+</code></pre>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p><a href="./LICENSE">MIT</a></p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-interface"><a href="interfaces/IBroadenPeaksOptions.html" class="tsd-kind-icon">IBroaden<wbr/>Peaks<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/IGSDOptions.html" class="tsd-kind-icon">IGSDOptions</a></li><li class="tsd-kind-interface"><a href="interfaces/IJoinBroadPeaksOptions.html" class="tsd-kind-icon">IJoin<wbr/>Broad<wbr/>Peaks<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/IOptimizePeaksOptions.html" class="tsd-kind-icon">IOptimize<wbr/>Peaks<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/Peak1D.html" class="tsd-kind-icon">Peak1D</a></li><li class="tsd-kind-function"><a href="modules.html#broadenPeaks" class="tsd-kind-icon">broaden<wbr/>Peaks</a></li><li class="tsd-kind-function"><a href="modules.html#gsd" class="tsd-kind-icon">gsd</a></li><li class="tsd-kind-function"><a href="modules.html#joinBroadPeaks" class="tsd-kind-icon">join<wbr/>Broad<wbr/>Peaks</a></li><li class="tsd-kind-function"><a href="modules.html#optimizePeaks" class="tsd-kind-icon">optimize<wbr/>Peaks</a></li></ul></nav></div></div></div><footer class=""><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="overlay"></div><script src="assets/main.js"></script></body></html>
