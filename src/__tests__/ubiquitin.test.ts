@@ -12,7 +12,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
     let spectrum = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
-      { keepInfo: false }
+      { keepInfo: false },
     ) as DataXY;
 
     let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
