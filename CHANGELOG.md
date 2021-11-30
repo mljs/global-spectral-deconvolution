@@ -1,5 +1,12 @@
 # Changelog
 
+### [9.0.3](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.2...v9.0.3) (2021-11-30)
+
+
+### Bug Fixes
+
+* remove I from interfaces ([f9c5171](https://www.github.com/mljs/global-spectral-deconvolution/commit/f9c5171b688fe4f1c33bbd75dce6d9387b828462))
+
 ### [9.0.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.1...v9.0.2) (2021-11-29)
 
 

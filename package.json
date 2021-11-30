@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "description": "Global Spectra Deconvolution",
   "main": "./lib/index.js",
   "module": "./lib-esm/index.js",
