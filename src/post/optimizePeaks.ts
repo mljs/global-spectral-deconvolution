@@ -2,7 +2,7 @@ import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { getShape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
-import type { IOptimizationOptions } from 'ml-spectra-fitting';
+import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import type { Peak1D } from '../gsd';
@@ -15,7 +15,7 @@ import { groupPeaks } from './groupPeaks';
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
-export interface IOptimizePeaksOptions {
+export interface OptimizePeaksOptions {
   /**
    * times of width to group peaks.
    * @default 1
@@ -33,13 +33,13 @@ export interface IOptimizePeaksOptions {
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
-  optimization?: IOptimizationOptions;
+  optimization?: OptimizationOptions;
 }
 
 export function optimizePeaks(
   data: DataXY,
   peakList: Peak1D[],
-  options: IOptimizePeaksOptions = {},
+  options: OptimizePeaksOptions = {},
 ): Peak1D[] {
   const {
     factorWidth = 1,
@@ -53,7 +53,7 @@ export function optimizePeaks(
         timeout: 10,
       },
     },
-  }: IOptimizePeaksOptions = options;
+  }: OptimizePeaksOptions = options;
 
   if (data.x[0] > data.x[1]) {
     data.x.reverse();

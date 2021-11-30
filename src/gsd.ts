@@ -38,7 +38,7 @@ interface LastType {
   index: number;
 }
 
-export interface IGSDOptions {
+export interface GSDOptions {
   noiseLevel?: number;
   sgOptions?: {
     windowSize: number;
@@ -54,7 +54,7 @@ export interface IGSDOptions {
   factor?: number;
 }
 
-export function gsd(data: DataXY, options: IGSDOptions = {}): Peak1D[] {
+export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let {
     noiseLevel,
     sgOptions = {

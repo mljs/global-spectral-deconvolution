@@ -2,7 +2,7 @@ import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 import { optimize } from 'ml-spectra-fitting';
-import type { IOptimizationOptions } from 'ml-spectra-fitting';
+import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
 import type { Peak1D } from '../gsd';
@@ -24,7 +24,7 @@ interface GetSoftMaskOptions {
   broadRatio: number;
 }
 
-export interface IJoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
+export interface JoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
   /**
    * width limit to join peaks.
    * @default 0.25
@@ -37,14 +37,14 @@ export interface IJoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
-  optimization?: IOptimizationOptions;
+  optimization?: OptimizationOptions;
   broadMask?: boolean[];
 }
 
 export function joinBroadPeaks(
   data: DataXY,
   peakList: Peak1D[],
-  options: IJoinBroadPeaksOptions = {},
+  options: JoinBroadPeaksOptions = {},
 ): Peak1D[] {
   let {
     broadMask,
