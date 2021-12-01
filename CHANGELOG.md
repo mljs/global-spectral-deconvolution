@@ -1,5 +1,12 @@
 # Changelog
 
+### [9.0.4](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.3...v9.0.4) (2021-12-01)
+
+
+### Bug Fixes
+
+* update dependencies to have ts definition ([d2899b2](https://www.github.com/mljs/global-spectral-deconvolution/commit/d2899b275ed9dbb9c191b7392e012741025afda9))
+
 ### [9.0.3](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.2...v9.0.3) (2021-11-30)
 
 
