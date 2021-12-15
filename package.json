@@ -82,6 +82,6 @@
     "ml-peak-shape-generator": "^4.0.1",
     "ml-savitzky-golay-generalized": "2.0.3",
     "ml-spectra-fitting": "^3.0.3",
-    "ml-spectra-processing": "^6.8.0"
+    "ml-spectra-processing": "^8.0.0"
   }
 }
