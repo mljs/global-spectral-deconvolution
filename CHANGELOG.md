@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.4...v9.1.0) (2021-12-15)
+
+
+### Features
+
+* remove circular dependency lf ml-gsd through ml-spectra-processing ([88a6c9e](https://www.github.com/mljs/global-spectral-deconvolution/commit/88a6c9e0da564ea5e67d932290b48a3dbcea0d1a))
+
 ### [9.0.4](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.3...v9.0.4) (2021-12-01)
 
 
