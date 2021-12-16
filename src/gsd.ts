@@ -3,29 +3,30 @@ import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
 /**
  * Global spectra deconvolution
- * @param {object} data - Object data with x and y arrays
- * @param {Array<number>} [data.x] - Independent variable
- * @param {Array<number>} [data.y] - Dependent variable
- * @param {object} [options={}] - Options object
- * @param {object} [options.shape={}] - Object that specified the kind of shape to calculate the FWHM instead of width between inflection points. see https://mljs.github.io/peak-shape-generator/#inflectionpointswidthtofwhm
- * @param {object} [options.shape.kind='gaussian']
- * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
- * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
- * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
- * @param {number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
- * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
+ * @param data - Object data with x and y arrays
+ * @param [data.x] - Independent variable
+ * @param [data.y] - Dependent variable
+ * @param [options={}] - Options object
+ * @param [options.shape={}] - Object that specified the kind of shape to calculate the FWHM instead of width between inflection points. see https://mljs.github.io/peak-shape-generator/#inflectionpointswidthtofwhm
+ * @param [options.shape.kind='gaussian']
+ * @param [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
+ * @param [options.sgOptions.windowSize = 9] - points to use in the approximations
+ * @param [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
+ * @param [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
+ * @param [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
  * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
- * @param {number} [options.noiseLevel = 0] - Noise threshold in spectrum units
- * @param {boolean} [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
- * @param {boolean} [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
- * @param {boolean} [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors
+ * @param [options.noiseLevel = 0] - Noise threshold in spectrum units
+ * @param [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
+ * @param [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
+ * @param [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors
  * to determine the true x,y values of the peak?
- * @param {number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
- * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
+ * @param [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
+ * @param [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
  * @return {Array<object>}
  */
 
 export interface Peak1D {
+  index?: number;
   x: number;
   y: number;
   width: number;
@@ -205,7 +206,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let gettingCloser: boolean;
 
   const peaks: Peak1D[] = [];
-  const indexes: number[] = [];
   for (const minddYIndex of minddY) {
     frequency = xData[minddYIndex];
     possible = -1;
@@ -232,8 +232,8 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     if (possible !== -1) {
       if (Math.abs(yData[minddYIndex]) > minMaxRatio * maxY) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
-        indexes.push(minddYIndex);
         peaks.push({
+          index: minddYIndex,
           x: frequency,
           y: maxCriteria
             ? yData[minddYIndex] + noiseLevel
@@ -247,7 +247,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   }
 
   if (realTopDetection) {
-    determineRealTop({ peaks, x: xData, y: yData, indexes });
+    determineRealTop({ peaks, x: xData, y: yData });
   }
 
   peaks.sort((a, b) => {
@@ -298,20 +298,33 @@ const getNoiseLevel = (y: DoubleArray): number => {
 
   return stddev;
 };
+
+interface Peak1DWithIndex extends Omit<Peak1D, 'index'> {
+  index: number;
+}
+
+function checkIndex(peaks: Peak1D[]): asserts peaks is Peak1DWithIndex[] {
+  for (const peak of peaks) {
+    if (peak.index === undefined) {
+      throw new Error('index property is mandatory to determine the real top');
+    }
+  }
+}
 const determineRealTop = (options: {
   peaks: Peak1D[];
   x: DoubleArray;
   y: DoubleArray;
-  indexes: number[];
 }): void => {
-  const { peaks, x, y, indexes } = options;
+  const { peaks, x, y } = options;
+
+  checkIndex(peaks);
+
   let alpha: number;
   let beta: number;
   let gamma: number;
   let p: number;
-  for (let i = 0; i < peaks.length; i++) {
-    const peak = peaks[i];
-    let currentPoint = indexes[i];
+  for (const peak of peaks) {
+    let currentPoint = peak.index;
     // The detected peak could be moved 1 or 2 units to left or right.
     if (
       y[currentPoint - 1] >= y[currentPoint - 2] &&
