@@ -1,11 +1,13 @@
 import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
-import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
+import { optimizePeaks } from '..';
 import type { Peak1D } from '../gsd';
+
+import { checkAscending } from './utils/checkAscending';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -42,7 +44,7 @@ export interface JoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
 }
 
 export function joinBroadPeaks(
-  data: DataXY,
+  input: DataXY,
   peakList: Peak1D[],
   options: JoinBroadPeaksOptions = {},
 ): Peak1D[] {
@@ -63,6 +65,7 @@ export function joinBroadPeaks(
   let count = 1;
   const broadLines: Peak1D[] = [];
   const peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  const { data } = checkAscending(input);
   const mask = !broadMask
     ? getSoftMask(data, peaks, { sgOptions, broadRatio })
     : broadMask;
@@ -78,7 +81,12 @@ export function joinBroadPeaks(
   }
 
   // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE, y: 0, width: 0 });
+  broadLines.push({
+    index: Number.MAX_VALUE,
+    x: Number.MAX_VALUE,
+    y: 0,
+    width: 0,
+  });
 
   let candidates: { x: number[]; y: number[] } = {
     x: [broadLines[0].x],
@@ -97,10 +105,11 @@ export function joinBroadPeaks(
       count++;
     } else {
       if (count > 2) {
-        let fitted = optimize(
+        let optimizedPeaks = optimizePeaks(
           candidates,
           [
             {
+              index: broadLines[maxI].index,
               x: broadLines[maxI].x,
               y: max,
               width: candidates.x[0] - candidates.x[candidates.x.length - 1],
@@ -109,8 +118,7 @@ export function joinBroadPeaks(
           ],
           { shape, optimization },
         );
-        let { peaks: peak } = fitted;
-        peaks.push(peak[0]);
+        peaks.push(optimizedPeaks[0]);
       } else {
         // Put back the candidates to the signals list
         indexes.forEach((index) => {
@@ -141,13 +149,7 @@ function getSoftMask(
 
   const { windowSize, polynomial } = sgOptions;
 
-  const yData = new Float64Array(data.y);
-  const xData = new Float64Array(data.x);
-
-  if (xData[1] - xData[0] < 0) {
-    yData.reverse();
-    xData.reverse();
-  }
+  const { x: xData, y: yData } = data;
 
   const ddY = SG(yData, xData[1] - xData[0], {
     windowSize,

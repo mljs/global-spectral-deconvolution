@@ -8,6 +8,8 @@ import { xGetFromToIndex } from 'ml-spectra-processing';
 import type { Peak1D } from '../gsd';
 
 import { groupPeaks } from './groupPeaks';
+import { checkAscending } from './utils/checkAscending';
+import { findClosestIndex } from './utils/findClosestIndex';
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (width)
@@ -36,8 +38,22 @@ export interface OptimizePeaksOptions {
   optimization?: OptimizationOptions;
 }
 
+const checkPeakList = (peaks: Peak1D[], shape: Shape1D) => {
+  const shape1D = getShape1D(shape);
+
+  for (let peak of peaks) {
+    if (peak.fwhm) {
+      peak.width = shape1D.fwhmToWidth(peak.fwhm);
+    } else {
+      peak.fwhm = shape1D.widthToFWHM(peak.width);
+    }
+  }
+
+  return peaks;
+};
+
 export function optimizePeaks(
-  data: DataXY,
+  input: DataXY,
   peakList: Peak1D[],
   options: OptimizePeaksOptions = {},
 ): Peak1D[] {
@@ -55,24 +71,7 @@ export function optimizePeaks(
     },
   }: OptimizePeaksOptions = options;
 
-  if (data.x[0] > data.x[1]) {
-    data.x.reverse();
-    data.y.reverse();
-  }
-
-  const checkPeakList = (peaks: Peak1D[], shape: Shape1D) => {
-    const shape1D = getShape1D(shape);
-
-    for (let peak of peaks) {
-      if (peak.fwhm) {
-        peak.width = shape1D.fwhmToWidth(peak.fwhm);
-      } else {
-        peak.fwhm = shape1D.widthToFWHM(peak.width);
-      }
-    }
-
-    return peaks;
-  };
+  const { data } = checkAscending(input);
 
   checkPeakList(peakList, shape);
 
@@ -93,10 +92,14 @@ export function optimizePeaks(
       y: data.y.slice(fromIndex, toIndex),
     };
     if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
+      let fitting = optimize(currentRange, peaks, {
         shape,
         optimization,
       });
+      const optimizedPeaks = fitting.peaks as Peak1D[];
+      for (const peak of optimizedPeaks) {
+        peak.index = findClosestIndex(data.x, peak.x);
+      }
       results = results.concat(optimizedPeaks);
       // eslint-disable-next-line curly
     } else results = results.concat(peaks);

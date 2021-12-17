@@ -1,6 +1,8 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+import { lorentzianFwhmToWidth as fwhmToWidth } from 'ml-peak-shape-generator';
+
 import { gsd, joinBroadPeaks } from '..';
 
 describe('Global spectra deconvolution NMR spectra', () => {
@@ -37,7 +39,8 @@ describe('Global spectra deconvolution NMR spectra', () => {
     expect(newResult).toHaveLength(14);
     newResult.forEach((peak) => {
       if (Math.abs(peak.x - 4.31) < 0.01) {
-        expect(peak.width).toBeCloseTo(0.39, 2);
+        expect(peak.fwhm).toBeCloseTo(0.39, 2);
+        expect(peak.width).toBeCloseTo(fwhmToWidth(0.39));
       }
     });
   });

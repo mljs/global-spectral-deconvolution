@@ -16,6 +16,7 @@ export function groupPeaks(peakList: Peak1D[], factor = 1): Peak1D[][] {
   peaks.sort((a, b) => a.x - b.x);
 
   let previousPeak: Peak1D = {
+    index: -1,
     x: Number.NEGATIVE_INFINITY,
     y: 0,
     width: 1,

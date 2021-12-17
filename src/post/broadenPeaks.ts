@@ -49,8 +49,8 @@ export function broadenPeaks(
   }
 
   return peaks.map((peak: Peak1D) => {
-    const { x, y, width, shape } = peak;
-    const peakResult: Peak1D = { x, y, width };
+    const { index, x, y, width, shape } = peak;
+    const peakResult: Peak1D = { index, x, y, width };
     if (shape) peakResult.shape = shape;
     return peakResult;
   });

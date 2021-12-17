@@ -26,7 +26,7 @@ import SG from 'ml-savitzky-golay-generalized';
  */
 
 export interface Peak1D {
-  index?: number;
+  index: number;
   x: number;
   y: number;
   width: number;
@@ -299,25 +299,12 @@ const getNoiseLevel = (y: DoubleArray): number => {
   return stddev;
 };
 
-interface Peak1DWithIndex extends Omit<Peak1D, 'index'> {
-  index: number;
-}
-
-function checkIndex(peaks: Peak1D[]): asserts peaks is Peak1DWithIndex[] {
-  for (const peak of peaks) {
-    if (peak.index === undefined) {
-      throw new Error('index property is mandatory to determine the real top');
-    }
-  }
-}
 const determineRealTop = (options: {
   peaks: Peak1D[];
   x: DoubleArray;
   y: DoubleArray;
 }): void => {
   const { peaks, x, y } = options;
-
-  checkIndex(peaks);
 
   let alpha: number;
   let beta: number;
