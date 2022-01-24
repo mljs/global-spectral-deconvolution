@@ -9,11 +9,11 @@ export function getNoiseLevel(y: DoubleArray): number {
     mean += y[i];
   }
   mean /= length;
-  let averageDeviations: DoubleArray = new Array(length);
+  let averageDeviations = new Float64Array(length);
   for (let i = 0; i < length; ++i) {
     averageDeviations[i] = Math.abs(y[i] - mean);
   }
-  averageDeviations.sort((a, b) => a - b);
+  averageDeviations.sort();
   if (length % 2 === 1) {
     stddev = averageDeviations[(length - 1) / 2] / 0.6745;
   } else {
