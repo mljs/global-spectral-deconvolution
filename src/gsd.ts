@@ -1,6 +1,9 @@
-import type { DataXY, DoubleArray } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
+import { determineRealTop } from './utils/determineRealTop';
+import { getNoiseLevel } from './utils/getNoiseLevel';
+import { isEquallySpaced } from './utils/isEquallySpaced';
 /**
  * Global spectra deconvolution
  * @param {object} data - Object data with x and y arrays
@@ -69,10 +72,10 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     realTopDetection = false,
   } = options;
 
-  let { y: yIn, x } = data;
+  let { y, x } = data;
+  y = y.slice();
 
-  const y = yIn.slice();
-  let equalSpaced = isEqualSpaced(x);
+  let equallySpaced = isEquallySpaced(x);
 
   if (maxCriteria === false) {
     for (let i = 0; i < y.length; i++) {
@@ -81,7 +84,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   }
 
   if (noiseLevel === undefined) {
-    noiseLevel = equalSpaced ? getNoiseLevel(y) : 0;
+    noiseLevel = equallySpaced ? getNoiseLevel(y) : 0;
   }
 
   for (let i = 0; i < y.length; i++) {
@@ -98,7 +101,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let dY: number[], ddY: number[];
   const { windowSize, polynomial } = sgOptions;
 
-  if (equalSpaced) {
+  if (equallySpaced) {
     if (smoothY) {
       yData = SG(y, x[1] - x[0], {
         windowSize,
@@ -199,7 +202,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
 
   let lastK = -1;
   let possible: number;
-  let frequency: number;
+  let deltaX: number;
   let distanceJ: number;
   let minDistance: number;
   let gettingCloser: boolean;
@@ -207,14 +210,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   const peaks: Peak1D[] = [];
   const indexes: number[] = [];
   for (const minddYIndex of minddY) {
-    frequency = xData[minddYIndex];
+    deltaX = xData[minddYIndex];
     possible = -1;
     let k = lastK + 1;
     minDistance = Number.MAX_VALUE;
     distanceJ = 0;
     gettingCloser = true;
     while (possible === -1 && k < intervalL.length && gettingCloser) {
-      distanceJ = Math.abs(frequency - (intervalL[k].x + intervalR[k].x) / 2);
+      distanceJ = Math.abs(deltaX - (intervalL[k].x + intervalR[k].x) / 2);
 
       // Still getting closer?
       if (distanceJ < minDistance) {
@@ -234,7 +237,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         indexes.push(minddYIndex);
         peaks.push({
-          x: frequency,
+          x: deltaX,
           y: maxCriteria
             ? yData[minddYIndex] + noiseLevel
             : -yData[minddYIndex] - noiseLevel,
@@ -256,107 +259,3 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
 
   return peaks;
 }
-
-const isEqualSpaced = (x: DoubleArray): boolean => {
-  let tmp: number;
-  let maxDx = 0;
-  let minDx = Number.MAX_SAFE_INTEGER;
-  for (let i = 0; i < x.length - 1; ++i) {
-    tmp = Math.abs(x[i + 1] - x[i]);
-    if (tmp < minDx) {
-      minDx = tmp;
-    }
-    if (tmp > maxDx) {
-      maxDx = tmp;
-    }
-  }
-  return (maxDx - minDx) / maxDx < 0.05;
-};
-
-const getNoiseLevel = (y: DoubleArray): number => {
-  let mean = 0;
-
-  let stddev = 0;
-  let length = y.length;
-  for (let i = 0; i < length; ++i) {
-    mean += y[i];
-  }
-  mean /= length;
-  let averageDeviations: DoubleArray = new Array(length);
-  for (let i = 0; i < length; ++i) {
-    averageDeviations[i] = Math.abs(y[i] - mean);
-  }
-  averageDeviations.sort((a, b) => a - b);
-  if (length % 2 === 1) {
-    stddev = averageDeviations[(length - 1) / 2] / 0.6745;
-  } else {
-    stddev =
-      (0.5 *
-        (averageDeviations[length / 2] + averageDeviations[length / 2 - 1])) /
-      0.6745;
-  }
-
-  return stddev;
-};
-const determineRealTop = (options: {
-  peaks: Peak1D[];
-  x: DoubleArray;
-  y: DoubleArray;
-  indexes: number[];
-}): void => {
-  const { peaks, x, y, indexes } = options;
-  let alpha: number;
-  let beta: number;
-  let gamma: number;
-  let p: number;
-  for (let i = 0; i < peaks.length; i++) {
-    const peak = peaks[i];
-    let currentPoint = indexes[i];
-    // The detected peak could be moved 1 or 2 units to left or right.
-    if (
-      y[currentPoint - 1] >= y[currentPoint - 2] &&
-      y[currentPoint - 1] >= y[currentPoint]
-    ) {
-      currentPoint--;
-    } else {
-      if (
-        y[currentPoint + 1] >= y[currentPoint] &&
-        y[currentPoint + 1] >= y[currentPoint + 2]
-      ) {
-        currentPoint++;
-      } else {
-        if (
-          y[currentPoint - 2] >= y[currentPoint - 3] &&
-          y[currentPoint - 2] >= y[currentPoint - 1]
-        ) {
-          currentPoint -= 2;
-        } else {
-          if (
-            y[currentPoint + 2] >= y[currentPoint + 1] &&
-            y[currentPoint + 2] >= y[currentPoint + 3]
-          ) {
-            currentPoint += 2;
-          }
-        }
-      }
-    }
-    // interpolation to a sin() function
-    if (
-      y[currentPoint - 1] > 0 &&
-      y[currentPoint + 1] > 0 &&
-      y[currentPoint] >= y[currentPoint - 1] &&
-      y[currentPoint] >= y[currentPoint + 1] &&
-      (y[currentPoint] !== y[currentPoint - 1] ||
-        y[currentPoint] !== y[currentPoint + 1])
-    ) {
-      alpha = 20 * Math.log10(y[currentPoint - 1]);
-      beta = 20 * Math.log10(y[currentPoint]);
-      gamma = 20 * Math.log10(y[currentPoint + 1]);
-      p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
-      peak.x = x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
-      peak.y =
-        y[currentPoint] -
-        0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
-    }
-  }
-};
