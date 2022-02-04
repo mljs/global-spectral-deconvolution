@@ -5,7 +5,7 @@ import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
-import { Peak1D } from '../Peak1D';
+import { GSDPeak } from '../GSDPeak';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
@@ -43,9 +43,9 @@ export interface JoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
 
 export function joinBroadPeaks(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: GSDPeak[],
   options: JoinBroadPeaksOptions = {},
-): Peak1D[] {
+): GSDPeak[] {
   let {
     broadMask,
     shape = { kind: 'gaussian' },
@@ -61,8 +61,8 @@ export function joinBroadPeaks(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: Peak1D[] = [];
-  const peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  const broadLines: GSDPeak[] = [];
+  const peaks: GSDPeak[] = JSON.parse(JSON.stringify(peakList));
   const mask = !broadMask
     ? getSoftMask(data, peaks, { sgOptions, broadRatio })
     : broadMask;
@@ -134,7 +134,7 @@ export function joinBroadPeaks(
 
 function getSoftMask(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: GSDPeak[],
   options: GetSoftMaskOptions,
 ) {
   const { sgOptions, broadRatio } = options;

@@ -1,7 +1,7 @@
 import type { DataXY } from 'cheminfo-types';
 import SG from 'ml-savitzky-golay-generalized';
 
-import { Peak1D } from './Peak1D';
+import { GSDPeak } from './GSDPeak';
 import { getNoiseLevel } from './utils/getNoiseLevel';
 import { isEquallySpaced } from './utils/isEquallySpaced';
 
@@ -45,7 +45,7 @@ export interface GSDOptions {
  * @return {Array<object>}
  */
 
-export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
+export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   let {
     noiseLevel,
     sgOptions = {
@@ -192,7 +192,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let minDistance: number;
   let gettingCloser: boolean;
 
-  const peaks: Peak1D[] = [];
+  const peaks: GSDPeak[] = [];
   const indexes: number[] = [];
   for (const minddYIndex of minddY) {
     deltaX = xData[minddYIndex];

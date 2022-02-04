@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { gsd } from '../gsd';
+import { optimizeTop } from '../optimizeTop';
 
 function lorentzian(x: number, x0 = 0, gamma = 1) {
   return (
@@ -15,12 +15,12 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
     let spectrum: number[][] = JSON.parse(
       readFileSync(join(__dirname, '/data//C2.json'), 'utf8'),
     );
-    let result = gsd(
+    let result = optimizeTop(
       { x: spectrum[0], y: spectrum[1] },
       {
         // noiseLevel: 0.001,
         minMaxRatio: 0,
-        //  realTopDetection: true,
+        realTopDetection: true,
         smoothY: false,
       },
     );
@@ -32,7 +32,7 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
     expect(result[1].y).toBeCloseTo(0.0020321396708958394, 5);
   });
 
-  it.only('Should give 10 peaks', () => {
+  it('Should give 10 peaks', () => {
     const size = 300;
     const fourth = size / 11;
     let times: number[] = new Array(size);
@@ -52,15 +52,16 @@ describe('Global spectra deconvolution simple simulated spectrum', () => {
         lorentzian(i, 9 * fourth) +
         2 * lorentzian(i, 10 * fourth);
     }
-    let ans = gsd(
+    let ans = optimizeTop(
       { x: times, y: tic },
       {
         noiseLevel: 0,
+        realTopDetection: false,
         smoothY: false,
         sgOptions: { windowSize: 5, polynomial: 3 },
       },
     );
-    console.log(ans);
+
     expect(ans).toHaveLength(10);
   });
 });

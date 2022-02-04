@@ -1,4 +1,4 @@
-import { Peak1D } from '../Peak1D';
+import { GSDPeak } from '../GSDPeak';
 
 /**
  * Group peaks based on factor and add group property in peaks
@@ -9,19 +9,19 @@ export interface GroupPeaksOptions {
   width?: number;
 }
 
-export function groupPeaks(peakList: Peak1D[], factor = 1): Peak1D[][] {
+export function groupPeaks(peakList: GSDPeak[], factor = 1): GSDPeak[][] {
   if (peakList && peakList.length === 0) return [];
 
-  let peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  let peaks: GSDPeak[] = JSON.parse(JSON.stringify(peakList));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak: Peak1D = {
+  let previousPeak: GSDPeak = {
     x: Number.NEGATIVE_INFINITY,
     y: 0,
     width: 1,
   };
-  let currentGroup: Peak1D[] = [previousPeak];
-  let groups: Peak1D[][] = [];
+  let currentGroup: GSDPeak[] = [previousPeak];
+  let groups: GSDPeak[][] = [];
 
   peaks.forEach((peak) => {
     if (

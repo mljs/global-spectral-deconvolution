@@ -1,17 +1,17 @@
 import { xyCheck } from 'ml-spectra-processing';
 import { DataXY } from 'xy-parser';
 
-import { Peak1D } from '../Peak1D';
+import { GSDPeak } from '../GSDPeak';
 
 //* @param {boolean} [options.realTopDetection = false] -
 
 /**
  * Correction of the x and y coordinates using a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak.
  * This process is done in place and is very fast.
- * @param peaks
  * @param data
+ * @param peaks
  */
-export function optimizeTop(data: DataXY, peaks: Peak1D[]): void {
+export function optimizeTop(data: DataXY, peaks: GSDPeak[]): void {
   xyCheck(data);
   const { x, y } = data;
 

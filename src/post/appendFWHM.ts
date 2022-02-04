@@ -1,7 +1,7 @@
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 
-import { Peak1D } from '../Peak1D';
-import { Peak1DWithShape } from '../Peak1DWithShape';
+import { GSDPeak } from '../GSDPeak';
+import { GSDPeakShape } from '../GSDPeakShape';
 
 /**
  * Global spectra deconvolution
@@ -11,7 +11,7 @@ import { Peak1DWithShape } from '../Peak1DWithShape';
  */
 
 export function appendFWHM(
-  peaks: Peak1D[],
+  peaks: GSDPeak[],
   options: {
     /**
      * Shape to use to calculate FWHM
@@ -19,10 +19,10 @@ export function appendFWHM(
      */
     shape?: Shape1D;
   } = {},
-): Peak1DWithShape[] {
+): GSDPeakShape[] {
   let { shape = { kind: 'gaussian' } } = options;
   let widthToFWHM = getShape1D(shape).widthToFWHM;
-  let newPeaks: Peak1DWithShape[] = [];
+  let newPeaks: GSDPeakShape[] = [];
   for (const peak of peaks) {
     newPeaks.push({ ...peak, fwhm: widthToFWHM(peak.width), shape });
   }

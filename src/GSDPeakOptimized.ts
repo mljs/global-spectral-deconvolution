@@ -1,4 +1,4 @@
-export interface Peak1DOptimized {
+export interface GSDPeakOptimized {
   x: number;
   y: number;
   width: number;

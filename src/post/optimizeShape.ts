@@ -4,8 +4,8 @@ import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { Peak1DOptimized } from '../Peak1DOptimized';
-import { Peak1DWithShape } from '../Peak1DWithShape';
+import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { GSDPeakShape } from '../GSDPeakShape';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -34,9 +34,9 @@ export interface OptimizePeaksOptions {
 
 export function optimizeShape(
   data: DataXY,
-  peakList: Peak1DWithShape[],
+  peakList: GSDPeakShape[],
   options: OptimizePeaksOptions = {},
-): Peak1DOptimized[] {
+): GSDPeakOptimized[] {
   const {
     factorWidth = 1,
     factorLimits = 2,
@@ -55,7 +55,7 @@ export function optimizeShape(
 */
   let groups = groupPeaks(peakList, factorWidth);
 
-  let results: Peak1DOptimized[] = [];
+  let results: GSDPeakOptimized[] = [];
 
   groups.forEach((peaks) => {
     const firstPeak = peaks[0];

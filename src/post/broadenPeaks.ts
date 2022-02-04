@@ -1,4 +1,4 @@
-import { Peak1D } from '../Peak1D';
+import { GSDPeak } from '../GSDPeak';
 
 /**
  * This method will allow to enlarge peaks and prevent overlap between peaks
@@ -17,14 +17,14 @@ export interface BroadenPeaksOptions {
   overlap?: boolean;
 }
 
-interface InternPeak1D extends Peak1D {
+interface InternPeak1D extends GSDPeak {
   from: number;
   to: number;
 }
 export function broadenPeaks(
-  peakList: Peak1D[],
+  peakList: GSDPeak[],
   options: BroadenPeaksOptions = {},
-): Peak1D[] {
+): GSDPeak[] {
   const { factor = 2, overlap = false } = options;
 
   const peaks: InternPeak1D[] = JSON.parse(JSON.stringify(peakList));
@@ -48,9 +48,9 @@ export function broadenPeaks(
     peak.width = peak.to - peak.from;
   }
 
-  return peaks.map((peak: Peak1D) => {
+  return peaks.map((peak: GSDPeak) => {
     const { x, y, width, shape } = peak;
-    const peakResult: Peak1D = { x, y, width };
+    const peakResult: GSDPeak = { x, y, width };
     if (shape) peakResult.shape = shape;
     return peakResult;
   });
