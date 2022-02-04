@@ -5,7 +5,7 @@ import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
-import type { Peak1D } from '../gsd';
+import { Peak1D } from '../Peak1D';
 
 /**
  * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.

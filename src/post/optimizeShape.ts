@@ -1,11 +1,11 @@
 import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
-import { getShape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import type { Peak1D } from '../gsd';
+import { Peak1DOptimized } from '../Peak1DOptimized';
+import { Peak1DWithShape } from '../Peak1DWithShape';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -17,36 +17,29 @@ import { groupPeaks } from './groupPeaks';
  */
 export interface OptimizePeaksOptions {
   /**
-   * times of width to group peaks.
+   * Number of times the width determining if the peaks have to be grouped and therefore optimized together
    * @default 1
    */
   factorWidth?: number;
   /**
-   * times of width to use to optimize peaks
+   * Define the min / max values
    * @default 2
    */
   factorLimits?: number;
-  /**
-   * it's specify the kind of shape used to fitting.
-   */
-  shape?: Shape1D;
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
   optimization?: OptimizationOptions;
 }
 
-export function optimizePeaks(
+export function optimizeShape(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: Peak1DWithShape[],
   options: OptimizePeaksOptions = {},
-): Peak1D[] {
+): Peak1DOptimized[] {
   const {
     factorWidth = 1,
     factorLimits = 2,
-    shape = {
-      kind: 'gaussian',
-    },
     optimization = {
       kind: 'lm',
       options: {
@@ -55,30 +48,14 @@ export function optimizePeaks(
     },
   }: OptimizePeaksOptions = options;
 
-  if (data.x[0] > data.x[1]) {
-    data.x.reverse();
-    data.y.reverse();
-  }
-
-  const checkPeakList = (peaks: Peak1D[], shape: Shape1D) => {
-    const shape1D = getShape1D(shape);
-
-    for (let peak of peaks) {
-      if (peak.fwhm) {
-        peak.width = shape1D.fwhmToWidth(peak.fwhm);
-      } else {
-        peak.fwhm = shape1D.widthToFWHM(peak.width);
-      }
-    }
-
-    return peaks;
-  };
-
-  checkPeakList(peakList, shape);
-
+  /*
+  The optimization algorithm will take some group of peaks.
+  We can not simply optimize everything because there would be too many variables to optimize
+  and it would be too time consuming.
+*/
   let groups = groupPeaks(peakList, factorWidth);
 
-  let results: Peak1D[] = [];
+  let results: Peak1DOptimized[] = [];
 
   groups.forEach((peaks) => {
     const firstPeak = peaks[0];
@@ -88,12 +65,18 @@ export function optimizePeaks(
     const to = lastPeak.x + lastPeak.width * factorLimits;
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
     // Multiple peaks
-    const currentRange = {
-      x: data.x.slice(fromIndex, toIndex),
-      y: data.y.slice(fromIndex, toIndex),
-    };
-    if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
+
+    const x =
+      data.x instanceof Float64Array
+        ? data.x.subarray(fromIndex, toIndex)
+        : data.x.slice(fromIndex, toIndex);
+    const y =
+      data.y instanceof Float64Array
+        ? data.y.subarray(fromIndex, toIndex)
+        : data.y.slice(fromIndex, toIndex);
+
+    if (x.length > 5) {
+      let { peaks: optimizedPeaks } = optimize({ x, y }, peaks, {
         shape,
         optimization,
       });
@@ -102,5 +85,5 @@ export function optimizePeaks(
     } else results = results.concat(peaks);
   });
 
-  return checkPeakList(results, shape);
+  return results;
 }

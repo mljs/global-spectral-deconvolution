@@ -11,17 +11,26 @@ describe('broadenPeaks', () => {
       {
         x: 5,
         y: 10,
-        width: 7.5,
+        width: 5,
+        index: 1,
+        fwhm: 5.8870501125773735,
+        shape: { kind: 'gaussian' },
       },
       {
         x: 10,
         y: 10,
-        width: 7.5,
+        width: 5,
+        index: 2,
+        fwhm: 5.8870501125773735,
+        shape: { kind: 'gaussian' },
       },
       {
         x: 30,
         y: 10,
-        width: 10,
+        width: 5,
+        index: 3,
+        fwhm: 5.8870501125773735,
+        shape: { kind: 'gaussian' },
       },
     ]);
   });

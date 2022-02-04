@@ -1,4 +1,4 @@
-import type { Peak1D } from '../gsd';
+import { Peak1D } from '../Peak1D';
 
 /**
  * Group peaks based on factor and add group property in peaks

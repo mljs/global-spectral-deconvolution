@@ -1,40 +1,9 @@
 import type { DataXY } from 'cheminfo-types';
-import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import SG from 'ml-savitzky-golay-generalized';
-import { determineRealTop } from './utils/determineRealTop';
+
+import { Peak1D } from './Peak1D';
 import { getNoiseLevel } from './utils/getNoiseLevel';
 import { isEquallySpaced } from './utils/isEquallySpaced';
-/**
- * Global spectra deconvolution
- * @param {object} data - Object data with x and y arrays
- * @param {Array<number>} [data.x] - Independent variable
- * @param {Array<number>} [data.y] - Dependent variable
- * @param {object} [options={}] - Options object
- * @param {object} [options.shape={}] - Object that specified the kind of shape to calculate the FWHM instead of width between inflection points. see https://mljs.github.io/peak-shape-generator/#inflectionpointswidthtofwhm
- * @param {object} [options.shape.kind='gaussian']
- * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
- * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
- * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
- * @param {number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
- * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
- * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
- * @param {number} [options.noiseLevel = 0] - Noise threshold in spectrum units
- * @param {boolean} [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
- * @param {boolean} [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
- * @param {boolean} [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors
- * to determine the true x,y values of the peak?
- * @param {number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
- * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
- * @return {Array<object>}
- */
-
-export interface Peak1D {
-  x: number;
-  y: number;
-  width: number;
-  fwhm?: number;
-  shape?: Shape1D;
-}
 
 interface LastType {
   x: number;
@@ -47,15 +16,34 @@ export interface GSDOptions {
     windowSize: number;
     polynomial: number;
   };
-  shape?: Shape1D;
   smoothY?: boolean;
   heightFactor?: number;
   maxCriteria?: boolean;
   minMaxRatio?: number;
   derivativeThreshold?: number;
-  realTopDetection?: boolean;
   factor?: number;
 }
+
+/**
+ * Global spectra deconvolution
+ * @param {object} data - Object data with x and y arrays
+ * @param {Array<number>} [data.x] - Independent variable
+ * @param {Array<number>} [data.y] - Dependent variable
+ * @param {object} [options={}] - Options object
+ * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
+ * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
+ * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
+ * @param {number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
+ * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
+ * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
+ * @param {number} [options.noiseLevel = 0] - Noise threshold in spectrum units
+ * @param {boolean} [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
+ * @param {boolean} [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
+
+ * @param {number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
+ * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
+ * @return {Array<object>}
+ */
 
 export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
   let {
@@ -64,17 +52,17 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
       windowSize: 9,
       polynomial: 3,
     },
-    shape = { kind: 'gaussian' },
     smoothY = true,
     maxCriteria = true,
     minMaxRatio = 0.00025,
     derivativeThreshold = -1,
-    realTopDetection = false,
   } = options;
 
   let { y, x } = data;
   y = y.slice();
 
+  // If the max difference between delta x is less than 5%, then,
+  // we can assume it to be equally spaced variable
   let equallySpaced = isEquallySpaced(x);
 
   if (maxCriteria === false) {
@@ -95,8 +83,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
       y[i] = 0;
     }
   }
-  // If the max difference between delta x is less than 5%, then,
-  // we can assume it to be equally spaced variable
+
   let yData = y;
   let dY: number[], ddY: number[];
   const { windowSize, polynomial } = sgOptions;
@@ -198,8 +185,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     }
   }
 
-  let widthToFWHM = getShape1D(shape).widthToFWHM;
-
   let lastK = -1;
   let possible: number;
   let deltaX: number;
@@ -235,22 +220,16 @@ export function gsd(data: DataXY, options: GSDOptions = {}): Peak1D[] {
     if (possible !== -1) {
       if (Math.abs(yData[minddYIndex]) > minMaxRatio * maxY) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
-        indexes.push(minddYIndex);
         peaks.push({
           x: deltaX,
           y: maxCriteria
             ? yData[minddYIndex] + noiseLevel
             : -yData[minddYIndex] - noiseLevel,
           width: width,
-          fwhm: widthToFWHM(width),
-          shape,
+          index: minddYIndex,
         });
       }
     }
-  }
-
-  if (realTopDetection) {
-    determineRealTop({ peaks, x: xData, y: yData, indexes });
   }
 
   peaks.sort((a, b) => {
