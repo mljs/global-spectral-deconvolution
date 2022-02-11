@@ -11,11 +11,10 @@ describe('Global spectra deconvolution NMR spectra', () => {
     let result = gsd(
       { x: spectrum[0], y: spectrum[1] },
       {
-        // noiseLevel: 1049200.537996172,
         minMaxRatio: 0.03,
         smoothY: false,
         realTopDetection: true,
-        sgOptions: { windowSize: 5, polynomial: 3 },
+        sggOptions: { windowSize: 5, polynomial: 3 },
       },
     );
     expect(result).toHaveLength(21);

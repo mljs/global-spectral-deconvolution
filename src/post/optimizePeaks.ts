@@ -4,23 +4,23 @@ import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
+import { appendShapeAndFWHM } from '..';
+import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { GSDPeakShape } from '../GSDPeakShape';
 
 import { groupPeaks } from './groupPeaks';
 
-/**
- * Optimize the position (x), max intensity (y), full width at half maximum (width)
- * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
- * @param data - An object containing the x and y data to be fitted.
- * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- */
 export interface OptimizePeaksOptions {
+  /**
+   * Shape to use for optimization
+   * @default {kind:'gaussian'}
+   */
+  shape?: Shape1D;
   /**
    * Number of times the width determining if the peaks have to be grouped and therefore optimized together
    * @default 1
    */
-  factorWidth?: number;
+  groupingFactor?: number;
   /**
    * Define the min / max values
    * @default 2
@@ -32,13 +32,26 @@ export interface OptimizePeaksOptions {
   optimization?: OptimizationOptions;
 }
 
-export function optimizeShape(
+interface XYWidth {
+  x: number;
+  y: number;
+  width: number;
+}
+
+/**
+ * Optimize the position (x), max intensity (y), full width at half maximum (width)
+ * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * @param data - An object containing the x and y data to be fitted.
+ * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ */
+export function optimizePeaks(
   data: DataXY,
-  peakList: GSDPeakShape[],
+  peakList: XYWidth[],
   options: OptimizePeaksOptions = {},
 ): GSDPeakOptimized[] {
   const {
-    factorWidth = 1,
+    shape = { kind: 'gaussian' },
+    groupingFactor = 1,
     factorLimits = 2,
     optimization = {
       kind: 'lm',
@@ -53,18 +66,20 @@ export function optimizeShape(
   We can not simply optimize everything because there would be too many variables to optimize
   and it would be too time consuming.
 */
-  let groups = groupPeaks(peakList, factorWidth);
+  let groups = groupPeaks(peakList, { factor: groupingFactor });
 
   let results: GSDPeakOptimized[] = [];
 
   groups.forEach((peaks) => {
+    // In order to make optimization we will add fwhm and shape on all the peaks
+    peaks = appendShapeAndFWHM(peaks, { shape });
+
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.width * factorLimits;
     const to = lastPeak.x + lastPeak.width * factorLimits;
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
-    // Multiple peaks
 
     const x =
       data.x instanceof Float64Array

@@ -1,7 +1,7 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { generateSpectrum } from 'spectrum-generator';
 
-import { optimizePeaks } from '../optimizeShape';
+import { optimizePeaks } from '../optimizePeaks';
 
 expect.extend({ toMatchCloseTo });
 
@@ -20,7 +20,13 @@ describe('optimizePeaks', () => {
       },
     });
 
-    let result = optimizePeaks(data, [{ x: 0.01, y: 0.9, width: 0.11 }]);
+    let result = optimizePeaks(data, [
+      {
+        x: 0.01,
+        y: 0.9,
+        width: 0.11,
+      },
+    ]);
     expect(result).toMatchCloseTo([
       {
         x: -3.419674049814014e-8,

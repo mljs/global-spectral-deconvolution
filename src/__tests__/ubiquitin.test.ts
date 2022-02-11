@@ -1,9 +1,12 @@
 import { readFileSync } from 'fs';
 
 import type { DataXY } from 'cheminfo-types';
+import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { parseXY } from 'xy-parser';
 
 import { gsd } from '../gsd';
+
+expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");
@@ -17,14 +20,23 @@ describe('Global spectra deconvolution ubiquitin', () => {
 
     let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
 
-    let result = gsd(spectrum, {
+    let peaks = gsd(spectrum, {
       noiseLevel: noiseLevel,
       minMaxRatio: 0.0,
       smoothY: false,
       realTopDetection: true,
-      sgOptions: { windowSize: 7, polynomial: 3 },
+      sggOptions: { windowSize: 7, polynomial: 3 },
     });
-
-    expect(result).toHaveLength(6198);
+    expect(peaks[0]).toBeDeepCloseTo({
+      x: 200.05527917306466,
+      y: 28.795378784444413,
+      width: 0.002420000000000755,
+      index: 11,
+      inflectionPoints: {
+        from: { x: 200.054133, index: 9 },
+        to: { x: 200.056553, index: 13 },
+      },
+    });
+    expect(peaks).toHaveLength(6198);
   });
 });

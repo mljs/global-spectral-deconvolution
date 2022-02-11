@@ -1,9 +1,4 @@
-import { xyCheck } from 'ml-spectra-processing';
-import { DataXY } from 'xy-parser';
-
-import { GSDPeak } from '../GSDPeak';
-
-//* @param {boolean} [options.realTopDetection = false] -
+import { DataXY } from 'cheminfo-types';
 
 /**
  * Correction of the x and y coordinates using a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak.
@@ -11,8 +6,10 @@ import { GSDPeak } from '../GSDPeak';
  * @param data
  * @param peaks
  */
-export function optimizeTop(data: DataXY, peaks: GSDPeak[]): void {
-  xyCheck(data);
+export function optimizeTop<T extends { index: number; x: number; y: number }>(
+  data: DataXY,
+  peaks: T[],
+): void {
   const { x, y } = data;
 
   for (const peak of peaks) {

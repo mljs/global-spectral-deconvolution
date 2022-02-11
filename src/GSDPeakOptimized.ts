@@ -1,3 +1,5 @@
+import { Shape1D } from 'ml-peak-shape-generator';
+
 export interface GSDPeakOptimized {
   x: number;
   y: number;

@@ -1,19 +1,14 @@
 import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
-import SG from 'ml-savitzky-golay-generalized';
+import { sgg } from 'ml-savitzky-golay-generalized';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
 import { GSDPeak } from '../GSDPeak';
 
-/**
- * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
- * @param peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- */
-
 interface GetSoftMaskOptions {
-  sgOptions: {
+  sggOptions: {
     windowSize: number;
     polynomial: number;
   };
@@ -41,6 +36,10 @@ export interface JoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
   broadMask?: boolean[];
 }
 
+/**
+ * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
+ */
+
 export function joinBroadPeaks(
   data: DataXY,
   peakList: GSDPeak[],
@@ -50,7 +49,7 @@ export function joinBroadPeaks(
     broadMask,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
-    sgOptions = {
+    sggOptions = {
       windowSize: 9,
       polynomial: 3,
     },
@@ -64,7 +63,7 @@ export function joinBroadPeaks(
   const broadLines: GSDPeak[] = [];
   const peaks: GSDPeak[] = JSON.parse(JSON.stringify(peakList));
   const mask = !broadMask
-    ? getSoftMask(data, peaks, { sgOptions, broadRatio })
+    ? getSoftMask(data, peaks, { sggOptions, broadRatio })
     : broadMask;
 
   if (mask.length !== peaks.length) {
@@ -137,19 +136,14 @@ function getSoftMask(
   peakList: GSDPeak[],
   options: GetSoftMaskOptions,
 ) {
-  const { sgOptions, broadRatio } = options;
+  const { sggOptions, broadRatio } = options;
 
-  const { windowSize, polynomial } = sgOptions;
+  const { windowSize, polynomial } = sggOptions;
 
   const yData = new Float64Array(data.y);
   const xData = new Float64Array(data.x);
 
-  if (xData[1] - xData[0] < 0) {
-    yData.reverse();
-    xData.reverse();
-  }
-
-  const ddY = SG(yData, xData[1] - xData[0], {
+  const ddY = sgg(yData, xData[1] - xData[0], {
     windowSize,
     polynomial,
     derivative: 2,

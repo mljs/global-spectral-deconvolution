@@ -5,9 +5,38 @@
 [![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 
-Global Spectra Deconvolution + Peak optimizer
+## Global Spectra Deconvolution + Peak optimizer
 
-`gsd`is using an algorithm that is searching for inflection points to determine the position of peaks and the width of the peaks are between the 2 inflection points. The result of GSD yield to an array of object containing {x, y fwhm and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
+`gsd`is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
+
+There are 3 public methods to calculate the peaks:
+
+- gsd: fast determination of the peaks
+- gsdShape: appends information about the shape and fwhm
+- gsdOptimized: will fit the shape to the peak to get exact parameters of the result
+
+Those methods have 3 steps:
+
+- preprocessing
+- gsd itself
+- postprocessing
+
+Preprocessing is common to the 3 methods and involve the following parameters
+
+- maxCriteria: search either for maxima or minima. We will invert the data and the results if searching for a minima
+- noiseLevel:
+- sgOptions: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
+- smoothY: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
+
+All those method will first preprocess the data. The preprocessing
+
+### gsd({x:[], y:[]}, options)
+
+`gsdShape({x:[], y:[]}, options)`
+
+`gsdOptimized({x:[], y:[]}, options)`
+
+The result of GSD yield to an array of object containing {x, y fwhm and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
 
 The second algorithm (`optimizePeaks`) will optimize the width and FWHM to match the original peak.
 
