@@ -24,7 +24,7 @@ export interface GSDOptions {
    * The Y values in case of smoothY is true will therefore be lower.
    * @default {windowSize:9,polynomial:3}
    */
-  sggOptions?: SGGOptions;
+  sgOptions?: SGGOptions;
   /**
    * Select the peak intensities from a smoothed version of the independent variables
    * @default false
@@ -63,7 +63,7 @@ export interface GSDOptions {
 export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   let {
     noiseLevel,
-    sggOptions = {
+    sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
@@ -102,7 +102,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   let yData = y;
   let dY, ddY;
-  const { windowSize, polynomial } = sggOptions;
+  const { windowSize, polynomial } = sgOptions;
 
   if (equallySpaced) {
     if (smoothY) {

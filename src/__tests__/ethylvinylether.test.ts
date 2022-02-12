@@ -14,7 +14,7 @@ describe('Global spectra deconvolution NMR spectra', () => {
         minMaxRatio: 0.03,
         smoothY: false,
         realTopDetection: true,
-        sggOptions: { windowSize: 5, polynomial: 3 },
+        sgOptions: { windowSize: 5, polynomial: 3 },
       },
     );
     expect(result).toHaveLength(21);

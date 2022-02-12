@@ -8,7 +8,7 @@ import { xFindClosestIndex } from 'ml-spectra-processing';
 import { GSDPeak } from '../GSDPeak';
 
 interface GetSoftMaskOptions {
-  sggOptions: {
+  sgOptions: {
     windowSize: number;
     polynomial: number;
   };
@@ -49,7 +49,7 @@ export function joinBroadPeaks(
     broadMask,
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
-    sggOptions = {
+    sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
@@ -63,7 +63,7 @@ export function joinBroadPeaks(
   const broadLines: GSDPeak[] = [];
   const peaks: GSDPeak[] = JSON.parse(JSON.stringify(peakList));
   const mask = !broadMask
-    ? getSoftMask(data, peaks, { sggOptions, broadRatio })
+    ? getSoftMask(data, peaks, { sgOptions, broadRatio })
     : broadMask;
 
   if (mask.length !== peaks.length) {
@@ -136,9 +136,9 @@ function getSoftMask(
   peakList: GSDPeak[],
   options: GetSoftMaskOptions,
 ) {
-  const { sggOptions, broadRatio } = options;
+  const { sgOptions, broadRatio } = options;
 
-  const { windowSize, polynomial } = sggOptions;
+  const { windowSize, polynomial } = sgOptions;
 
   const yData = new Float64Array(data.y);
   const xData = new Float64Array(data.x);

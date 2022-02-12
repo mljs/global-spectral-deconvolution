@@ -25,7 +25,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
       minMaxRatio: 0.0,
       smoothY: false,
       realTopDetection: true,
-      sggOptions: { windowSize: 7, polynomial: 3 },
+      sgOptions: { windowSize: 7, polynomial: 3 },
     });
     expect(peaks[0]).toBeDeepCloseTo({
       x: 200.05527917306466,
