@@ -1,12 +1,11 @@
 import type { DataXY } from 'cheminfo-types';
-import type { Shape1D } from 'ml-peak-shape-generator';
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { appendShapeAndFWHM } from '..';
-import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 
 import { groupPeaks } from './groupPeaks';
 
@@ -70,9 +69,9 @@ export function optimizePeaks(
 
   let results: GSDPeakOptimized[] = [];
 
-  groups.forEach((peaks) => {
+  groups.forEach((peakGroup) => {
     // In order to make optimization we will add fwhm and shape on all the peaks
-    peaks = appendShapeAndFWHM(peaks, { shape });
+    const peaks = appendShapeAndFWHM(peakGroup, { shape });
 
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
@@ -95,9 +94,18 @@ export function optimizePeaks(
         shape,
         optimization,
       });
-      results = results.concat(optimizedPeaks);
-      // eslint-disable-next-line curly
-    } else results = results.concat(peaks);
+      for (let i = 0; i < peaks.length; i++) {
+        results.push({
+          x: optimizedPeaks[i].x,
+          y: optimizedPeaks[i].y,
+          shape: peaks[i].shape,
+          fwhm: optimizedPeaks[i].fwhm || 0, // todo remove || 0 it should never happen after update spectra-fitting
+          width: getShape1D(peaks[i].shape).fwhmToWidth(optimizedPeaks[i].fwhm),
+        });
+      }
+    } else {
+      results = results.concat(peaks);
+    }
   });
 
   return results;
