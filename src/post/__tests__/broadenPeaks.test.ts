@@ -15,6 +15,7 @@ describe('broadenPeaks', () => {
       {
         x: -0.5,
         y: 1,
+        ddY: 0,
         width: 0.8,
         index: 25,
         inflectionPoints: {
@@ -25,6 +26,7 @@ describe('broadenPeaks', () => {
       {
         x: 0.5,
         y: 1,
+        ddY: 0,
         width: 0.08,
         index: 75,
         inflectionPoints: {
@@ -60,6 +62,7 @@ describe('broadenPeaks', () => {
         {
           x: -0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 25,
           inflectionPoints: {
@@ -70,6 +73,7 @@ describe('broadenPeaks', () => {
         {
           x: 0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 75,
           inflectionPoints: {
@@ -106,6 +110,7 @@ describe('broadenPeaks', () => {
         {
           x: -0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 25,
           inflectionPoints: {
@@ -116,6 +121,7 @@ describe('broadenPeaks', () => {
         {
           x: 0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 75,
           inflectionPoints: {
@@ -152,6 +158,7 @@ describe('broadenPeaks', () => {
         {
           x: -0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 25,
           inflectionPoints: {
@@ -162,6 +169,7 @@ describe('broadenPeaks', () => {
         {
           x: 0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 75,
           inflectionPoints: {
@@ -198,6 +206,7 @@ describe('broadenPeaks', () => {
         {
           x: -0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 25,
           inflectionPoints: {
@@ -208,6 +217,7 @@ describe('broadenPeaks', () => {
         {
           x: 0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 75,
           inflectionPoints: {
@@ -244,6 +254,7 @@ describe('broadenPeaks', () => {
         {
           x: -0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 25,
           inflectionPoints: {
@@ -254,6 +265,7 @@ describe('broadenPeaks', () => {
         {
           x: 0.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 75,
           inflectionPoints: {
@@ -264,6 +276,7 @@ describe('broadenPeaks', () => {
         {
           x: 10.5,
           y: 1,
+          ddY: 0,
           width: 0.08,
           index: 575,
           inflectionPoints: {

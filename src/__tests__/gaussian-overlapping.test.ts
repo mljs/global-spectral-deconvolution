@@ -28,50 +28,36 @@ describe('gaussian overlapping', () => {
     });
 
     let peaks = gsd(data, {});
-    expect(peaks).toBeDeepCloseTo([
+    expect(peaks).toMatchCloseTo([
       {
         x: -0.1,
-        y: 1.0003354626279024,
+        y: 1,
         width: 0.096,
         index: 450,
       },
       {
         x: 0.1,
-        y: 1.0003354626279024,
+        y: 1,
         width: 0.096,
         index: 550,
       },
     ]);
 
-    let optimizedPeaks = optimizePeaks(data, peaks);
-    console.log(optimizedPeaks);
-  });
-
-  it('one peak detected', () => {
-    const peaks = [
-      { x: -0.1, y: 1, width: 0.2 },
-      { x: 0.1, y: 1, width: 0.2 },
-    ];
-
-    const data: DataXY = generateSpectrum(peaks, {
-      generator: {
-        from: -1,
-        to: 1,
-        nbPoints: 1001,
-      },
-      peaks: {
-        factor: 6,
-      },
-    });
-
-    let peakList = gsd(data, {});
-
-    expect(peakList).toBeDeepCloseTo([
+    let optimizedPeaks = optimizePeaks(data, peaks, { groupingFactor: 3 });
+    expect(optimizedPeaks).toMatchCloseTo([
       {
-        x: -0.11,
-        y: 1.0985206138453019,
-        width: 0.384,
-        index: 444,
+        x: -0.1,
+        y: 1,
+        width: 0.1,
+        fwhm: 0.11774128880591818,
+        shape: { kind: 'gaussian' },
+      },
+      {
+        x: 0.1,
+        y: 1,
+        width: 0.1,
+        fwhm: 0.11774128880591818,
+        shape: { kind: 'gaussian' },
       },
     ]);
   });
