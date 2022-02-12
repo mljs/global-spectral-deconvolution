@@ -35,6 +35,7 @@ describe('gaussian simulated peaks', () => {
       {
         x: -0.5,
         y: 0.6945098953985852,
+        ddY: -259.83290100626783,
         width: 0.08,
         index: 25,
         inflectionPoints: {
@@ -45,6 +46,7 @@ describe('gaussian simulated peaks', () => {
       {
         x: 0.5,
         y: 0.6945098953985852,
+        ddY: -259.83290100626783,
         width: 0.08,
         index: 75,
         inflectionPoints: {

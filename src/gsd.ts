@@ -31,7 +31,7 @@ export interface GSDOptions {
    */
   smoothY?: boolean;
   /**
-   * Peaks are local maximum(true) or minimum(false)
+   * Peaks are local maxima (true) or minima (false)
    * @default true
    */
   maxCriteria?: boolean;
@@ -246,6 +246,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
           y: yData[minddYIndex],
           width: width,
           index: minddYIndex,
+          ddY: ddY[minddYIndex],
           inflectionPoints: {
             from: intervalL[possible],
             to: intervalR[possible],
@@ -260,8 +261,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   }
 
   peaks.forEach((peak) => {
-    //@ts-expect-error We now for sure noiseLevel is not undefined
-    peak.y = maxCriteria ? peak.y + noiseLevel : -peak.y - noiseLevel;
+    if (maxCriteria) {
+      //@ts-expect-error We know for sure noiseLevel is not undefined
+      peak.y = peak.y + noiseLevel;
+    } else {
+      //@ts-expect-error We know for sure noiseLevel is not undefined
+      peak.y = -peak.y - noiseLevel;
+      peak.ddY = peak.ddY * -1;
+    }
   });
 
   peaks.sort((a, b) => {

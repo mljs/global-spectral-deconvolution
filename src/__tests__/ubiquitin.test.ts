@@ -30,6 +30,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
     expect(peaks[0]).toBeDeepCloseTo({
       x: 200.05527917306466,
       y: 28.795378784444413,
+      ddY: -15468134.039875854,
       width: 0.002420000000000755,
       index: 11,
       inflectionPoints: {
