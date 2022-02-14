@@ -1,46 +1,33 @@
-# global-spectral-deconvolution
+# global-spectral-deconvolution and peak optimizer
 
 [![NPM version][npm-image]][npm-url]
 [![build status][ci-image]][ci-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 
-## Global Spectra Deconvolution + Peak optimizer
+## Global Spectra Deconvolution
 
 `gsd`is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
 
-There are 3 public methods to calculate the peaks:
+Preprocessing of the data involves the following parameters
 
-- gsd: fast determination of the peaks
-- gsdShape: appends information about the shape and fwhm
-- gsdOptimized: will fit the shape to the peak to get exact parameters of the result
-
-Those methods have 3 steps:
-
-- preprocessing
-- gsd itself
-- postprocessing
-
-Preprocessing is common to the 3 methods and involve the following parameters
-
-- maxCriteria: search either for maxima or minima. We will invert the data and the results if searching for a minima
-- noiseLevel:
-- sgOptions: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
-- smoothY: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
-
-All those method will first preprocess the data. The preprocessing
+- `maxCriteria`: search either for maxima or minima. We will invert the data and the results if searching for a minima
+- `noiseLevel`:
+- `sgOptions`: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
+- `smoothY`: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
 
 ### gsd({x:[], y:[]}, options)
 
-`gsdShape({x:[], y:[]}, options)`
+The result of GSD is an array of GSDPeak:
 
-`gsdOptimized({x:[], y:[]}, options)`
-
-The result of GSD yield to an array of object containing {x, y fwhm and width}. However this width is based on the inflection point and may be different from the 'fwhm' (Full Width Half Maximum).
-
-The second algorithm (`optimizePeaks`) will optimize the width and FWHM to match the original peak.
-
-## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
+- x: position of the peak on the x axis
+- y: the height of the peak
+- width: width at the level of the inflection points
+- index: index in the 'x' and 'y' array of the peak
+- ddY: second derivative value at the level of the peak. Allows to identify 'large' peaks
+- inflectionPoints: an object with the position of the inflection points
+  - from: { x, index }
+  - to: { x, index }
 
 ## Parameters
 
@@ -95,25 +82,51 @@ If `broadRatio` is higher than 0, then all the peaks which second derivative sma
 
 ```js
 import { IsotopicDistribution } from 'mf-global';
-import { gsd, optimizePeaks } from '../src';
+import { gsd, optimizePeaks } from 'ml-gad';
 
 // generate a sample spectrum of the form {x:[], y:[]}
 const data = new IsotopicDistribution('C').getGaussian();
 
 let peaks = gsd(data, {
-  noiseLevel: 0,
+  noiseLevel: 0, // if 0, automatic noise detection
   minMaxRatio: 0.00025, // Threshold to determine if a given peak should be considered as a noise
-  realTopDetection: true,
-  maxCriteria: true, // inverted:false
-  smoothY: false,
-  sgOptions: { windowSize: 7, polynomial: 3 },
+  realTopDetection: true, // Correction of the x and y coordinates using a quadratic optimizations
+  maxCriteria: true, // Are we looking for maxima or minima
+  smoothY: false, // should we smooth the spectra and return smoothed peaks ? Default false.
+  sgOptions: { windowSize: 7, polynomial: 3 }, // Savitzky-Golay smoothing parameters for first and second derivative calculation
 });
-console.log(peaks); // array of peaks {x, y, width, fwhw}, width = distance between inflection points
-// GSD
+console.log(peaks);
+/*
+  array of peaks containing {x, y, width, ddY, inflectionPoints}
+  - width = distance between inflection points
+  - ddY = second derivative on the top of the peak
+ */
 
 let optimized = optimizePeaks(data, peaks);
-console.log(optimized); // array of peaks {x, y, width, fwhm}.
+console.log(optimized);
+/*
+[
+  {
+    x: 11.99999999960885,
+    y: 0.9892695646808637,
+    shape: { kind: 'gaussian' },
+    fwhm: 0.010000209455943584,
+    width: 0.008493395898379276
+  },
+  {
+    x: 13.003354834590702,
+    y: 0.010699637653261198,
+    shape: { kind: 'gaussian' },
+    fwhm: 0.010000226962299321,
+    width: 0.008493410766908847
+  }
+]
+*/
 ```
+
+i
+
+## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
 ## License
 
