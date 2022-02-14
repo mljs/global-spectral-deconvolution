@@ -186,34 +186,29 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   }
 
   let lastK = -1;
-  let possible: number;
-  let deltaX: number;
-  let distanceJ: number;
-  let minDistance: number;
-  let gettingCloser: boolean;
 
   const peaks: GSDPeak[] = [];
   for (const minddYIndex of minddY) {
-    deltaX = xData[minddYIndex];
-    possible = -1;
+    let deltaX = xData[minddYIndex];
+    let possible = -1;
     let k = lastK + 1;
-    minDistance = Number.POSITIVE_INFINITY;
-    distanceJ = 0;
-    gettingCloser = true;
-    while (possible === -1 && k < intervalL.length && gettingCloser) {
+    let minDistance = Number.POSITIVE_INFINITY;
+    let distanceJ = 0;
+    while (possible === -1 && k < intervalL.length) {
       distanceJ = Math.abs(deltaX - (intervalL[k].x + intervalR[k].x) / 2);
 
-      // Still getting closer?
-      if (distanceJ < minDistance) {
-        minDistance = distanceJ;
-      } else {
-        gettingCloser = false;
-      }
       if (distanceJ < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
         possible = k;
         lastK = k;
       }
       ++k;
+
+      // Still getting closer?
+      if (distanceJ < minDistance) {
+        minDistance = distanceJ;
+      } else {
+        break;
+      }
     }
 
     if (possible !== -1) {
