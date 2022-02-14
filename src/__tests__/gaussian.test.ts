@@ -28,8 +28,8 @@ describe('smooth:false option', () => {
   // when smoothY we should take care that the peak is still as the same position but the height will be reduced
   // we have here a low resolution spectrum so the impact is big
 
-  it('positive peaks', () => {
-    let peakList = gsd(data, {});
+  it('positive maxima peaks', () => {
+    let peakList = gsd(data);
 
     let expected = [
       {
@@ -46,6 +46,36 @@ describe('smooth:false option', () => {
       {
         x: 0.5,
         y: 1,
+        ddY: -259.83290100626783,
+        width: 0.08,
+        index: 75,
+        inflectionPoints: {
+          from: { index: 73, x: 0.46 },
+          to: { index: 77, x: 0.54 },
+        },
+      },
+    ];
+    expect(peakList).toBeDeepCloseTo(expected);
+  });
+
+  it('negative maxima peaks', () => {
+    let peakList = gsd({ x: data.x, y: data.y.map((value) => value - 2) }, {});
+
+    let expected = [
+      {
+        x: -0.5,
+        y: -1,
+        ddY: -259.83290100626783,
+        width: 0.08,
+        index: 25,
+        inflectionPoints: {
+          from: { index: 23, x: -0.54 },
+          to: { index: 27, x: -0.46 },
+        },
+      },
+      {
+        x: 0.5,
+        y: -1,
         ddY: -259.83290100626783,
         width: 0.08,
         index: 75,
@@ -79,6 +109,40 @@ describe('smooth:false option', () => {
       {
         x: 0.5,
         y: -1,
+        ddY: 259.83290100626783,
+        width: 0.08,
+        index: 75,
+        inflectionPoints: {
+          from: { index: 73, x: 0.46 },
+          to: { index: 77, x: 0.54 },
+        },
+      },
+    ];
+
+    expect(peakList).toBeDeepCloseTo(expected);
+  });
+
+  it('minima peaks', () => {
+    // we check negative peaks
+    let peakList = gsd(
+      { x: data.x, y: data.y.map((value) => 1 - value) },
+      { maxCriteria: false },
+    );
+    let expected = [
+      {
+        x: -0.5,
+        y: 0,
+        ddY: 259.83290100626783,
+        width: 0.08,
+        index: 25,
+        inflectionPoints: {
+          from: { index: 23, x: -0.54 },
+          to: { index: 27, x: -0.46 },
+        },
+      },
+      {
+        x: 0.5,
+        y: 0,
         ddY: 259.83290100626783,
         width: 0.08,
         index: 75,

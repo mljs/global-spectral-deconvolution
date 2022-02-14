@@ -1,6 +1,11 @@
 import type { DataXY } from 'cheminfo-types';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
-import { xIsEquallySpaced, xIsMonotoneIncreasing } from 'ml-spectra-processing';
+import {
+  xIsEquallySpaced,
+  xIsMonotoneIncreasing,
+  xMinValue,
+  xMaxValue,
+} from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
 import { optimizeTop } from './utils/optimizeTop';
@@ -115,15 +120,15 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     });
   }
 
+  const minY = xMinValue(yData);
+  const maxY = xMaxValue(yData);
+  const yThreshold = minY + (maxY - minY) * minMaxRatio;
+
   const dX = x[1] - x[0];
-  let maxDdy = 0;
-  let maxY = 0;
+  let maxAbsDdy = 0;
   for (let i = 0; i < yData.length; i++) {
-    if (Math.abs(ddY[i]) > maxDdy) {
-      maxDdy = Math.abs(ddY[i]);
-    }
-    if (Math.abs(yData[i]) > maxY) {
-      maxY = Math.abs(yData[i]);
+    if (Math.abs(ddY[i]) > maxAbsDdy) {
+      maxAbsDdy = Math.abs(ddY[i]);
     }
   }
 
@@ -202,7 +207,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     }
 
     if (possible !== -1) {
-      if (Math.abs(yData[minddYIndex]) > minMaxRatio * maxY) {
+      if (yData[minddYIndex] > yThreshold) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         peaks.push({
           x: deltaX,
