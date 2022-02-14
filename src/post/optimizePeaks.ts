@@ -1,52 +1,57 @@
 import type { DataXY } from 'cheminfo-types';
-import type { Shape1D } from 'ml-peak-shape-generator';
-import { getShape1D } from 'ml-peak-shape-generator';
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import type { Peak1D } from '../gsd';
+import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 
 import { groupPeaks } from './groupPeaks';
 
-/**
- * Optimize the position (x), max intensity (y), full width at half maximum (width)
- * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
- * @param data - An object containing the x and y data to be fitted.
- * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- */
 export interface OptimizePeaksOptions {
   /**
-   * times of width to group peaks.
+   * Shape to use for optimization
+   * @default {kind:'gaussian'}
+   */
+  shape?: Shape1D;
+  /**
+   * Number of times the width determining if the peaks have to be grouped and therefore optimized together
    * @default 1
    */
-  factorWidth?: number;
+  groupingFactor?: number;
   /**
-   * times of width to use to optimize peaks
+   * Define the min / max values
    * @default 2
    */
   factorLimits?: number;
-  /**
-   * it's specify the kind of shape used to fitting.
-   */
-  shape?: Shape1D;
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
   optimization?: OptimizationOptions;
 }
 
+interface XYWidth {
+  x: number;
+  y: number;
+  width: number;
+}
+
+/**
+ * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
+ * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * @param data - An object containing the x and y data to be fitted.
+ * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ */
 export function optimizePeaks(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: XYWidth[],
   options: OptimizePeaksOptions = {},
-): Peak1D[] {
+): GSDPeakOptimized[] {
   const {
-    factorWidth = 1,
+    shape = { kind: 'gaussian' },
+    groupingFactor = 1,
     factorLimits = 2,
-    shape = {
-      kind: 'gaussian',
-    },
     optimization = {
       kind: 'lm',
       options: {
@@ -55,52 +60,53 @@ export function optimizePeaks(
     },
   }: OptimizePeaksOptions = options;
 
-  if (data.x[0] > data.x[1]) {
-    data.x.reverse();
-    data.y.reverse();
-  }
+  /*
+  The optimization algorithm will take some group of peaks.
+  We can not simply optimize everything because there would be too many variables to optimize
+  and it would be too time consuming.
+*/
+  let groups = groupPeaks(peakList, { factor: groupingFactor });
 
-  const checkPeakList = (peaks: Peak1D[], shape: Shape1D) => {
-    const shape1D = getShape1D(shape);
+  let results: GSDPeakOptimized[] = [];
 
-    for (let peak of peaks) {
-      if (peak.fwhm) {
-        peak.width = shape1D.fwhmToWidth(peak.fwhm);
-      } else {
-        peak.fwhm = shape1D.widthToFWHM(peak.width);
-      }
-    }
+  groups.forEach((peakGroup) => {
+    // In order to make optimization we will add fwhm and shape on all the peaks
+    const peaks = appendShapeAndFWHM(peakGroup, { shape });
 
-    return peaks;
-  };
-
-  checkPeakList(peakList, shape);
-
-  let groups = groupPeaks(peakList, factorWidth);
-
-  let results: Peak1D[] = [];
-
-  groups.forEach((peaks) => {
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
 
     const from = firstPeak.x - firstPeak.width * factorLimits;
     const to = lastPeak.x + lastPeak.width * factorLimits;
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
-    // Multiple peaks
-    const currentRange = {
-      x: data.x.slice(fromIndex, toIndex),
-      y: data.y.slice(fromIndex, toIndex),
-    };
-    if (currentRange.x.length > 5) {
-      let { peaks: optimizedPeaks } = optimize(currentRange, peaks, {
+
+    const x =
+      data.x instanceof Float64Array
+        ? data.x.subarray(fromIndex, toIndex)
+        : data.x.slice(fromIndex, toIndex);
+    const y =
+      data.y instanceof Float64Array
+        ? data.y.subarray(fromIndex, toIndex)
+        : data.y.slice(fromIndex, toIndex);
+
+    if (x.length > 5) {
+      let { peaks: optimizedPeaks } = optimize({ x, y }, peaks, {
         shape,
         optimization,
       });
-      results = results.concat(optimizedPeaks);
-      // eslint-disable-next-line curly
-    } else results = results.concat(peaks);
+      for (let i = 0; i < peaks.length; i++) {
+        results.push({
+          x: optimizedPeaks[i].x,
+          y: optimizedPeaks[i].y,
+          shape: peaks[i].shape,
+          fwhm: optimizedPeaks[i].fwhm || 0, // todo remove || 0 it should never happen after update spectra-fitting
+          width: getShape1D(peaks[i].shape).fwhmToWidth(optimizedPeaks[i].fwhm),
+        });
+      }
+    } else {
+      results = results.concat(peaks);
+    }
   });
 
-  return checkPeakList(results, shape);
+  return results;
 }

@@ -20,12 +20,19 @@ describe('optimizePeaks', () => {
       },
     });
 
-    let result = optimizePeaks(data, [{ x: 0.01, y: 0.9, width: 0.11 }]);
+    let result = optimizePeaks(data, [
+      {
+        x: 0.01,
+        y: 0.9,
+        width: 0.11,
+      },
+    ]);
     expect(result).toMatchCloseTo([
       {
-        x: -3.419674049814014e-8,
-        y: 0.999994064595118,
-        fwhm: 0.12000070163648587,
+        x: 0,
+        y: 1,
+        fwhm: 0.14128970668640126,
+        width: 0.12,
         shape: {
           kind: 'gaussian',
         },

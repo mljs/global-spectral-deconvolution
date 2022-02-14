@@ -1,32 +1,35 @@
-import type { Peak1D } from '../gsd';
-
 /**
- * Group peaks based on factor and add group property in peaks
+ * Group peaks based on factor
+ * In order to group peaks we only need the x and width value. This means that
+ * in the current implementation we don't take into account the asymmetry of peaks
  */
 
-export interface GroupPeaksOptions {
-  factor?: number;
-  width?: number;
-}
+export function groupPeaks<T extends { x: number; width: number }>(
+  peaks: T[],
+  options: {
+    /**
+     * In order to group peaks we will use a factor that takes into account the peak width.
+     *
+     */
+    factor?: number;
+  } = {},
+): T[][] {
+  if (peaks && peaks.length === 0) return [];
 
-export function groupPeaks(peakList: Peak1D[], factor = 1): Peak1D[][] {
-  if (peakList && peakList.length === 0) return [];
+  const { factor = 1 } = options;
 
-  let peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  peaks = JSON.parse(JSON.stringify(peaks));
   peaks.sort((a, b) => a.x - b.x);
 
-  let previousPeak: Peak1D = {
-    x: Number.NEGATIVE_INFINITY,
-    y: 0,
-    width: 1,
-  };
-  let currentGroup: Peak1D[] = [previousPeak];
-  let groups: Peak1D[][] = [];
+  let previousPeak = peaks[0];
+  let currentGroup: T[] = [previousPeak];
+  let groups: T[][] = [currentGroup];
 
-  peaks.forEach((peak) => {
+  for (let i = 1; i < peaks.length; i++) {
+    const peak = peaks[i];
     if (
-      (peak.x - previousPeak.x) / (peak.width + previousPeak.width) <=
-      factor / 2
+      (peak.x - previousPeak.x) / ((peak.width + previousPeak.width) / 2) <=
+      factor
     ) {
       currentGroup.push(peak);
     } else {
@@ -34,7 +37,7 @@ export function groupPeaks(peakList: Peak1D[], factor = 1): Peak1D[][] {
       groups.push(currentGroup);
     }
     previousPeak = peak;
-  });
+  }
 
   return groups;
 }

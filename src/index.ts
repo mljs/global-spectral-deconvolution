@@ -1,4 +1,5 @@
 export * from './gsd';
 export * from './post/optimizePeaks';
-export * from './post/joinBroadPeaks';
+// joinBroadPeaks is not tested and should not be used
+// export * from './post/joinBroadPeaks';
 export * from './post/broadenPeaks';

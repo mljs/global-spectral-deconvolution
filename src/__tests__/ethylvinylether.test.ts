@@ -9,9 +9,8 @@ describe('Global spectra deconvolution NMR spectra', () => {
       readFileSync(`${__dirname}/data/ethylvinylether.json`, 'utf-8'),
     );
     let result = gsd(
-      { x: spectrum[0], y: spectrum[1] },
+      { x: spectrum[0].reverse(), y: spectrum[1].reverse() },
       {
-        // noiseLevel: 1049200.537996172,
         minMaxRatio: 0.03,
         smoothY: false,
         realTopDetection: true,

@@ -1,16 +1,11 @@
 import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
-import SG from 'ml-savitzky-golay-generalized';
+import { sgg } from 'ml-savitzky-golay-generalized';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 import { xFindClosestIndex } from 'ml-spectra-processing';
 
-import type { Peak1D } from '../gsd';
-
-/**
- * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
- * @param peaks - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
- */
+import { GSDPeak } from '../GSDPeak';
 
 interface GetSoftMaskOptions {
   sgOptions: {
@@ -41,11 +36,15 @@ export interface JoinBroadPeaksOptions extends Partial<GetSoftMaskOptions> {
   broadMask?: boolean[];
 }
 
+/**
+ * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
+ */
+
 export function joinBroadPeaks(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: GSDPeak[],
   options: JoinBroadPeaksOptions = {},
-): Peak1D[] {
+): GSDPeak[] {
   let {
     broadMask,
     shape = { kind: 'gaussian' },
@@ -61,8 +60,8 @@ export function joinBroadPeaks(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: Peak1D[] = [];
-  const peaks: Peak1D[] = JSON.parse(JSON.stringify(peakList));
+  const broadLines: any[] = [];
+  const peaks: any[] = JSON.parse(JSON.stringify(peakList));
   const mask = !broadMask
     ? getSoftMask(data, peaks, { sgOptions, broadRatio })
     : broadMask;
@@ -134,7 +133,7 @@ export function joinBroadPeaks(
 
 function getSoftMask(
   data: DataXY,
-  peakList: Peak1D[],
+  peakList: GSDPeak[],
   options: GetSoftMaskOptions,
 ) {
   const { sgOptions, broadRatio } = options;
@@ -144,12 +143,7 @@ function getSoftMask(
   const yData = new Float64Array(data.y);
   const xData = new Float64Array(data.x);
 
-  if (xData[1] - xData[0] < 0) {
-    yData.reverse();
-    xData.reverse();
-  }
-
-  const ddY = SG(yData, xData[1] - xData[0], {
+  const ddY = sgg(yData, xData[1] - xData[0], {
     windowSize,
     polynomial,
     derivative: 2,
