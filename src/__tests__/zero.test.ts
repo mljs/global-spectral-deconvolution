@@ -6,7 +6,7 @@ describe('Simple test cases', () => {
     let y = [];
     expect(() => {
       gsd({ x, y });
-    }).toThrow('input must not be empty');
+    }).toThrow('Window size is higher than the data length 9>0');
   });
 
   it('length = 2', () => {

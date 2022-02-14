@@ -18,10 +18,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
       { keepInfo: false },
     ) as DataXY;
 
-    let noiseLevel = 0; // Stat.array.max(spectrum[1])*0.015;
-
     let peaks = gsd(spectrum, {
-      noiseLevel: noiseLevel,
       minMaxRatio: 0.0,
       smoothY: false,
       realTopDetection: true,

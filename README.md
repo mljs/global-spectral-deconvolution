@@ -12,7 +12,6 @@
 Preprocessing of the data involves the following parameters
 
 - `maxCriteria`: search either for maxima or minima. We will invert the data and the results if searching for a minima
-- `noiseLevel`:
 - `sgOptions`: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
 - `smoothY`: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
 
@@ -34,10 +33,6 @@ The result of GSD is an array of GSDPeak:
 #### minMaxRatio=0.00025 (0-1)
 
 Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
-
-#### noiseLevel=0 (-inf, inf)
-
-Noise threshold in spectrum units
 
 #### maxCriteria=true [true||false]
 
@@ -88,7 +83,6 @@ import { gsd, optimizePeaks } from 'ml-gad';
 const data = new IsotopicDistribution('C').getGaussian();
 
 let peaks = gsd(data, {
-  noiseLevel: 0, // if 0, automatic noise detection
   minMaxRatio: 0.00025, // Threshold to determine if a given peak should be considered as a noise
   realTopDetection: true, // Correction of the x and y coordinates using a quadratic optimizations
   maxCriteria: true, // Are we looking for maxima or minima

@@ -10,14 +10,6 @@ import { optimizeTop } from './utils/optimizeTop';
 
 export interface GSDOptions {
   /**
-   * Noise threshold in spectrum units.
-   * There are 2 cases. Either the data contains equally spaced X and in this
-   * case the noise will calculated automatically if not defined or it is discrete
-   * and in this case if the noise is not defined it will stay undefined
-   * @default 0 (or automatic in case of equally spaced X)
-   */
-  noiseLevel?: number;
-  /**
    * Options for the Savitzky-Golay generalised algorithm. This algorithm is used
    * to calculate the first ans second derivative.
    * It is also used when smoothY:true to smooth the spectrum for peak picking.
@@ -62,7 +54,6 @@ export interface GSDOptions {
 
 export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   let {
-    noiseLevel,
     sgOptions = {
       windowSize: 9,
       polynomial: 3,
@@ -84,19 +75,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   if (maxCriteria === false) {
     for (let i = 0; i < y.length; i++) {
       y[i] *= -1;
-    }
-  }
-
-  if (noiseLevel === undefined) {
-    noiseLevel = equallySpaced ? xNoiseStandardDeviation(y) : 0;
-  }
-
-  for (let i = 0; i < y.length; i++) {
-    y[i] -= noiseLevel;
-  }
-  for (let i = 0; i < y.length; i++) {
-    if (y[i] < 0) {
-      y[i] = 0;
     }
   }
 
@@ -261,12 +239,8 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   }
 
   peaks.forEach((peak) => {
-    if (maxCriteria) {
-      //@ts-expect-error We know for sure noiseLevel is not undefined
-      peak.y = peak.y + noiseLevel;
-    } else {
-      //@ts-expect-error We know for sure noiseLevel is not undefined
-      peak.y = -peak.y - noiseLevel;
+    if (!maxCriteria) {
+      peak.y = -peak.y;
       peak.ddY = peak.ddY * -1;
     }
   });

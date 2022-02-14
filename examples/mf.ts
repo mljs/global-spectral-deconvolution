@@ -8,7 +8,6 @@ import { gsd, optimizePeaks } from '../src';
 const data = new IsotopicDistribution('C').getGaussian();
 
 let peaks = gsd(data, {
-  noiseLevel: 0,
   minMaxRatio: 0.00025, // Threshold to determine if a given peak should be considered as a noise
   realTopDetection: true,
   maxCriteria: true, // inverted:false
