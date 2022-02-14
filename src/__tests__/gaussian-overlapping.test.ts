@@ -10,7 +10,7 @@ expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 const { generateSpectrum } = require('spectrum-generator');
 
 describe('gaussian overlapping', () => {
-  it.only('2 peaks detected', () => {
+  it('2 peaks detected', () => {
     const expectedPeaks = [
       { x: -0.1, y: 1, width: 0.1 },
       { x: 0.1, y: 1, width: 0.1 },
