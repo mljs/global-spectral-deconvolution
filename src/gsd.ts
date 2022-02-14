@@ -29,11 +29,7 @@ export interface GSDOptions {
    * @default 0.00025
    */
   minMaxRatio?: number;
-  /**
-   * Filters based on the amplitude of the first derivative
-   * @default -1
-   */
-  derivativeThreshold?: number;
+
   /**
    * Use a quadratic optimizations with the peak and its 3 closest neighbors
    * @default false
@@ -58,7 +54,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     smoothY = false,
     maxCriteria = true,
     minMaxRatio = 0.00025,
-    derivativeThreshold = -1,
     realTopDetection = false,
   } = options;
 
@@ -142,36 +137,32 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
-    // filter based on derivativeThreshold
-    if (Math.abs(dY[i]) > derivativeThreshold) {
-      // Minimum in first derivative
-      if (
-        (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
-        (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
-      ) {
-        lastMin = {
-          x: x[i],
-          index: i,
-        };
-        if (dX > 0 && lastMax !== null) {
-          intervalL.push(lastMax);
-          intervalR.push(lastMin);
-        }
+    if (
+      (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
+      (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
+    ) {
+      lastMin = {
+        x: x[i],
+        index: i,
+      };
+      if (dX > 0 && lastMax !== null) {
+        intervalL.push(lastMax);
+        intervalR.push(lastMin);
       }
+    }
 
-      // Maximum in first derivative
-      if (
-        (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1]) ||
-        (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
-      ) {
-        lastMax = {
-          x: x[i],
-          index: i,
-        };
-        if (dX < 0 && lastMin !== null) {
-          intervalL.push(lastMax);
-          intervalR.push(lastMin);
-        }
+    // Maximum in first derivative
+    if (
+      (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1]) ||
+      (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
+    ) {
+      lastMax = {
+        x: x[i],
+        index: i,
+      };
+      if (dX < 0 && lastMin !== null) {
+        intervalL.push(lastMax);
+        intervalR.push(lastMin);
       }
     }
 
