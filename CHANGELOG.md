@@ -1,5 +1,21 @@
 # Changelog
 
+## [10.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.1.0...v10.0.0) (2022-02-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* major refactoring
+
+### Features
+
+* major refactoring ([42a54fb](https://www.github.com/mljs/global-spectral-deconvolution/commit/42a54fbd907055d233b9b43c85344823f3551bad))
+
+
+### Bug Fixes
+
+* update dependencies and fix is-any-array of spectra-processing ([8dbae56](https://www.github.com/mljs/global-spectral-deconvolution/commit/8dbae56cac1f6921dfc8ec57374d8c9df7776f96))
+
 ## [9.1.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.0.4...v9.1.0) (2021-12-15)
 
 
