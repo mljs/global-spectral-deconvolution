@@ -1,9 +1,6 @@
 import type { DataXY } from 'cheminfo-types';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
-import {
-  xNoiseStandardDeviation,
-  xIsEquallySpaced,
-} from 'ml-spectra-processing';
+import { xIsEquallySpaced } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
 import { optimizeTop } from './utils/optimizeTop';
@@ -120,7 +117,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     });
   }
 
-  const xData = x;
   const dX = x[1] - x[0];
   let maxDdy = 0;
   let maxY = 0;
@@ -154,7 +150,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
         (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
       ) {
         lastMin = {
-          x: xData[i],
+          x: x[i],
           index: i,
         };
         if (dX > 0 && lastMax !== null) {
@@ -169,7 +165,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
         (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
       ) {
         lastMax = {
-          x: xData[i],
+          x: x[i],
           index: i,
         };
         if (dX < 0 && lastMin !== null) {
@@ -189,26 +185,27 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   const peaks: GSDPeak[] = [];
   for (const minddYIndex of minddY) {
-    let deltaX = xData[minddYIndex];
+    let deltaX = x[minddYIndex];
     let possible = -1;
     let k = lastK + 1;
     let minDistance = Number.POSITIVE_INFINITY;
-    let distanceJ = 0;
+    let currentDistance = 0;
     while (possible === -1 && k < intervalL.length) {
-      distanceJ = Math.abs(deltaX - (intervalL[k].x + intervalR[k].x) / 2);
+      currentDistance = Math.abs(
+        deltaX - (intervalL[k].x + intervalR[k].x) / 2,
+      );
 
-      if (distanceJ < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
+      if (currentDistance < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
         possible = k;
         lastK = k;
       }
       ++k;
 
       // Still getting closer?
-      if (distanceJ < minDistance) {
-        minDistance = distanceJ;
-      } else {
+      if (currentDistance >= minDistance) {
         break;
       }
+      minDistance = currentDistance;
     }
 
     if (possible !== -1) {
