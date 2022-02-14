@@ -60,8 +60,8 @@ export function joinBroadPeaks(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: GSDPeak[] = [];
-  const peaks: GSDPeak[] = JSON.parse(JSON.stringify(peakList));
+  const broadLines: any[] = [];
+  const peaks: any[] = JSON.parse(JSON.stringify(peakList));
   const mask = !broadMask
     ? getSoftMask(data, peaks, { sgOptions, broadRatio })
     : broadMask;
