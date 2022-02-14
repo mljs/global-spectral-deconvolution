@@ -50,10 +50,6 @@ Use a quadratic optimizations with the peak and its 3 closest neighbors to deter
 
 Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of the polynomial to use in the approximations. It should be bigger than 2.
 
-#### heightFactor=0
-
-Factor to multiply the calculated height (usually 2).
-
 ## Post methods
 
 ### GSD.broadenPeaks(peakList, {factor=2, overlap=false})
@@ -61,13 +57,9 @@ Factor to multiply the calculated height (usually 2).
 We enlarge the peaks and add the properties from and to.
 By default we enlarge of a factor 2 and we don't allow overlap.
 
-### GSD.joinBroadPeaks
+### GSD.optimizePeaks(data, peakList, options)
 
-#### broadRatio=0.00 (0-1)
-
-If `broadRatio` is higher than 0, then all the peaks which second derivative smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
-
-### GSD.optimizePeaks
+Optimize the position (x), max intensity (y), full width at half maximum (fwhm) and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
 
 ## Example
 

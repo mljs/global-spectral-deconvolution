@@ -38,8 +38,8 @@ interface XYWidth {
 }
 
 /**
- * Optimize the position (x), max intensity (y), full width at half maximum (width)
- * and the ratio of gaussian contribution (mu) if it's required. It supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
+ * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
