@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.0.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.0.0...v10.0.1) (2022-02-14)
+
+
+### Bug Fixes
+
+* export typescript interface for GSDPeak, etc. ([2967ef5](https://www.github.com/mljs/global-spectral-deconvolution/commit/2967ef5126e5bcec38ec37ec7712a2749aa1f398))
+
 ## [10.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.1.0...v10.0.0) (2022-02-14)
 
 
