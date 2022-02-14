@@ -1,6 +1,6 @@
 import type { DataXY } from 'cheminfo-types';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
-import { xIsEquallySpaced } from 'ml-spectra-processing';
+import { xIsEquallySpaced, xIsMonotoneIncreasing } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
 import { optimizeTop } from './utils/optimizeTop';
@@ -39,7 +39,7 @@ export interface GSDOptions {
 
 /**
  * Global spectra deconvolution
- * @param  data - Object data with x and y arrays
+ * @param  data - Object data with x and y arrays. Values in x has to be growing
  * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
  * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
 
@@ -58,6 +58,9 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   } = options;
 
   let { x, y } = data;
+  if (!xIsMonotoneIncreasing(x)) {
+    throw new Error('GSD only accepts monotone increasing x values');
+  }
   y = y.slice();
 
   // If the max difference between delta x is less than 5%, then,
@@ -185,14 +188,13 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
       currentDistance = Math.abs(
         deltaX - (intervalL[k].x + intervalR[k].x) / 2,
       );
-
-      if (currentDistance < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
+      if (currentDistance < (intervalR[k].x - intervalL[k].x) / 2) {
         possible = k;
         lastK = k;
       }
       ++k;
 
-      // Still getting closer?
+      // Not getting closer?
       if (currentDistance >= minDistance) {
         break;
       }
