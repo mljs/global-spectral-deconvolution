@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.1.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.0.0...v10.1.0) (2022-02-15)
+
+
+### Features
+
+* reintroduce an improved noiseLevel option ([d8d646a](https://www.github.com/mljs/global-spectral-deconvolution/commit/d8d646a5cd2c1ab68ae6ccc97fc4d4dd4ea21c3d))
+
+
+### Bug Fixes
+
+* export typescript interface for GSDPeak, etc. ([2967ef5](https://www.github.com/mljs/global-spectral-deconvolution/commit/2967ef5126e5bcec38ec37ec7712a2749aa1f398))
+
 ## [10.0.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v9.1.0...v10.0.0) (2022-02-14)
 
 
