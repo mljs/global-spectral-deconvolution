@@ -12,6 +12,7 @@
 Preprocessing of the data involves the following parameters
 
 - `maxCriteria`: search either for maxima or minima. We will invert the data and the results if searching for a minima
+- `noiseLevel`: specifies the noise level. All the peaks bellow this value (or above in case of maxCriteria=false) are ignored. By default the noiseLevel will be set to the median + 3 x sd. This is a good value when not too many peaks are present in the spectrum.
 - `sgOptions`: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
 - `smoothY`: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
 

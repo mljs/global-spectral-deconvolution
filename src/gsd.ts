@@ -5,6 +5,7 @@ import {
   xIsMonotoneIncreasing,
   xMinValue,
   xMaxValue,
+  xNoiseStandardDeviation,
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
@@ -30,11 +31,14 @@ export interface GSDOptions {
    */
   maxCriteria?: boolean;
   /**
-   * Threshold to determine if a given peak should be considered as a noise
+   * Peak under the noiseLevel (or over in case of maxCriteria=false) are ignored.
+   */
+  noiseLevel?: number;
+  /**
+   * Minimal height of small peaks based on the ratio between min and max
    * @default 0.00025
    */
   minMaxRatio?: number;
-
   /**
    * Use a quadratic optimizations with the peak and its 3 closest neighbors
    * @default false
@@ -56,6 +60,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
       windowSize: 9,
       polynomial: 3,
     },
+    noiseLevel,
     smoothY = false,
     maxCriteria = true,
     minMaxRatio = 0.00025,
@@ -72,9 +77,33 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   // we can assume it to be equally spaced variable
   let equallySpaced = xIsEquallySpaced(x);
 
+  if (noiseLevel === undefined) {
+    if (equallySpaced) {
+      const noiseInfo = xNoiseStandardDeviation(y);
+      if (maxCriteria) {
+        noiseLevel = noiseInfo.median + 1.5 * noiseInfo.sd;
+      } else {
+        noiseLevel = -noiseInfo.median + 1.5 * noiseInfo.sd;
+      }
+    } else {
+      noiseLevel = 0;
+    }
+  } else {
+    if (maxCriteria === false) {
+      noiseLevel *= -1;
+    }
+  }
+
   if (maxCriteria === false) {
     for (let i = 0; i < y.length; i++) {
       y[i] *= -1;
+    }
+  }
+  if (noiseLevel) {
+    for (let i = 0; i < y.length; i++) {
+      if (y[i] < noiseLevel) {
+        y[i] = noiseLevel;
+      }
     }
   }
 
