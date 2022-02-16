@@ -1,8 +1,9 @@
 import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
+import { OptimizationOptions } from 'ml-spectra-fitting';
 
+import { optimizePeaks } from '..';
 import { GSDPeak } from '../GSDPeak';
-import { optimizePeaks, OptimizePeaksOptions } from '..';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -22,7 +23,7 @@ export interface JoinBroadPeaksOptions {
   /**
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
-  optimization?: OptimizePeaksOptions;
+  optimization?: OptimizationOptions;
 }
 
 /**
