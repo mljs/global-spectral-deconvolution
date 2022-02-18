@@ -31,7 +31,6 @@ export interface JoinBroadPeaksOptions {
  */
 
 export function joinBroadPeaks(
-  data: DataXY,
   peakList: GSDPeak[],
   options: JoinBroadPeaksOptions = {},
 ): GSDPeak[] {
