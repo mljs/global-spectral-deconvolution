@@ -8,6 +8,8 @@ import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 import { groupPeaks } from '../utils/groupPeaks';
 
+import { XYWidth } from './XYWidth';
+
 export interface OptimizePeaksOptions {
   /**
    * Shape to use for optimization
@@ -28,12 +30,6 @@ export interface OptimizePeaksOptions {
    * it's specify the kind and options of the algorithm use to optimize parameters.
    */
   optimization?: OptimizationOptions;
-}
-
-interface XYWidth {
-  x: number;
-  y: number;
-  width: number;
 }
 
 /**
