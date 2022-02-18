@@ -1,9 +1,9 @@
-import type { DataXY } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { OptimizationOptions } from 'ml-spectra-fitting';
 
-import { optimizePeaks } from '..';
+import { GSDPeakOptimized, optimizePeaks } from '..';
 import { GSDPeak } from '../GSDPeak';
+import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -44,8 +44,8 @@ export function joinBroadPeaks(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: any[] = [];
-  const peaks: any[] = JSON.parse(JSON.stringify(peakList));
+  const broadLines: GSDPeakOptimized[] = [];
+  const peaks = appendShapeAndFWHM(peakList, { shape });
 
   let maxDdy = peakList[0].ddY;
   for (let i = 1; i < peakList.length; i++) {
@@ -58,8 +58,8 @@ export function joinBroadPeaks(
     }
   }
 
-  // Push a feke peak
-  broadLines.push({ x: Number.MAX_VALUE, y: 0, width: 0 });
+  //@ts-expect-error Push a feke peak
+  broadLines.push({ x: Number.MAX_VALUE, y: 0 });
 
   let candidates: { x: number[]; y: number[] } = {
     x: [broadLines[0].x],
@@ -89,10 +89,12 @@ export function joinBroadPeaks(
           ],
           { shape, optimization },
         );
+        //@ts-expect-error type is equal as expected
         peaks.push(fitted[0]);
       } else {
-        // Put back the candidates to the signals list
+        // Put back the candidates to the peak list
         indexes.forEach((index) => {
+          // @ts-expect-error todo 2
           peaks.push(broadLines[index]);
         });
       }
