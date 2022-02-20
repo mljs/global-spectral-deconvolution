@@ -15,7 +15,6 @@ describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
     let spectrum = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
-      { keepInfo: false },
     ) as DataXY;
 
     let peaks = gsd(spectrum, {
