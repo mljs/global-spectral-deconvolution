@@ -9,7 +9,6 @@ import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 import { groupPeaks } from '../utils/groupPeaks';
 
-
 export interface OptimizePeaksOptions {
   /**
    * Shape to use for optimization
