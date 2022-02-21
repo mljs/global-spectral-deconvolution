@@ -47,6 +47,8 @@ export function joinBroadPeaks(
   const broadLines: GSDPeakOptimized[] = [];
   const peaks = appendShapeAndFWHM(peakList, { shape });
 
+  if (peaks.length < 2) return peaks;
+
   let maxDdy = peakList[0].ddY;
   for (let i = 1; i < peakList.length; i++) {
     if (Math.abs(peakList[i].ddY) > maxDdy) maxDdy = Math.abs(peakList[i].ddY);

@@ -1,4 +1,5 @@
 import type { DataXY } from 'cheminfo-types';
+import { PeakXYWidth } from 'cheminfo-types';
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
@@ -8,7 +9,6 @@ import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
 import { groupPeaks } from '../utils/groupPeaks';
 
-import { XYWidth } from './XYWidth';
 
 export interface OptimizePeaksOptions {
   /**
@@ -40,7 +40,7 @@ export interface OptimizePeaksOptions {
  */
 export function optimizePeaks(
   data: DataXY,
-  peakList: XYWidth[],
+  peakList: PeakXYWidth[],
   options: OptimizePeaksOptions = {},
 ): GSDPeakOptimized[] {
   const {

@@ -78,7 +78,7 @@
     "xy-parser": "^4.0.1"
   },
   "dependencies": {
-    "cheminfo-types": "^0.10.1",
+    "cheminfo-types": "^0.11.0",
     "ml-peak-shape-generator": "^4.0.3",
     "ml-savitzky-golay-generalized": "4.0.0",
     "ml-spectra-fitting": "^3.0.4",
