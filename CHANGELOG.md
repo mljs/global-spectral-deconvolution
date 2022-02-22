@@ -1,5 +1,13 @@
 # Changelog
 
+### [10.1.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.1.0...v10.1.1) (2022-02-22)
+
+
+### Bug Fixes
+
+* joinBroadPeaks n types ([#91](https://www.github.com/mljs/global-spectral-deconvolution/issues/91)) ([0b1b867](https://www.github.com/mljs/global-spectral-deconvolution/commit/0b1b86771770d8dbe3fe9ac8fb5fa6d3fbe39bc4))
+* refactor joinBroadPeaks ([#87](https://www.github.com/mljs/global-spectral-deconvolution/issues/87)) ([e7c7785](https://www.github.com/mljs/global-spectral-deconvolution/commit/e7c7785433c09eb3357b567f8f459dbf2d7bb5e0))
+
 ## [10.1.0](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.0.0...v10.1.0) (2022-02-15)
 
 
