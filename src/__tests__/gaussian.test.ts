@@ -162,5 +162,5 @@ describe('smooth:false option', () => {
       { maxCriteria: true },
     );
     expect(peakList).toHaveLength(0);
-  })
+  });
 });
