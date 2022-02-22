@@ -22,7 +22,7 @@ describe('joinBroadPeaks', () => {
     );
 
     const peaks = gsd(data);
-    const newPeaks = joinBroadPeaks(data, peaks, {
+    const newPeaks = joinBroadPeaks(peaks, {
       broadRatio: 0.03,
       broadWidth: 0.25,
     });

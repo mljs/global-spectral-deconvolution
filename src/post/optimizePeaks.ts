@@ -1,4 +1,5 @@
 import type { DataXY } from 'cheminfo-types';
+import { PeakXYWidth } from 'cheminfo-types';
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
@@ -30,12 +31,6 @@ export interface OptimizePeaksOptions {
   optimization?: OptimizationOptions;
 }
 
-interface XYWidth {
-  x: number;
-  y: number;
-  width: number;
-}
-
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
  * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
@@ -44,7 +39,7 @@ interface XYWidth {
  */
 export function optimizePeaks(
   data: DataXY,
-  peakList: XYWidth[],
+  peakList: PeakXYWidth[],
   options: OptimizePeaksOptions = {},
 ): GSDPeakOptimized[] {
   const {
