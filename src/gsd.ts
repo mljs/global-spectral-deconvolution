@@ -71,6 +71,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   if (!xIsMonotoneIncreasing(x)) {
     throw new Error('GSD only accepts monotone increasing x values');
   }
+  //rescale;
   y = y.slice();
 
   // If the max difference between delta x is less than 5%, then,
@@ -99,7 +100,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
       y[i] *= -1;
     }
   }
-  if (noiseLevel) {
+  if (noiseLevel !== undefined) {
     for (let i = 0; i < y.length; i++) {
       if (y[i] < noiseLevel) {
         y[i] = noiseLevel;
@@ -151,15 +152,12 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   const minY = xMinValue(yData);
   const maxY = xMaxValue(yData);
+
+  if (minY > maxY || minY === maxY) return [];
+
   const yThreshold = minY + (maxY - minY) * minMaxRatio;
 
   const dX = x[1] - x[0];
-  let maxAbsDdy = 0;
-  for (let i = 0; i < yData.length; i++) {
-    if (Math.abs(ddY[i]) > maxAbsDdy) {
-      maxAbsDdy = Math.abs(ddY[i]);
-    }
-  }
 
   interface XIndex {
     x: number;
@@ -259,7 +257,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   peaks.forEach((peak) => {
     if (!maxCriteria) {
-      peak.y = -peak.y;
+      peak.y *= -1;
       peak.ddY = peak.ddY * -1;
     }
   });

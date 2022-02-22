@@ -155,4 +155,12 @@ describe('smooth:false option', () => {
 
     expect(peakList).toBeDeepCloseTo(expected);
   });
+
+  it('negative peaks with maxCriteria true', () => {
+    let peakList = gsd(
+      { x: data.x, y: data.y.map((value) => -value) },
+      { maxCriteria: true },
+    );
+    expect(peakList).toHaveLength(0);
+  })
 });
