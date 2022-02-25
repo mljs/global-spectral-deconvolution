@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 
-import type { DataXY } from 'cheminfo-types';
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { parseXY } from 'xy-parser';
 
@@ -15,7 +14,7 @@ describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
     let spectrum = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
-    ) as DataXY;
+    );
 
     let peaks = gsd(spectrum, {
       minMaxRatio: 0.0,
