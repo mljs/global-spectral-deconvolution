@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.1.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.1.1...v10.1.2) (2022-02-25)
+
+
+### Bug Fixes
+
+* update dependencies ([924e5b7](https://www.github.com/mljs/global-spectral-deconvolution/commit/924e5b709efe8f919711310bb0a21e1a12dca227))
+
 ### [10.1.1](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.1.0...v10.1.1) (2022-02-22)
 
 
