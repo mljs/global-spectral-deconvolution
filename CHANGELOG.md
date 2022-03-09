@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.2.0](https://github.com/mljs/global-spectral-deconvolution/compare/v10.1.2...v10.2.0) (2022-03-09)
+
+
+### Features
+
+* when broadening overlaping peaks the middle is proportional to the width ([8bf8838](https://github.com/mljs/global-spectral-deconvolution/commit/8bf8838cde1dab73b86b0e7f97daf67875c20ae2))
+
 ### [10.1.2](https://www.github.com/mljs/global-spectral-deconvolution/compare/v10.1.1...v10.1.2) (2022-02-25)
 
 
