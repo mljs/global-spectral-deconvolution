@@ -43,7 +43,10 @@ export function broadenPeaks(
       let peak = peaks[i];
       let nextPeak = peaks[i + 1];
       if (peak.to.x > nextPeak.from.x) {
-        peak.to.x = nextPeak.from.x = (peak.to.x + nextPeak.from.x) / 2;
+        // we do it proportional to the width of the peaks
+        peak.to.x = nextPeak.from.x =
+          (peak.width / (nextPeak.width + peak.width)) * (nextPeak.x - peak.x) +
+          peak.x;
       }
     }
   }

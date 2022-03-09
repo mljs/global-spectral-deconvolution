@@ -200,6 +200,54 @@ describe('broadenPeaks', () => {
     ]);
   });
 
+  it('factor=20 not same width', () => {
+    let result = broadenPeaks(
+      [
+        {
+          x: -0.5,
+          y: 1,
+          ddY: 0,
+          width: 0.1,
+          index: 25,
+          inflectionPoints: {
+            from: { index: 23, x: -0.55 },
+            to: { index: 27, x: -0.45 },
+          },
+        },
+        {
+          x: 0.5,
+          y: 1,
+          ddY: 0,
+          width: 0.4,
+          index: 75,
+          inflectionPoints: {
+            from: { index: 73, x: 0.3 },
+            to: { index: 77, x: 0.7 },
+          },
+        },
+      ],
+      { factor: 20 },
+    );
+    expect(result).toBeDeepCloseTo([
+      {
+        x: -0.5,
+        y: 1,
+        index: 25,
+        width: 1.2,
+        from: { x: -1.5 },
+        to: { x: -0.3 },
+      },
+      {
+        x: 0.5,
+        y: 1,
+        index: 75,
+        width: 4.8,
+        from: { x: -0.3 },
+        to: { x: 4.5 },
+      },
+    ]);
+  });
+
   it('factor=20 overlap=true', () => {
     let result = broadenPeaks(
       [
