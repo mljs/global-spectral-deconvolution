@@ -66,7 +66,7 @@ Optimize the position (x), max intensity (y), full width at half maximum (fwhm) 
 
 ```js
 import { IsotopicDistribution } from 'mf-global';
-import { gsd, optimizePeaks } from 'ml-gad';
+import { gsd, optimizePeaks } from 'ml-gsd';
 
 // generate a sample spectrum of the form {x:[], y:[]}
 const data = new IsotopicDistribution('C').getGaussian();
