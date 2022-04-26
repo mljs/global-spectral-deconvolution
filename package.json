@@ -58,6 +58,7 @@
     "trailingComma": "all"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.17.9",
     "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
     "chemcalc": "^3.4.1",
