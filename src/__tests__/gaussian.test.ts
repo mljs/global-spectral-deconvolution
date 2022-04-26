@@ -145,7 +145,7 @@ describe('smooth:false option', () => {
         y: 0,
         ddY: 259.83290100626783,
         width: 0.08,
-        index: 75,
+        index: 100,
         inflectionPoints: {
           from: { index: 73, x: 0.46 },
           to: { index: 77, x: 0.54 },

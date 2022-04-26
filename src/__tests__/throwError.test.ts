@@ -7,7 +7,7 @@ describe('Throw Errors', () => {
       y: [1, 2, 4, 3, 1],
     };
     expect(() => gsd(data)).toThrow(
-      'GSD only accepts monotone increasing x values',
+      'GSDD only accepts monotone increasing x values',
     );
   });
 });
