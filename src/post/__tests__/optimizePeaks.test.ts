@@ -31,17 +31,17 @@ describe('optimizePeaks', () => {
       {
         x: 0,
         y: 1,
-        fwhm: 0.14128970668640126,
         width: 0.12,
         shape: {
           kind: 'gaussian',
+          fwhm: 0.14128970668640126,
         },
       },
     ]);
 
     const options = {
       optimization: {
-        kind: 'lm',
+        kind: 'lm' as const,
         options: {
           timeout: 0,
         },

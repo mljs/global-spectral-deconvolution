@@ -89,12 +89,9 @@ export function optimizePeaks(
       });
       for (let i = 0; i < peaks.length; i++) {
         results.push({
-          x: optimizedPeaks[i].x,
-          y: optimizedPeaks[i].y,
-          shape: peaks[i].shape,
-          fwhm: optimizedPeaks[i].shape?.fwhm || 0, // todo remove || 0 it should never happen after update spectra-fitting
+          ...optimizedPeaks[i],
           width: getShape1D(peaks[i].shape).fwhmToWidth(
-            optimizedPeaks[i].shape?.fwhm,
+            optimizedPeaks[i].shape.fwhm,
           ),
         });
       }

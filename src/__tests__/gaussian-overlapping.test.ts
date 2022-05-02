@@ -49,15 +49,13 @@ describe('gaussian overlapping', () => {
         x: -0.1,
         y: 1,
         width: 0.1,
-        fwhm: 0.11774128880591818,
-        shape: { kind: 'gaussian' },
+        shape: { kind: 'gaussian', fwhm: 0.11774128880591818 },
       },
       {
         x: 0.1,
         y: 1,
         width: 0.1,
-        fwhm: 0.11774128880591818,
-        shape: { kind: 'gaussian' },
+        shape: { kind: 'gaussian', fwhm: 0.11774128880591818 },
       },
     ]);
   });
