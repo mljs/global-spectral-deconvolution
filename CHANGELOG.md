@@ -1,5 +1,16 @@
 # Changelog
 
+## [11.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v10.2.0...v11.0.0) (2022-05-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* Move property fwhm to be into 'shape'. This ensure compability with our other packages.
+
+### Miscellaneous Chores
+
+* update dependencies ([#96](https://github.com/mljs/global-spectral-deconvolution/issues/96)) ([d8bd3e7](https://github.com/mljs/global-spectral-deconvolution/commit/d8bd3e7b9ec45c6e21459405b8b64fee058dbc99))
+
 ## [10.2.0](https://github.com/mljs/global-spectral-deconvolution/compare/v10.1.2...v10.2.0) (2022-03-09)
 
 
