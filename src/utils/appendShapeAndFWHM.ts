@@ -18,7 +18,6 @@ export function appendShapeAndFWHM<T extends { width: number }>(
   let widthToFWHM = getShape1D(shape).widthToFWHM;
   return peaks.map((peak) => ({
     ...peak,
-    fwhm: widthToFWHM(peak.width),
-    shape,
+    shape: { fwhm: widthToFWHM(peak.width), ...shape },
   }));
 }
