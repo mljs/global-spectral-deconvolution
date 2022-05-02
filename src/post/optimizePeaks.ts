@@ -1,5 +1,4 @@
-import type { DataXY } from 'cheminfo-types';
-import { PeakXYWidth } from 'cheminfo-types';
+import type { DataXY, PeakXYWidth } from 'cheminfo-types';
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
@@ -90,11 +89,10 @@ export function optimizePeaks(
       });
       for (let i = 0; i < peaks.length; i++) {
         results.push({
-          x: optimizedPeaks[i].x,
-          y: optimizedPeaks[i].y,
-          shape: peaks[i].shape,
-          fwhm: optimizedPeaks[i].fwhm || 0, // todo remove || 0 it should never happen after update spectra-fitting
-          width: getShape1D(peaks[i].shape).fwhmToWidth(optimizedPeaks[i].fwhm),
+          ...optimizedPeaks[i],
+          width: getShape1D(peaks[i].shape).fwhmToWidth(
+            optimizedPeaks[i].shape.fwhm,
+          ),
         });
       }
     } else {
