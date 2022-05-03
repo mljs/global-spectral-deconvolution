@@ -15,9 +15,9 @@ export function appendShapeAndFWHM<T extends { width: number }>(
   } = {},
 ) {
   let { shape = { kind: 'gaussian' } } = options;
-  let widthToFWHM = getShape1D(shape).widthToFWHM;
+  let shapeInstance = getShape1D(shape);
   return peaks.map((peak) => ({
     ...peak,
-    shape: { fwhm: widthToFWHM(peak.width), ...shape },
+    shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape },
   }));
 }
