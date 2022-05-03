@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.0.0...v11.1.0) (2022-05-03)
+
+
+### Features
+
+* add optimizePeaksWithLogs to be able to debug ([4e7848b](https://github.com/mljs/global-spectral-deconvolution/commit/4e7848b37ed8280275f76d56dd5d35c860074542))
+
+
+### Bug Fixes
+
+* fwhm didn't work for pseudovoigt ([9b8e0b6](https://github.com/mljs/global-spectral-deconvolution/commit/9b8e0b6f9dfe9e3f396522b35d961315ef5f0e90))
+
 ## [11.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v10.2.0...v11.0.0) (2022-05-02)
 
 
