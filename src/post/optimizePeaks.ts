@@ -13,7 +13,7 @@ export interface OptimizePeaksOptions {
    */
   shape?: Shape1D;
   /**
-   * Number of times the width determining if the peaks have to be grouped and therefore optimized together
+   * Number of times we should multiply the width determining if the peaks have to be grouped and therefore optimized together
    * @default 1
    */
   groupingFactor?: number;

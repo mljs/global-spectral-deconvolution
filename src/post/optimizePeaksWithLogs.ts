@@ -62,6 +62,13 @@ export function optimizePeaksWithLogs(
         ? data.y.subarray(fromIndex, toIndex)
         : data.y.slice(fromIndex, toIndex);
 
+    const log = {
+      range: { from, to },
+      parameters: optimization,
+      groupSize: peakGroup.length,
+      time: Date.now() - start,
+    };
+
     if (x.length > 5) {
       const {
         iterations,
@@ -81,20 +88,17 @@ export function optimizePeaksWithLogs(
         });
       }
       logs.push({
+        ...log,
         iterations,
         error,
-        parameters: optimization,
         message: 'optimization successful',
-        groupSize: peakGroup.length,
-        time: `${Date.now() - start}ms`,
       });
     } else {
       results = results.concat(peaks);
       logs.push({
+        ...log,
         iterations: 0,
         message: 'x length too small for optimization',
-        groupSize: peakGroup.length,
-        time: `${Date.now() - start}ms`,
       });
     }
   });
