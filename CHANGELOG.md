@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.1.0...v11.2.0) (2022-05-03)
+
+
+### Features
+
+* add range in logs of optimization ([4e1c5d0](https://github.com/mljs/global-spectral-deconvolution/commit/4e1c5d05920f10404a6da1e08af9c0cb770ec71f))
+
 ## [11.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.0.0...v11.1.0) (2022-05-03)
 
 
