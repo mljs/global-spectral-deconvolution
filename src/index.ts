@@ -1,5 +1,6 @@
 export * from './gsd';
 export * from './post/optimizePeaks';
+export * from './post/optimizePeaksWithLogs';
 export * from './post/joinBroadPeaks';
 export * from './post/broadenPeaks';
 export * from './utils/appendShapeAndFWHM';
