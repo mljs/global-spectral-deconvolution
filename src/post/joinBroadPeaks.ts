@@ -1,9 +1,11 @@
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { OptimizationOptions } from 'ml-spectra-fitting';
 
-import { GSDPeakOptimized, optimizePeaks } from '..';
 import { GSDPeak } from '../GSDPeak';
+import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
+
+import { optimizePeaks } from './optimizePeaks';
 
 export interface JoinBroadPeaksOptions {
   /**
