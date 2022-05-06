@@ -1,5 +1,13 @@
 # Changelog
 
+### [11.2.1](https://github.com/mljs/global-spectral-deconvolution/compare/v11.2.0...v11.2.1) (2022-05-06)
+
+
+### Bug Fixes
+
+* remove circular dependency ([d73b0ae](https://github.com/mljs/global-spectral-deconvolution/commit/d73b0ae3d70671164ff186a2924a6b051846208c))
+* still allow node 12 compatibility ([394870e](https://github.com/mljs/global-spectral-deconvolution/commit/394870e5154eaa4e4252fe99e7ffca76d7e9eaed))
+
 ## [11.2.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.1.0...v11.2.0) (2022-05-03)
 
 
