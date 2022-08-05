@@ -1,4 +1,5 @@
 import type { DataXY, PeakXYWidth } from 'cheminfo-types';
+import { FromTo } from 'cheminfo-types';
 import { Shape1D } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
@@ -7,6 +8,14 @@ import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { optimizePeaksWithLogs } from './optimizePeaksWithLogs';
 
 export interface OptimizePeaksOptions {
+  /**
+   * baseline
+   */
+  baseline?: number;
+  /**
+   * range to apply the optimization
+   */
+  fromTo?: Partial<FromTo>;
   /**
    * Shape to use for optimization
    * @default {kind:'gaussian'}

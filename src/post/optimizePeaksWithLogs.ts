@@ -21,6 +21,8 @@ export function optimizePeaksWithLogs(
   options: OptimizePeaksOptions = {},
 ): { logs: any[]; optimizedPeaks: GSDPeakOptimized[] } {
   const {
+    fromTo = {},
+    baseline,
     shape = { kind: 'gaussian' },
     groupingFactor = 1,
     factorLimits = 2,
@@ -40,7 +42,6 @@ export function optimizePeaksWithLogs(
   let groups = groupPeaks(peakList, { factor: groupingFactor });
   let logs: any[] = [];
   let results: GSDPeakOptimized[] = [];
-
   groups.forEach((peakGroup) => {
     const start = Date.now();
     // In order to make optimization we will add fwhm and shape on all the peaks
@@ -49,8 +50,11 @@ export function optimizePeaksWithLogs(
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
 
-    const from = firstPeak.x - firstPeak.width * factorLimits;
-    const to = lastPeak.x + lastPeak.width * factorLimits;
+    const {
+      from = firstPeak.x - firstPeak.width * factorLimits,
+      to = lastPeak.x + lastPeak.width * factorLimits,
+    } = fromTo;
+
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
 
     const x =
@@ -76,6 +80,7 @@ export function optimizePeaksWithLogs(
         peaks: optimizedPeaks,
       } = optimize({ x, y }, peaks, {
         shape,
+        baseline,
         optimization,
       });
 

@@ -30,7 +30,7 @@ describe('optimizePeaksWithLogs', () => {
     expect(result.logs).toMatchObject([
       {
         iterations: 100,
-        error: 0.000017852930772995625,
+        error: 0.000017852931247867768,
         parameters: { kind: 'lm', options: { timeout: 10 } },
         message: 'optimization successful',
         groupSize: 1,
