@@ -1,3 +1,5 @@
+import { Shape1D } from 'ml-peak-shape-generator';
+
 export interface GSDPeak {
   x: number;
   y: number;
@@ -14,6 +16,9 @@ export interface GSDPeak {
    * This allows to determine if a peak is soft or not
    */
   ddY: number;
+
+  shape: Shape1D;
+
   inflectionPoints: {
     from: { x: number; index: number };
     to: { x: number; index: number };

@@ -10,7 +10,7 @@ import { GSDPeak } from '../GSDPeak';
  */
 
 export function broadenPeaks(
-  peakList: GSDPeak[],
+  peakList: Omit<GSDPeak, 'shape'>[],
   options: {
     /**
      * @default 2

@@ -1,4 +1,5 @@
 import type { DataXY } from 'cheminfo-types';
+import { Shape1D } from 'ml-peak-shape-generator';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
@@ -9,6 +10,7 @@ import {
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
+import { appendShapeAndFWHM } from './utils/appendShapeAndFWHM';
 import { optimizeTop } from './utils/optimizeTop';
 
 export interface GSDOptions {
@@ -44,6 +46,11 @@ export interface GSDOptions {
    * @default false
    */
   realTopDetection?: boolean;
+  /**
+   * Shape used to add FWHM property in the peaks
+   * @default {kind:'gaussian'}
+   */
+  shape?: Shape1D;
 }
 
 /**
@@ -60,6 +67,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
       windowSize: 9,
       polynomial: 3,
     },
+    shape,
     noiseLevel,
     smoothY = false,
     maxCriteria = true,
@@ -239,14 +247,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
         peaks.push({
           x: deltaX,
           y: yData[minddYIndex],
-          width: width,
+          width,
           index: minddYIndex,
           ddY: ddY[minddYIndex],
           inflectionPoints: {
             from: intervalL[possible],
             to: intervalR[possible],
           },
-        });
+        } as GSDPeak);
       }
     }
   }
@@ -266,5 +274,5 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     return a.x - b.x;
   });
 
-  return peaks;
+  return appendShapeAndFWHM(peaks, { shape });
 }

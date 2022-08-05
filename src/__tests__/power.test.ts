@@ -56,6 +56,10 @@ describe('power', () => {
         width: 0.3,
         index: 100,
         ddY: -33832.03463203485,
+        shape: {
+          fwhm: 0.35322300675464324,
+          kind: 'gaussian',
+        },
         inflectionPoints: {
           from: { x: 4.85, index: 97 },
           to: { x: 5.15, index: 103 },
@@ -78,6 +82,10 @@ describe('power', () => {
         width: 0.05,
         index: 89,
         ddY: 800,
+        shape: {
+          fwhm: 0.05887050112577352,
+          kind: 'gaussian',
+        },
         inflectionPoints: {
           from: { x: 4.4, index: 88 },
           to: { x: 4.45, index: 89 },
@@ -89,6 +97,10 @@ describe('power', () => {
         width: 0.2,
         index: 100,
         ddY: -44914.28571428623,
+        shape: {
+          fwhm: 0.2354820045030941,
+          kind: 'gaussian',
+        },
         inflectionPoints: {
           from: { x: 4.9, index: 98 },
           to: { x: 5.1, index: 102 },
@@ -100,6 +112,10 @@ describe('power', () => {
         width: 0.05,
         index: 111,
         ddY: 800,
+        shape: {
+          fwhm: 0.05887050112577352,
+          kind: 'gaussian',
+        },
         inflectionPoints: {
           from: { x: 5.55, index: 111 },
           to: { x: 5.6, index: 112 },
