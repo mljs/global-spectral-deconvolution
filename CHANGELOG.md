@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.2.1...v11.3.0) (2022-08-05)
+
+
+### Features
+
+* add shape to gsd result ([#102](https://github.com/mljs/global-spectral-deconvolution/issues/102)) ([505121d](https://github.com/mljs/global-spectral-deconvolution/commit/505121d79a32fafa6fd49ab633556983b1cef24c))
+
 ### [11.2.1](https://github.com/mljs/global-spectral-deconvolution/compare/v11.2.0...v11.2.1) (2022-05-06)
 
 
