@@ -4,7 +4,7 @@ import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
+import { appendMissingShapeAndFWHM } from '../utils/appendMissingShapeAndFWHM';
 import { groupPeaks } from '../utils/groupPeaks';
 
 import { OptimizePeaksOptions } from './optimizePeaks';
@@ -45,7 +45,7 @@ export function optimizePeaksWithLogs(
   groups.forEach((peakGroup) => {
     const start = Date.now();
     // In order to make optimization we will add fwhm and shape on all the peaks
-    const peaks = appendShapeAndFWHM(peakGroup, { shape });
+    const peaks = appendMissingShapeAndFWHM(peakGroup, { shape });
 
     const firstPeak = peaks[0];
     const lastPeak = peaks[peaks.length - 1];
