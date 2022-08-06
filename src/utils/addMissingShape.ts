@@ -1,8 +1,14 @@
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 
-export function appendMissingShapeAndFWHM<
-  T extends { width: number; shape?: Shape1D },
->(peaks: T[], options: { shape?: Shape1D } = {}): (T & { shape: Shape1D })[] {
+/**
+ * add missing property if it does not exist in the peak,
+ * if shape exists but fwhm doesn't, it will be calculated from peak.width
+ */
+
+export function addMissingShape<T extends { width: number; shape?: Shape1D }>(
+  peaks: T[],
+  options: { shape?: Shape1D } = {},
+): (T & { shape: Shape1D })[] {
   const { shape = { kind: 'gaussian' } } = options;
   let shapeInstance = getShape1D(shape);
   return peaks.map((peak) => {

@@ -1,12 +1,12 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 
-import { appendShapeAndFWHM } from '../appendShapeAndFWHM';
+import { setShape } from '../setShape';
 
 expect.extend({ toMatchCloseTo });
 
-describe('appendShapeAndFWHM', () => {
+describe('setShape', () => {
   it('gaussian shape', () => {
-    let result = appendShapeAndFWHM([
+    let result = setShape([
       {
         x: 5,
         y: 10,
@@ -51,7 +51,7 @@ describe('appendShapeAndFWHM', () => {
     ]);
   });
   it('lorentzian shape', () => {
-    let result = appendShapeAndFWHM(
+    let result = setShape(
       [
         {
           x: 5,
@@ -114,7 +114,7 @@ describe('appendShapeAndFWHM', () => {
     ]);
   });
   it('pseudovoigt shape', () => {
-    let result = appendShapeAndFWHM(
+    let result = setShape(
       [
         {
           x: 5,

@@ -4,7 +4,7 @@ import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
  * Append 2 properties to the peaks, shape and fwhm
  */
 
-export function appendShapeAndFWHM<T extends { width: number }>(
+export function setShape<T extends { width: number }>(
   peaks: T[],
   options: {
     /**

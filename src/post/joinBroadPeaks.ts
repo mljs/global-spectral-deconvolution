@@ -3,7 +3,7 @@ import { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { appendShapeAndFWHM } from '../utils/appendShapeAndFWHM';
+import { addMissingShape } from '../utils/addMissingShape';
 
 import { optimizePeaks } from './optimizePeaks';
 
@@ -32,8 +32,11 @@ export interface JoinBroadPeaksOptions {
  * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
  */
 
+export interface GSDPeakWithOptionalShape extends Omit<GSDPeak, 'shape'> {
+  shape?: Shape1D;
+}
 export function joinBroadPeaks(
-  peakList: GSDPeak[],
+  peakList: GSDPeakWithOptionalShape[],
   options: JoinBroadPeaksOptions = {},
 ): GSDPeak[] {
   let {
@@ -47,7 +50,7 @@ export function joinBroadPeaks(
   let maxI = 0;
   let count = 1;
   const broadLines: GSDPeakOptimized[] = [];
-  const peaks = appendShapeAndFWHM(peakList, { shape });
+  const peaks = addMissingShape(peakList, { shape });
 
   if (peaks.length < 2) return peaks;
 
