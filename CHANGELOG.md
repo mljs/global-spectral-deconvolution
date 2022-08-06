@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.3.0...v12.0.0) (2022-08-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add setShape n addMissingShape function
+
+### Features
+
+* add setShape n addMissingShape function ([a939d0c](https://github.com/mljs/global-spectral-deconvolution/commit/a939d0c5ad99a19f426847558268d5caa154e1c8)), closes [#104](https://github.com/mljs/global-spectral-deconvolution/issues/104)
+
 ## [11.3.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.2.1...v11.3.0) (2022-08-05)
 
 
