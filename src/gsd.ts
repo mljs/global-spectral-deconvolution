@@ -10,8 +10,8 @@ import {
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
-import { appendShapeAndFWHM } from './utils/appendShapeAndFWHM';
 import { optimizeTop } from './utils/optimizeTop';
+import { setShape } from './utils/setShape';
 
 export interface GSDOptions {
   /**
@@ -274,5 +274,5 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
     return a.x - b.x;
   });
 
-  return appendShapeAndFWHM(peaks, { shape });
+  return setShape(peaks, { shape });
 }

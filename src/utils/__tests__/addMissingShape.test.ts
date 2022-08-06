@@ -1,12 +1,13 @@
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { getShape1D } from 'ml-peak-shape-generator';
 
-import { appendShapeAndFWHM } from '../appendShapeAndFWHM';
+import { addMissingShape } from '../addMissingShape';
 
 expect.extend({ toMatchCloseTo });
 
-describe('appendShapeAndFWHM', () => {
+describe('addMissingShape', () => {
   it('gaussian shape', () => {
-    let result = appendShapeAndFWHM([
+    let result = addMissingShape([
       {
         x: 5,
         y: 10,
@@ -24,6 +25,7 @@ describe('appendShapeAndFWHM', () => {
         y: 10,
         width: 15,
         index: 3,
+        shape: { kind: 'lorentzian', fwhm: 5.8870501125773735 * 3 },
       },
     ]);
     expect(result).toMatchCloseTo([
@@ -46,12 +48,12 @@ describe('appendShapeAndFWHM', () => {
         y: 10,
         width: 15,
         index: 3,
-        shape: { kind: 'gaussian', fwhm: 5.8870501125773735 * 3 },
+        shape: { kind: 'lorentzian', fwhm: 5.8870501125773735 * 3 },
       },
     ]);
   });
   it('lorentzian shape', () => {
-    let result = appendShapeAndFWHM(
+    let result = addMissingShape(
       [
         {
           x: 5,
@@ -72,6 +74,7 @@ describe('appendShapeAndFWHM', () => {
             from: { x: 0, index: 0 },
             to: { x: 0, index: 0 },
           },
+          shape: { kind: 'pseudoVoigt', fwhm: 8.660254037844386 * 2, mu: 0.5 },
         },
         {
           x: 30,
@@ -100,7 +103,7 @@ describe('appendShapeAndFWHM', () => {
         y: 10,
         width: 10,
         index: 2,
-        shape: { kind: 'lorentzian', fwhm: 8.660254037844386 * 2 },
+        shape: { kind: 'pseudoVoigt', fwhm: 8.660254037844386 * 2, mu: 0.5 },
         inflectionPoints: { from: { x: 0, index: 0 }, to: { x: 0, index: 0 } },
       },
       {
@@ -114,7 +117,7 @@ describe('appendShapeAndFWHM', () => {
     ]);
   });
   it('pseudovoigt shape', () => {
-    let result = appendShapeAndFWHM(
+    let result = addMissingShape(
       [
         {
           x: 5,
@@ -125,6 +128,17 @@ describe('appendShapeAndFWHM', () => {
             from: { x: 0, index: 0 },
             to: { x: 0, index: 0 },
           },
+        },
+        {
+          x: 5,
+          y: 10,
+          width: 5,
+          index: 1,
+          inflectionPoints: {
+            from: { x: 0, index: 0 },
+            to: { x: 0, index: 0 },
+          },
+          shape: { kind: 'gaussian' },
         },
       ],
       { shape: { kind: 'pseudoVoigt', mu: 0.5 } },
@@ -137,6 +151,20 @@ describe('appendShapeAndFWHM', () => {
         index: 1,
         shape: { kind: 'pseudoVoigt', fwhm: 5.443525056288687, mu: 0.5 },
         inflectionPoints: { from: { x: 0, index: 0 }, to: { x: 0, index: 0 } },
+      },
+      {
+        x: 5,
+        y: 10,
+        width: 5,
+        index: 1,
+        inflectionPoints: {
+          from: { x: 0, index: 0 },
+          to: { x: 0, index: 0 },
+        },
+        shape: {
+          kind: 'gaussian',
+          fwhm: getShape1D({ kind: 'gaussian' }).widthToFWHM(5),
+        },
       },
     ]);
   });
