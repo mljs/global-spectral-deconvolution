@@ -26,9 +26,11 @@ export function broadenPeaks(
   const { factor = 2, overlap = false } = options;
 
   const peaks = peakList.map((peak) => {
+    const { id } = peak;
     const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;
     const xTo = peak.x + (peak.inflectionPoints.to.x - peak.x) * factor;
     return {
+      id,
       x: peak.x,
       y: peak.y,
       index: peak.index,

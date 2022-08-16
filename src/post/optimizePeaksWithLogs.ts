@@ -9,6 +9,10 @@ import { groupPeaks } from '../utils/groupPeaks';
 
 import { OptimizePeaksOptions } from './optimizePeaks';
 
+export interface PeakXYWidthWidthOptionalID extends PeakXYWidth {
+  id?: string;
+}
+
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
  * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
@@ -17,7 +21,7 @@ import { OptimizePeaksOptions } from './optimizePeaks';
  */
 export function optimizePeaksWithLogs(
   data: DataXY,
-  peakList: PeakXYWidth[],
+  peakList: PeakXYWidthWidthOptionalID[],
   options: OptimizePeaksOptions = {},
 ): { logs: any[]; optimizedPeaks: GSDPeakOptimized[] } {
   const {

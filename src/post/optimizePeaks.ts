@@ -1,11 +1,14 @@
-import type { DataXY, PeakXYWidth } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 import { FromTo } from 'cheminfo-types';
 import { Shape1D } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
 
-import { optimizePeaksWithLogs } from './optimizePeaksWithLogs';
+import {
+  optimizePeaksWithLogs,
+  PeakXYWidthWidthOptionalID,
+} from './optimizePeaksWithLogs';
 
 export interface OptimizePeaksOptions {
   /**
@@ -45,7 +48,7 @@ export interface OptimizePeaksOptions {
  */
 export function optimizePeaks(
   data: DataXY,
-  peakList: PeakXYWidth[],
+  peakList: PeakXYWidthWidthOptionalID[],
   options: OptimizePeaksOptions = {},
 ): GSDPeakOptimized[] {
   return optimizePeaksWithLogs(data, peakList, options).optimizedPeaks;

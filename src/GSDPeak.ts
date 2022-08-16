@@ -1,6 +1,7 @@
 import { Shape1D } from 'ml-peak-shape-generator';
 
 export interface GSDPeak {
+  id?: string;
   x: number;
   y: number;
   /**

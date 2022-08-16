@@ -1,4 +1,5 @@
 export interface GSDBroadenPeak {
+  id?: string;
   x: number;
   y: number;
   width: number;

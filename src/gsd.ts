@@ -1,3 +1,4 @@
+import { v4 as generateID } from '@lukeed/uuid';
 import type { DataXY } from 'cheminfo-types';
 import { Shape1D } from 'ml-peak-shape-generator';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
@@ -245,6 +246,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
       if (yData[minddYIndex] > yThreshold) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         peaks.push({
+          id: generateID(),
           x: deltaX,
           y: yData[minddYIndex],
           width,

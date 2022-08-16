@@ -1,3 +1,4 @@
+import { v4 as generateID } from '@lukeed/uuid';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { OptimizationOptions } from 'ml-spectra-fitting';
 
@@ -35,6 +36,7 @@ export interface JoinBroadPeaksOptions {
 export interface GSDPeakWithOptionalShape extends Omit<GSDPeak, 'shape'> {
   shape?: Shape1D;
 }
+
 export function joinBroadPeaks(
   peakList: GSDPeakWithOptionalShape[],
   options: JoinBroadPeaksOptions = {},
@@ -89,6 +91,7 @@ export function joinBroadPeaks(
           candidates,
           [
             {
+              id: generateID(),
               x: broadLines[maxI].x,
               y: max,
               width: candidates.x[0] - candidates.x[candidates.x.length - 1],
