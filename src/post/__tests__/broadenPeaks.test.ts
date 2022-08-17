@@ -300,6 +300,7 @@ describe('broadenPeaks', () => {
     let result = broadenPeaks(
       [
         {
+          id: '1',
           x: -0.5,
           y: 1,
           ddY: 0,
@@ -326,6 +327,7 @@ describe('broadenPeaks', () => {
           y: 1,
           ddY: 0,
           width: 0.08,
+          shape: { kind: 'gaussian' },
           index: 575,
           inflectionPoints: {
             from: { index: 573, x: 10.46 },
@@ -337,6 +339,7 @@ describe('broadenPeaks', () => {
     );
     expect(result).toBeDeepCloseTo([
       {
+        id: '1',
         x: -0.5,
         y: 1,
         index: 25,
@@ -356,10 +359,11 @@ describe('broadenPeaks', () => {
         x: 10.5,
         y: 1,
         index: 575,
+        shape: { kind: 'gaussian' },
         width: 1.6,
         from: { x: 9.7 },
         to: { x: 11.3 },
       },
-    ]);
+    ], 1);
   });
 });

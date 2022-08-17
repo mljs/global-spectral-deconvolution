@@ -1,6 +1,25 @@
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
+
 import { GSDBroadenPeak } from '../GSDBroadenPeak';
 import { GSDPeak } from '../GSDPeak';
+import { MakeOptional } from '../utils/MakeOptional';
 
+type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+
+type GSDBroadenPeakWithID = GSDBroadenPeak & { id: string };
+type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1D };
+type GSDBroadenPeakWithShapeID = GSDBroadenPeakWithID & { shape: Shape1D };
+
+type WithIDOrShape<T extends GSDPeakOptionalShape> = T extends { id: string }
+  ? WithIDnShapeOrNot<T>
+  : WidthShapeOrNot<T>;
+
+type WidthShapeOrNot<T extends GSDPeakOptionalShape> = T extends GSDPeak
+  ? GSDBroadenPeakWithShape
+  : GSDBroadenPeak;
+type WithIDnShapeOrNot<T extends GSDPeakOptionalShape> = T extends GSDPeak
+  ? GSDBroadenPeakWithShapeID
+  : GSDBroadenPeakWithShape;
 /**
  * This method will allow to enlarge peaks while preventing overlap between peaks
  * A typical application in chromatography peak picking.
@@ -9,8 +28,8 @@ import { GSDPeak } from '../GSDPeak';
  * @return {Array} peakList
  */
 
-export function broadenPeaks(
-  peakList: Omit<GSDPeak, 'shape'>[],
+export function broadenPeaks<T extends GSDPeakOptionalShape>(
+  peakList: T[],
   options: {
     /**
      * @default 2
@@ -22,22 +41,32 @@ export function broadenPeaks(
      */
     overlap?: boolean;
   } = {},
-): GSDBroadenPeak[] {
+): WithIDOrShape<T>[] {
   const { factor = 2, overlap = false } = options;
 
   const peaks = peakList.map((peak) => {
-    const { id } = peak;
+    const { id, shape } = peak;
     const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;
     const xTo = peak.x + (peak.inflectionPoints.to.x - peak.x) * factor;
-    return {
-      id,
+
+    let result = {
       x: peak.x,
       y: peak.y,
       index: peak.index,
       width: xTo - xFrom,
       from: { x: xFrom },
       to: { x: xTo },
-    };
+    } as GSDBroadenPeak;
+
+    if (peak.id) {
+      result.id = id;
+    }
+
+    if (peak.shape) {
+      result.shape = shape;
+    }
+
+    return result;
   });
 
   if (!overlap) {
@@ -53,9 +82,16 @@ export function broadenPeaks(
     }
   }
 
-  for (let peak of peaks) {
+  for (const peak of peaks) {
     peak.width = peak.to.x - peak.from.x;
+    if (peak.shape) {
+      const { shape, width } = peak;
+      if (shape.fwhm !== undefined) {
+        const shapeFct = getShape1D(shape);
+        peak.shape.fwhm = shapeFct.widthToFWHM(width);
+      }
+    }
   }
 
-  return peaks;
+  return peaks as WithIDOrShape<T>[];
 }
