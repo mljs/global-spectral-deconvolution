@@ -5,6 +5,7 @@ import { OptimizationOptions } from 'ml-spectra-fitting';
 import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { addMissingShape } from '../utils/addMissingShape';
+import { MakeOptional } from '../utils/MakeOptional';
 
 import { optimizePeaks } from './optimizePeaks';
 
@@ -33,14 +34,22 @@ export interface JoinBroadPeaksOptions {
  * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
  */
 
-export interface GSDPeakWithOptionalShape extends Omit<GSDPeak, 'shape'> {
-  shape?: Shape1D;
-}
+export type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+type GSDPeakOptimizedOptionalShape = MakeOptional<GSDPeakOptimized, 'shape'>;
 
-export function joinBroadPeaks(
-  peakList: GSDPeakWithOptionalShape[],
+type GSDPeakOptimizedWithID = GSDPeakOptimized & { id: string };
+type GSDPeakOptimizedWithShapeID = GSDPeakOptimizedWithID & { shape: Shape1D };
+
+type WithIDOrNot<T extends GSDPeakOptimizedOptionalShape> = T extends {
+  id: string;
+}
+  ? GSDPeakOptimizedWithShapeID
+  : GSDPeakOptimized;
+
+export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
+  peakList: T[],
   options: JoinBroadPeaksOptions = {},
-): GSDPeak[] {
+): WithIDOrNot<T>[] {
   let {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
@@ -54,7 +63,7 @@ export function joinBroadPeaks(
   const broadLines: GSDPeakOptimized[] = [];
   const peaks = addMissingShape(peakList, { shape });
 
-  if (peaks.length < 2) return peaks;
+  if (peaks.length < 2) return peaks as WithIDOrNot<T>[];
 
   let maxDdy = peakList[0].ddY;
   for (let i = 1; i < peakList.length; i++) {
@@ -75,6 +84,7 @@ export function joinBroadPeaks(
     y: [broadLines[0].y],
   };
   let indexes: number[] = [0];
+  const newPeaks: GSDPeakOptimized[] = [];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < broadWidth) {
       candidates.x.push(broadLines[i].x);
@@ -99,13 +109,22 @@ export function joinBroadPeaks(
           ],
           { shape, optimization },
         );
-        //@ts-expect-error type is equal as expected
-        peaks.push(fitted[0]);
+        newPeaks.push(fitted[0]);
       } else {
         // Put back the candidates to the peak list
         indexes.forEach((index) => {
-          // @ts-expect-error todo 2
-          peaks.push(broadLines[index]);
+          const { id, shape, x, y, width } = broadLines[index];
+
+          let newPeak = {
+            x,
+            y,
+            width,
+            shape,
+          } as GSDPeakOptimized;
+
+          if (id) newPeak.id = id;
+
+          newPeaks.push(newPeak);
         });
       }
 
@@ -116,9 +135,9 @@ export function joinBroadPeaks(
       count = 1;
     }
   }
-  peaks.sort((a, b) => {
+  newPeaks.sort((a, b) => {
     return a.x - b.x;
   });
 
-  return peaks;
+  return newPeaks as WithIDOrNot<T>[];
 }
