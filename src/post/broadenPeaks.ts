@@ -10,9 +10,9 @@ type GSDBroadenPeakWithID = GSDBroadenPeak & { id: string };
 type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1D };
 type GSDBroadenPeakWithShapeID = GSDBroadenPeakWithID & { shape: Shape1D };
 
-type WithIDOrShape<T, ToExtends = GSDPeak> = T extends { id: string }
-  ? WithIDnShapeOrNot<T, ToExtends>
-  : WidthShapeOrNot<T, ToExtends>;
+type WithIDOrShape<T> = T extends { id: string }
+  ? WithIDnShapeOrNot<T, GSDPeak>
+  : WidthShapeOrNot<T, GSDPeak>;
 
 export type WidthShapeOrNot<
   T,
@@ -21,9 +21,12 @@ export type WidthShapeOrNot<
   FalseType = GSDBroadenPeak,
 > = T extends ToExtends ? TrueType : FalseType;
 
-export type WithIDnShapeOrNot<T, ToExtends, TrueType = GSDBroadenPeakWithShapeID, FalseType = GSDBroadenPeakWithShape> = T extends ToExtends
-  ? TrueType
-  : FalseType;
+export type WithIDnShapeOrNot<
+  T,
+  ToExtends,
+  TrueType = GSDBroadenPeakWithShapeID,
+  FalseType = GSDBroadenPeakWithShape,
+> = T extends ToExtends ? TrueType : FalseType;
 /**
  * This method will allow to enlarge peaks while preventing overlap between peaks
  * A typical application in chromatography peak picking.
