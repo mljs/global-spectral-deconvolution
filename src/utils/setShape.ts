@@ -1,5 +1,7 @@
 import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 
+const { parse, stringify } = JSON;
+
 /**
  * Append 2 properties to the peaks, shape and fwhm
  */
@@ -12,12 +14,17 @@ export function setShape<T extends { width: number }>(
      * @default "{ kind: 'gaussian' }"
      */
     shape?: Shape1D;
+    output?: T[];
   } = {},
-) {
-  let { shape = { kind: 'gaussian' } } = options;
+): (T & { shape: Shape1D })[] {
+  let {
+    shape = { kind: 'gaussian' },
+    output = parse(stringify(peaks)) as T[],
+  } = options;
   let shapeInstance = getShape1D(shape);
-  return peaks.map((peak) => ({
+
+  return output.map((peak) => ({
     ...peak,
-    shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape },
+    shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape }
   }));
 }
