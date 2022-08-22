@@ -25,6 +25,6 @@ export function setShape<T extends { width: number }>(
 
   return output.map((peak) => ({
     ...peak,
-    shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape }
+    shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape },
   }));
 }
