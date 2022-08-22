@@ -327,8 +327,8 @@ describe('broadenPeaks', () => {
           y: 1,
           ddY: 0,
           width: 0.08,
-          shape: { kind: 'gaussian' },
           index: 575,
+          shape: { kind: 'gaussian' },
           inflectionPoints: {
             from: { index: 573, x: 10.46 },
             to: { index: 577, x: 10.54 },
@@ -337,33 +337,36 @@ describe('broadenPeaks', () => {
       ],
       { factor: 20 },
     );
-    expect(result).toBeDeepCloseTo([
-      {
-        id: '1',
-        x: -0.5,
-        y: 1,
-        index: 25,
-        width: 1.3,
-        from: { x: -1.3 },
-        to: { x: 0 },
-      },
-      {
-        x: 0.5,
-        y: 1,
-        index: 75,
-        width: 1.3,
-        from: { x: 0 },
-        to: { x: 1.3 },
-      },
-      {
-        x: 10.5,
-        y: 1,
-        index: 575,
-        shape: { kind: 'gaussian' },
-        width: 1.6,
-        from: { x: 9.7 },
-        to: { x: 11.3 },
-      },
-    ], 1);
+    expect(result).toBeDeepCloseTo(
+      [
+        {
+          id: '1',
+          x: -0.5,
+          y: 1,
+          index: 25,
+          width: 1.3,
+          from: { x: -1.3 },
+          to: { x: 0 },
+        },
+        {
+          x: 0.5,
+          y: 1,
+          index: 75,
+          width: 1.3,
+          from: { x: 0 },
+          to: { x: 1.3 },
+        },
+        {
+          x: 10.5,
+          y: 1,
+          index: 575,
+          shape: { kind: 'gaussian' },
+          width: 1.6,
+          from: { x: 9.7 },
+          to: { x: 11.3 },
+        },
+      ],
+      1,
+    );
   });
 });
