@@ -11,6 +11,8 @@ import {
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
+import { MakeMandatory } from './utils/MakeMandatory';
+import { MakeOptional } from './utils/MakeOptional';
 import { optimizeTop } from './utils/optimizeTop';
 import { setShape } from './utils/setShape';
 
@@ -54,6 +56,8 @@ export interface GSDOptions {
   shape?: Shape1D;
 }
 
+export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
+export type GSDPeakIDOptionalShape = MakeOptional<GSDPeakID, 'shape'>;
 /**
  * Global spectra deconvolution
  * @param  data - Object data with x and y arrays. Values in x has to be growing
@@ -62,7 +66,7 @@ export interface GSDOptions {
 
  */
 
-export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
+export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   let {
     sgOptions = {
       windowSize: 9,
@@ -218,7 +222,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
 
   let lastK = -1;
 
-  const peaks: GSDPeak[] = [];
+  const peaks: GSDPeakIDOptionalShape[] = [];
   for (const minddYIndex of minddY) {
     let deltaX = x[minddYIndex];
     let possible = -1;
@@ -256,7 +260,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
             from: intervalL[possible],
             to: intervalR[possible],
           },
-        } as GSDPeak);
+        });
       }
     }
   }
