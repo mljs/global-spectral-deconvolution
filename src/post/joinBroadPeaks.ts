@@ -4,8 +4,8 @@ import { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { addMissingShape } from '../utils/addMissingShape';
 import { MakeOptional } from '../utils/MakeOptional';
+import { addMissingShape } from '../utils/addMissingShape';
 
 import { optimizePeaks } from './optimizePeaks';
 
@@ -38,12 +38,11 @@ export type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
 type GSDPeakOptimizedOptionalShape = MakeOptional<GSDPeakOptimized, 'shape'>;
 
 type GSDPeakOptimizedWithID = GSDPeakOptimized & { id: string };
-type GSDPeakOptimizedWithShapeID = GSDPeakOptimizedWithID & { shape: Shape1D };
 
 type WithIDOrNot<T extends GSDPeakOptimizedOptionalShape> = T extends {
   id: string;
 }
-  ? GSDPeakOptimizedWithShapeID
+  ? GSDPeakOptimizedWithID
   : GSDPeakOptimized;
 
 export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
@@ -60,19 +59,25 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: GSDPeakOptimized[] = [];
-  const peaks = addMissingShape(peakList, { shape });
+  const broadLines: T[] = [];
 
-  if (peaks.length < 2) return peaks as WithIDOrNot<T>[];
+  if (peakList.length < 2) {
+    return addMissingShape(peakList, { shape }).map(
+      getGSDPeakOptimizedStructure,
+    ) as WithIDOrNot<T>[];
+  }
 
   let maxDdy = peakList[0].ddY;
   for (let i = 1; i < peakList.length; i++) {
     if (Math.abs(peakList[i].ddY) > maxDdy) maxDdy = Math.abs(peakList[i].ddY);
   }
 
-  for (let i: number = peaks.length - 1; i >= 0; i--) {
-    if (Math.abs(peaks[i].ddY) <= broadRatio * maxDdy) {
-      broadLines.push(peaks.splice(i, 1)[0]);
+  const newPeaks: GSDPeakOptimized[] = [];
+  for (const peak of peakList) {
+    if (Math.abs(peak.ddY) <= broadRatio * maxDdy) {
+      broadLines.push(peak);
+    } else {
+      newPeaks.push(getGSDPeakOptimizedStructure(peak));
     }
   }
 
@@ -84,7 +89,6 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
     y: [broadLines[0].y],
   };
   let indexes: number[] = [0];
-  const newPeaks: GSDPeakOptimized[] = [];
   for (let i = 1; i < broadLines.length; i++) {
     if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < broadWidth) {
       candidates.x.push(broadLines[i].x);
@@ -112,20 +116,9 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
         newPeaks.push(fitted[0]);
       } else {
         // Put back the candidates to the peak list
-        indexes.forEach((index) => {
-          const { id, shape, x, y, width } = broadLines[index];
-
-          let newPeak = {
-            x,
-            y,
-            width,
-            shape,
-          } as GSDPeakOptimized;
-
-          if (id) newPeak.id = id;
-
-          newPeaks.push(newPeak);
-        });
+        for (const index of indexes) {
+          newPeaks.push(getGSDPeakOptimizedStructure(broadLines[index]));
+        }
       }
 
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
@@ -140,4 +133,19 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   });
 
   return newPeaks as WithIDOrNot<T>[];
+}
+
+function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
+  const { id, shape, x, y, width } = peak;
+
+  let newPeak = {
+    x,
+    y,
+    width,
+    shape,
+  } as GSDPeakOptimized;
+
+  if (id) newPeak.id = id;
+
+  return newPeak;
 }
