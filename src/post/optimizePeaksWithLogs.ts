@@ -54,7 +54,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
 */
   let groups = groupPeaks(peakList, { factor: groupingFactor });
   let logs: any[] = [];
-  let results: GSDPeakOptimized[] = [];
+  let results: GSDPeakOptimizedIDOrNot<T>[] = [];
   groups.forEach((peakGroup) => {
     const start = Date.now();
     // In order to make optimization we will add fwhm and shape on all the peaks
@@ -103,7 +103,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
           width: getShape1D(peaks[i].shape).fwhmToWidth(
             optimizedPeaks[i].shape.fwhm,
           ),
-        });
+        } as GSDPeakOptimizedIDOrNot<T>);
       }
       logs.push({
         ...log,
@@ -112,7 +112,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
         message: 'optimization successful',
       });
     } else {
-      results = results.concat(peaks);
+      results.push(...peaks as GSDPeakOptimizedIDOrNot<T>[]);
       logs.push({
         ...log,
         iterations: 0,
@@ -121,5 +121,5 @@ export function optimizePeaksWithLogs<T extends Peak>(
     }
   });
 
-  return { logs, optimizedPeaks: results as GSDPeakOptimizedIDOrNot<T>[] };
+  return { logs, optimizedPeaks: results };
 }

@@ -3,8 +3,6 @@ import { FromTo } from 'cheminfo-types';
 import { Shape1D } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
-import { GSDPeakOptimized } from '../GSDPeakOptimized';
-
 import { Peak, optimizePeaksWithLogs } from './optimizePeaksWithLogs';
 
 export interface OptimizePeaksOptions {
@@ -43,10 +41,10 @@ export interface OptimizePeaksOptions {
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
-export function optimizePeaks(
+export function optimizePeaks<T extends Peak>(
   data: DataXY,
-  peakList: Peak[],
+  peakList: T[],
   options: OptimizePeaksOptions = {},
-): GSDPeakOptimized[] {
+) {
   return optimizePeaksWithLogs(data, peakList, options).optimizedPeaks;
 }
