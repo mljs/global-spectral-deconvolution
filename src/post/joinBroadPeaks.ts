@@ -1,12 +1,15 @@
+import { v4 as generateID } from '@lukeed/uuid';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { MakeOptional } from '../utils/MakeOptional';
+import { addMissingIDs } from '../utils/addMissingIDs';
 import { addMissingShape } from '../utils/addMissingShape';
 
 import { optimizePeaks } from './optimizePeaks';
+import { GSDPeakOptimizedID } from './optimizePeaksWithLogs';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -38,7 +41,7 @@ export type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
 export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   peakList: T[],
   options: JoinBroadPeaksOptions = {},
-): GSDPeakOptimized[] {
+): GSDPeakOptimizedID[] {
   let {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
@@ -52,8 +55,8 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   const broadLines: T[] = [];
 
   if (peakList.length < 2) {
-    return addMissingShape(peakList, { shape }).map(
-      getGSDPeakOptimizedStructure,
+    return addMissingIDs(
+      addMissingShape(peakList.map(getGSDPeakOptimizedStructure), { shape }),
     );
   }
 
@@ -95,6 +98,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
           candidates,
           [
             {
+              id: generateID(),
               x: broadLines[maxI].x,
               y: max,
               width: candidates.x[0] - candidates.x[candidates.x.length - 1],
@@ -121,7 +125,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
     return a.x - b.x;
   });
 
-  return newPeaks;
+  return addMissingIDs(newPeaks, { output: newPeaks });
 }
 
 function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
