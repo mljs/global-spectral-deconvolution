@@ -279,5 +279,5 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     return a.x - b.x;
   });
 
-  return setShape(peaks, { shape });
+  return setShape(peaks, { shape }) as GSDPeakID[];
 }
