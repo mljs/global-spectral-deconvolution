@@ -63,7 +63,7 @@ describe('smooth:false option', () => {
         },
       },
     ];
-    expect(peakList).toBeDeepCloseTo(expected);
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
   });
 
   it('negative maxima peaks', () => {
@@ -101,7 +101,7 @@ describe('smooth:false option', () => {
         },
       },
     ];
-    expect(peakList).toBeDeepCloseTo(expected);
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
   });
 
   it('Negative peaks', () => {
@@ -143,7 +143,7 @@ describe('smooth:false option', () => {
       },
     ];
 
-    expect(peakList).toBeDeepCloseTo(expected);
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
   });
 
   it('minima peaks', () => {
@@ -185,7 +185,7 @@ describe('smooth:false option', () => {
       },
     ];
 
-    expect(peakList).toBeDeepCloseTo(expected);
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
   });
 
   it('negative peaks with maxCriteria true', () => {
@@ -196,3 +196,10 @@ describe('smooth:false option', () => {
     expect(peakList).toHaveLength(0);
   });
 });
+
+function addMissingID(peaks, expected) {
+  for (let i = 0; i < expected.length; i++) {
+    expected[i].id = peaks[i].id;
+  }
+  return expected
+}
