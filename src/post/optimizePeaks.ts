@@ -5,10 +5,7 @@ import type { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
 
-import {
-  optimizePeaksWithLogs,
-  PeakXYWidthWidthOptionalID,
-} from './optimizePeaksWithLogs';
+import { Peak, optimizePeaksWithLogs } from './optimizePeaksWithLogs';
 
 export interface OptimizePeaksOptions {
   /**
@@ -48,7 +45,7 @@ export interface OptimizePeaksOptions {
  */
 export function optimizePeaks(
   data: DataXY,
-  peakList: PeakXYWidthWidthOptionalID[],
+  peakList: Peak[],
   options: OptimizePeaksOptions = {},
 ): GSDPeakOptimized[] {
   return optimizePeaksWithLogs(data, peakList, options).optimizedPeaks;

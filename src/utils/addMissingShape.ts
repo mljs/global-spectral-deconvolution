@@ -5,7 +5,7 @@ import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
  * if shape exists but fwhm doesn't, it will be calculated from peak.width
  */
 
-export function addMissingShape<T extends { width: number; shape?: Shape1D }>(
+export function addMissingShape<T extends { width: number }>(
   peaks: T[],
   options: { shape?: Shape1D } = {},
 ): (T & { shape: Shape1D })[] {

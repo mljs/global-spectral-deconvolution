@@ -4,14 +4,23 @@ import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { MakeMandatory } from '../utils/MakeMandatory';
 import { addMissingShape } from '../utils/addMissingShape';
 import { groupPeaks } from '../utils/groupPeaks';
 
 import { OptimizePeaksOptions } from './optimizePeaks';
 
-export interface PeakXYWidthWidthOptionalID extends PeakXYWidth {
+export interface Peak extends PeakXYWidth {
   id?: string;
 }
+
+export type GSDPeakOptimizedID = MakeMandatory<GSDPeakOptimized, 'id'>;
+
+type GSDPeakOptimizedIDOrNot<T extends Peak> = T extends {
+  id: string;
+}
+  ? GSDPeakOptimizedID
+  : GSDPeakOptimized;
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
@@ -19,11 +28,11 @@ export interface PeakXYWidthWidthOptionalID extends PeakXYWidth {
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
-export function optimizePeaksWithLogs(
+export function optimizePeaksWithLogs<T extends Peak>(
   data: DataXY,
-  peakList: PeakXYWidthWidthOptionalID[],
+  peakList: T[],
   options: OptimizePeaksOptions = {},
-): { logs: any[]; optimizedPeaks: GSDPeakOptimized[] } {
+): { logs: any[]; optimizedPeaks: GSDPeakOptimizedIDOrNot<T>[] } {
   const {
     fromTo = {},
     baseline,
@@ -112,5 +121,5 @@ export function optimizePeaksWithLogs(
     }
   });
 
-  return { logs, optimizedPeaks: results };
+  return { logs, optimizedPeaks: results as GSDPeakOptimizedIDOrNot<T>[] };
 }
