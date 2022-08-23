@@ -1,4 +1,3 @@
-import { v4 as generateID } from '@lukeed/uuid';
 import type { DataXY } from 'cheminfo-types';
 import { Shape1D } from 'ml-peak-shape-generator';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
@@ -11,7 +10,6 @@ import {
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
-import { MakeMandatory } from './utils/MakeMandatory';
 import { MakeOptional } from './utils/MakeOptional';
 import { optimizeTop } from './utils/optimizeTop';
 import { setShape } from './utils/setShape';
@@ -55,9 +53,7 @@ export interface GSDOptions {
    */
   shape?: Shape1D;
 }
-
-export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
-export type GSDPeakIDOptionalShape = MakeOptional<GSDPeakID, 'shape'>;
+export type GSDPeakIDOptionalShape = MakeOptional<GSDPeak, 'shape'>;
 /**
  * Global spectra deconvolution
  * @param  data - Object data with x and y arrays. Values in x has to be growing
@@ -66,7 +62,7 @@ export type GSDPeakIDOptionalShape = MakeOptional<GSDPeakID, 'shape'>;
 
  */
 
-export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
+export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeak[] {
   let {
     sgOptions = {
       windowSize: 9,
@@ -250,7 +246,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
       if (yData[minddYIndex] > yThreshold) {
         let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         peaks.push({
-          id: generateID(),
           x: deltaX,
           y: yData[minddYIndex],
           width,
