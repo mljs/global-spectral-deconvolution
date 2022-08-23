@@ -112,7 +112,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
         message: 'optimization successful',
       });
     } else {
-      results.push(...peaks as GSDPeakOptimizedIDOrNot<T>[]);
+      results.push(...(peaks as GSDPeakOptimizedIDOrNot<T>[]));
       logs.push({
         ...log,
         iterations: 0,

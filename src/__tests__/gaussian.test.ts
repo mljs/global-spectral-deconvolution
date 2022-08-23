@@ -201,5 +201,5 @@ function addMissingID(peaks, expected) {
   for (let i = 0; i < expected.length; i++) {
     expected[i].id = peaks[i].id;
   }
-  return expected
+  return expected;
 }
