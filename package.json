@@ -83,7 +83,7 @@
     "cheminfo-types": "^1.1.0",
     "ml-peak-shape-generator": "^4.1.1",
     "ml-savitzky-golay-generalized": "^4.0.1",
-    "ml-spectra-fitting": "^4.1.0-pre.1661357854",
+    "ml-spectra-fitting": "^4.1.1",
     "ml-spectra-processing": "^11.6.0"
   }
 }
