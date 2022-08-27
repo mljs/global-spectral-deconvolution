@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v12.0.0...v12.1.0) (2022-08-27)
+
+
+### Features
+
+* peak picking returns id and keep id if it exists ([#108](https://github.com/mljs/global-spectral-deconvolution/issues/108)) ([f22f5a5](https://github.com/mljs/global-spectral-deconvolution/commit/f22f5a5f3077aa86f2efbd3e9eb8cbab92ba416b))
+
 ## [12.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v11.3.0...v12.0.0) (2022-08-06)
 
 
