@@ -33,6 +33,7 @@ describe('gaussian simulated peaks', () => {
     });
     expect(peakList).toBeDeepCloseTo([
       {
+        id: peakList[0].id,
         x: -0.5,
         y: 0.6945098953985852,
         ddY: -259.83290100626783,
@@ -48,6 +49,7 @@ describe('gaussian simulated peaks', () => {
         },
       },
       {
+        id: peakList[1].id,
         x: 0.5,
         y: 0.6945098953985852,
         ddY: -259.83290100626783,

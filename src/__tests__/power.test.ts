@@ -51,6 +51,7 @@ describe('power', () => {
     let peakList = gsd(data);
     let expected = [
       {
+        id: peakList[0].id,
         x: 5,
         y: 10000,
         width: 0.3,
@@ -77,6 +78,7 @@ describe('power', () => {
     // This shape is anyway quite strange
     const expected = [
       {
+        id: peakList[0].id,
         x: 4.45,
         y: 7921,
         width: 0.05,
@@ -92,6 +94,7 @@ describe('power', () => {
         },
       },
       {
+        id: peakList[1].id,
         x: 5,
         y: 10000,
         width: 0.2,
@@ -107,6 +110,7 @@ describe('power', () => {
         },
       },
       {
+        id: peakList[2].id,
         x: 5.55,
         y: 7921,
         width: 0.05,

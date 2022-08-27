@@ -4,10 +4,23 @@ import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { MakeMandatory } from '../utils/MakeMandatory';
 import { addMissingShape } from '../utils/addMissingShape';
 import { groupPeaks } from '../utils/groupPeaks';
 
 import { OptimizePeaksOptions } from './optimizePeaks';
+
+export interface Peak extends PeakXYWidth {
+  id?: string;
+}
+
+export type GSDPeakOptimizedID = MakeMandatory<GSDPeakOptimized, 'id'>;
+
+type GSDPeakOptimizedIDOrNot<T extends Peak> = T extends {
+  id: string;
+}
+  ? GSDPeakOptimizedID
+  : GSDPeakOptimized;
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
@@ -15,11 +28,11 @@ import { OptimizePeaksOptions } from './optimizePeaks';
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
  */
-export function optimizePeaksWithLogs(
+export function optimizePeaksWithLogs<T extends Peak>(
   data: DataXY,
-  peakList: PeakXYWidth[],
+  peakList: T[],
   options: OptimizePeaksOptions = {},
-): { logs: any[]; optimizedPeaks: GSDPeakOptimized[] } {
+): { logs: any[]; optimizedPeaks: GSDPeakOptimizedIDOrNot<T>[] } {
   const {
     fromTo = {},
     baseline,
@@ -41,7 +54,7 @@ export function optimizePeaksWithLogs(
 */
   let groups = groupPeaks(peakList, { factor: groupingFactor });
   let logs: any[] = [];
-  let results: GSDPeakOptimized[] = [];
+  let results: GSDPeakOptimizedIDOrNot<T>[] = [];
   groups.forEach((peakGroup) => {
     const start = Date.now();
     // In order to make optimization we will add fwhm and shape on all the peaks
@@ -90,7 +103,7 @@ export function optimizePeaksWithLogs(
           width: getShape1D(peaks[i].shape).fwhmToWidth(
             optimizedPeaks[i].shape.fwhm,
           ),
-        });
+        } as GSDPeakOptimizedIDOrNot<T>);
       }
       logs.push({
         ...log,
@@ -99,7 +112,7 @@ export function optimizePeaksWithLogs(
         message: 'optimization successful',
       });
     } else {
-      results = results.concat(peaks);
+      results.push(...(peaks as GSDPeakOptimizedIDOrNot<T>[]));
       logs.push({
         ...log,
         iterations: 0,

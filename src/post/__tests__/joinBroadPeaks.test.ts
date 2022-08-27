@@ -26,7 +26,6 @@ describe('joinBroadPeaks', () => {
       broadRatio: 0.03,
       broadWidth: 0.25,
     });
-
     expect(peaks.length).toBeGreaterThan(3);
     expect(newPeaks).toHaveLength(3);
   });

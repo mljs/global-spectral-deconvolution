@@ -1,11 +1,15 @@
+import { v4 as generateID } from '@lukeed/uuid';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { OptimizationOptions } from 'ml-spectra-fitting';
 
 import { GSDPeak } from '../GSDPeak';
 import { GSDPeakOptimized } from '../GSDPeakOptimized';
+import { MakeOptional } from '../utils/MakeOptional';
+import { addMissingIDs } from '../utils/addMissingIDs';
 import { addMissingShape } from '../utils/addMissingShape';
 
 import { optimizePeaks } from './optimizePeaks';
+import { GSDPeakOptimizedID } from './optimizePeaksWithLogs';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -32,13 +36,12 @@ export interface JoinBroadPeaksOptions {
  * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
  */
 
-export interface GSDPeakWithOptionalShape extends Omit<GSDPeak, 'shape'> {
-  shape?: Shape1D;
-}
-export function joinBroadPeaks(
-  peakList: GSDPeakWithOptionalShape[],
+export type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+
+export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
+  peakList: T[],
   options: JoinBroadPeaksOptions = {},
-): GSDPeak[] {
+): GSDPeakOptimizedID[] {
   let {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
@@ -49,19 +52,25 @@ export function joinBroadPeaks(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: GSDPeakOptimized[] = [];
-  const peaks = addMissingShape(peakList, { shape });
+  const broadLines: T[] = [];
 
-  if (peaks.length < 2) return peaks;
+  if (peakList.length < 2) {
+    return addMissingIDs(
+      addMissingShape(peakList.map(getGSDPeakOptimizedStructure), { shape }),
+    );
+  }
 
   let maxDdy = peakList[0].ddY;
   for (let i = 1; i < peakList.length; i++) {
     if (Math.abs(peakList[i].ddY) > maxDdy) maxDdy = Math.abs(peakList[i].ddY);
   }
 
-  for (let i: number = peaks.length - 1; i >= 0; i--) {
-    if (Math.abs(peaks[i].ddY) <= broadRatio * maxDdy) {
-      broadLines.push(peaks.splice(i, 1)[0]);
+  const newPeaks: GSDPeakOptimized[] = [];
+  for (const peak of peakList) {
+    if (Math.abs(peak.ddY) <= broadRatio * maxDdy) {
+      broadLines.push(peak);
+    } else {
+      newPeaks.push(getGSDPeakOptimizedStructure(peak));
     }
   }
 
@@ -89,6 +98,7 @@ export function joinBroadPeaks(
           candidates,
           [
             {
+              id: generateID(),
               x: broadLines[maxI].x,
               y: max,
               width: candidates.x[0] - candidates.x[candidates.x.length - 1],
@@ -96,14 +106,12 @@ export function joinBroadPeaks(
           ],
           { shape, optimization },
         );
-        //@ts-expect-error type is equal as expected
-        peaks.push(fitted[0]);
+        newPeaks.push(fitted[0]);
       } else {
         // Put back the candidates to the peak list
-        indexes.forEach((index) => {
-          // @ts-expect-error todo 2
-          peaks.push(broadLines[index]);
-        });
+        for (const index of indexes) {
+          newPeaks.push(getGSDPeakOptimizedStructure(broadLines[index]));
+        }
       }
 
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
@@ -113,9 +121,24 @@ export function joinBroadPeaks(
       count = 1;
     }
   }
-  peaks.sort((a, b) => {
+  newPeaks.sort((a, b) => {
     return a.x - b.x;
   });
 
-  return peaks;
+  return addMissingIDs(newPeaks, { output: newPeaks });
+}
+
+function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
+  const { id, shape, x, y, width } = peak;
+
+  let newPeak = {
+    x,
+    y,
+    width,
+    shape,
+  } as GSDPeakOptimized;
+
+  if (id) newPeak.id = id;
+
+  return newPeak;
 }

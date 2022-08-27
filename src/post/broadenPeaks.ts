@@ -1,5 +1,21 @@
+import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
+
 import { GSDBroadenPeak } from '../GSDBroadenPeak';
 import { GSDPeak } from '../GSDPeak';
+import { MakeOptional } from '../utils/MakeOptional';
+
+type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+
+type GSDBroadenPeakWithID = GSDBroadenPeak & { id: string };
+type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1D };
+type GSDBroadenPeakWithShapeID = GSDBroadenPeakWithID & { shape: Shape1D };
+
+export type WithOrWithout<T, ToExtends, TrueType, FalseType> =
+  T extends ToExtends ? TrueType : FalseType;
+
+export type WithIDOrShape<T> = T extends { id: string }
+  ? WithOrWithout<T, GSDPeak, GSDBroadenPeakWithShapeID, GSDBroadenPeakWithID>
+  : WithOrWithout<T, GSDPeak, GSDBroadenPeakWithShape, GSDBroadenPeak>;
 
 /**
  * This method will allow to enlarge peaks while preventing overlap between peaks
@@ -9,8 +25,8 @@ import { GSDPeak } from '../GSDPeak';
  * @return {Array} peakList
  */
 
-export function broadenPeaks(
-  peakList: Omit<GSDPeak, 'shape'>[],
+export function broadenPeaks<T extends GSDPeakOptionalShape>(
+  peakList: T[],
   options: {
     /**
      * @default 2
@@ -22,21 +38,10 @@ export function broadenPeaks(
      */
     overlap?: boolean;
   } = {},
-): GSDBroadenPeak[] {
+) {
   const { factor = 2, overlap = false } = options;
 
-  const peaks = peakList.map((peak) => {
-    const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;
-    const xTo = peak.x + (peak.inflectionPoints.to.x - peak.x) * factor;
-    return {
-      x: peak.x,
-      y: peak.y,
-      index: peak.index,
-      width: xTo - xFrom,
-      from: { x: xFrom },
-      to: { x: xTo },
-    };
-  });
+  const peaks = mapPeaks(peakList, factor);
 
   if (!overlap) {
     for (let i = 0; i < peaks.length - 1; i++) {
@@ -51,9 +56,48 @@ export function broadenPeaks(
     }
   }
 
-  for (let peak of peaks) {
+  for (const peak of peaks) {
     peak.width = peak.to.x - peak.from.x;
+    if (peak.shape) {
+      const { shape, width } = peak;
+      if (shape.fwhm !== undefined) {
+        const shapeFct = getShape1D(shape);
+        peak.shape.fwhm = shapeFct.widthToFWHM(width);
+      }
+    }
   }
 
   return peaks;
+}
+
+function mapPeaks<T extends GSDPeakOptionalShape>(
+  peaks: T[],
+  factor: number,
+): WithIDOrShape<T>[] {
+  return peaks.map((peak) => {
+    const { id, shape } = peak;
+    const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;
+    const xTo = peak.x + (peak.inflectionPoints.to.x - peak.x) * factor;
+
+    let result = {
+      x: peak.x,
+      y: peak.y,
+      index: peak.index,
+      width: xTo - xFrom,
+      from: { x: xFrom },
+      to: { x: xTo },
+    } as GSDBroadenPeak;
+
+    if (id) {
+      result = { ...result, id } as GSDBroadenPeakWithID;
+    }
+
+    if (shape) {
+      result = { ...result, shape } as T extends { id: string }
+        ? GSDBroadenPeakWithShapeID
+        : GSDBroadenPeakWithShape;
+    }
+
+    return result as WithIDOrShape<T>;
+  });
 }
