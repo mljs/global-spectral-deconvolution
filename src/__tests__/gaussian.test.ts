@@ -38,10 +38,6 @@ describe('smooth:false option', () => {
         ddY: -259.83290100626783,
         width: 0.08,
         index: 25,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 23, x: -0.54 },
           to: { index: 27, x: -0.46 },
@@ -53,10 +49,6 @@ describe('smooth:false option', () => {
         ddY: -259.83290100626783,
         width: 0.08,
         index: 75,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 73, x: 0.46 },
           to: { index: 77, x: 0.54 },
@@ -76,10 +68,6 @@ describe('smooth:false option', () => {
         ddY: -259.83290100626783,
         width: 0.08,
         index: 25,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 23, x: -0.54 },
           to: { index: 27, x: -0.46 },
@@ -91,10 +79,6 @@ describe('smooth:false option', () => {
         ddY: -259.83290100626783,
         width: 0.08,
         index: 75,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 73, x: 0.46 },
           to: { index: 77, x: 0.54 },
@@ -117,10 +101,6 @@ describe('smooth:false option', () => {
         ddY: 259.83290100626783,
         width: 0.08,
         index: 25,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 23, x: -0.54 },
           to: { index: 27, x: -0.46 },
@@ -132,10 +112,6 @@ describe('smooth:false option', () => {
         ddY: 259.83290100626783,
         width: 0.08,
         index: 75,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 73, x: 0.46 },
           to: { index: 77, x: 0.54 },
@@ -159,10 +135,6 @@ describe('smooth:false option', () => {
         ddY: 259.83290100626783,
         width: 0.08,
         index: 25,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 23, x: -0.54 },
           to: { index: 27, x: -0.46 },
@@ -174,10 +146,6 @@ describe('smooth:false option', () => {
         ddY: 259.83290100626783,
         width: 0.08,
         index: 75,
-        shape: {
-          fwhm: 0.09419280180123805,
-          kind: 'gaussian',
-        },
         inflectionPoints: {
           from: { index: 73, x: 0.46 },
           to: { index: 77, x: 0.54 },

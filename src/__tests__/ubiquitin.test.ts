@@ -30,10 +30,6 @@ describe('Global spectra deconvolution ubiquitin', () => {
       ddY: -15468134.039875854,
       width: 0.002420000000000755,
       index: 11,
-      shape: {
-        fwhm: 0.0028493322544883375,
-        kind: 'gaussian',
-      },
       inflectionPoints: {
         from: { x: 200.054133, index: 9 },
         to: { x: 200.056553, index: 13 },

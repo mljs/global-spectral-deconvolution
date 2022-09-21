@@ -10,9 +10,6 @@
     "src",
     "lib-esm"
   ],
-  "env": {
-    "jest": true
-  },
   "scripts": {
     "build": "npm run tsc-esm && cheminfo-build --entry lib-esm/index.js --root GSD",
     "check-types": "tsc --noEmit",
@@ -43,7 +40,7 @@
   "author": "Andres Castillo",
   "contributors": [
     "Miguel Asencio <maasencioh@gmail.com> (https://github.com/maasencioh)",
-    "Alejandro Bolaños <jose.bolanos@correounivalle.edu.co> (https://github.com/jobo322)"
+    "J. Alejandro Bolaños A. <jose.bolanos@correounivalle.edu.co> (https://github.com/jobo322)"
   ],
   "license": "MIT",
   "bugs": {

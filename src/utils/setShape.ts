@@ -22,7 +22,6 @@ export function setShape<T extends { width: number }>(
     output = parse(stringify(peaks)) as T[],
   } = options;
   let shapeInstance = getShape1D(shape);
-
   return output.map((peak) => ({
     ...peak,
     shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape },
