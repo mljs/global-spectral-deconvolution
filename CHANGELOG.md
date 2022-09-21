@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.1](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.0...v12.1.1) (2022-09-21)
+
+
+### Bug Fixes
+
+* remove shape from gsd peaks ([#111](https://github.com/mljs/global-spectral-deconvolution/issues/111)) ([926ca69](https://github.com/mljs/global-spectral-deconvolution/commit/926ca69f130f3bda4bc63de8827660de082fe95d))
+
 ## [12.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v12.0.0...v12.1.0) (2022-08-27)
 
 
