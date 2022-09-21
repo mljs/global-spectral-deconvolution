@@ -1,6 +1,5 @@
 import { v4 as generateID } from '@lukeed/uuid';
 import type { DataXY } from 'cheminfo-types';
-import { Shape1D } from 'ml-peak-shape-generator';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
@@ -14,7 +13,6 @@ import { GSDPeak } from './GSDPeak';
 import { MakeMandatory } from './utils/MakeMandatory';
 import { MakeOptional } from './utils/MakeOptional';
 import { optimizeTop } from './utils/optimizeTop';
-import { setShape } from './utils/setShape';
 
 export interface GSDOptions {
   /**
@@ -49,11 +47,6 @@ export interface GSDOptions {
    * @default false
    */
   realTopDetection?: boolean;
-  /**
-   * Shape used to add FWHM property in the peaks
-   * @default {kind:'gaussian'}
-   */
-  shape?: Shape1D;
 }
 export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
 export type GSDPeakIDOptionalShape = MakeOptional<GSDPeak, 'shape'>;
@@ -71,7 +64,6 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
       windowSize: 9,
       polynomial: 3,
     },
-    shape,
     noiseLevel,
     smoothY = false,
     maxCriteria = true,
@@ -279,5 +271,5 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     return a.x - b.x;
   });
 
-  return setShape(peaks, { shape }) as GSDPeakID[];
+  return peaks as GSDPeakID[];
 }
