@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.2](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.1...v12.1.2) (2022-09-22)
+
+
+### Bug Fixes
+
+* remove shape from type definitions ([#114](https://github.com/mljs/global-spectral-deconvolution/issues/114)) ([ea30120](https://github.com/mljs/global-spectral-deconvolution/commit/ea301202e0a011581790eb390ab91012f1eee3ef))
+
 ## [12.1.1](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.0...v12.1.1) (2022-09-21)
 
 
