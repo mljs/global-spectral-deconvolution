@@ -11,7 +11,6 @@ import {
 
 import { GSDPeak } from './GSDPeak';
 import { MakeMandatory } from './utils/MakeMandatory';
-import { MakeOptional } from './utils/MakeOptional';
 import { optimizeTop } from './utils/optimizeTop';
 
 export interface GSDOptions {
@@ -49,7 +48,7 @@ export interface GSDOptions {
   realTopDetection?: boolean;
 }
 export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
-export type GSDPeakIDOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+
 /**
  * Global spectra deconvolution
  * @param  data - Object data with x and y arrays. Values in x has to be growing
@@ -213,7 +212,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   let lastK = -1;
 
-  const peaks: GSDPeakIDOptionalShape[] = [];
+  const peaks: GSDPeakID[] = [];
   for (const minddYIndex of minddY) {
     let deltaX = x[minddYIndex];
     let possible = -1;
@@ -271,5 +270,5 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     return a.x - b.x;
   });
 
-  return peaks as GSDPeakID[];
+  return peaks;
 }

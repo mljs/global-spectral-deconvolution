@@ -2,9 +2,8 @@ import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
 
 import { GSDBroadenPeak } from '../GSDBroadenPeak';
 import { GSDPeak } from '../GSDPeak';
-import { MakeOptional } from '../utils/MakeOptional';
 
-type GSDPeakOptionalShape = MakeOptional<GSDPeak, 'shape'>;
+type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
 
 type GSDBroadenPeakWithID = GSDBroadenPeak & { id: string };
 type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1D };
