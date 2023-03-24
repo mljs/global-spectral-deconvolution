@@ -119,7 +119,7 @@ i
 [npm-url]: https://npmjs.org/package/ml-gsd
 [codecov-image]: https://img.shields.io/codecov/c/github/mljs/global-spectral-deconvolution.svg
 [codecov-url]: https://codecov.io/gh/mljs/global-spectral-deconvolution
-[ci-image]: https://github.com/mljs/global-spectral-deconvolution/workflows/Node.js%20CI/badge.svg?branch=master
+[ci-image]: https://github.com/mljs/global-spectral-deconvolution/workflows/Node.js%20CI/badge.svg?branch=main
 [ci-url]: https://github.com/mljs/global-spectral-deconvolution/actions?query=workflow%3A%22Node.js+CI%22
 [download-image]: https://img.shields.io/npm/dm/ml-gsd.svg
 [download-url]: https://npmjs.org/package/ml-gsd
