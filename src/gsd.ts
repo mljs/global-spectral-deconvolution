@@ -3,7 +3,7 @@ import type { DataXY } from 'cheminfo-types';
 import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
-  xIsMonotoneIncreasing,
+  xIsMonotonic,
   xMinValue,
   xMaxValue,
   xNoiseStandardDeviation,
@@ -71,7 +71,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   } = options;
 
   let { x, y } = data;
-  if (!xIsMonotoneIncreasing(x)) {
+  if (xIsMonotonic(x) !== 1) {
     throw new Error('GSD only accepts monotone increasing x values');
   }
   //rescale;
@@ -92,13 +92,11 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     } else {
       noiseLevel = 0;
     }
-  } else {
-    if (maxCriteria === false) {
-      noiseLevel *= -1;
-    }
+  } else if (!maxCriteria) {
+    noiseLevel *= -1;
   }
 
-  if (maxCriteria === false) {
+  if (!maxCriteria) {
     for (let i = 0; i < y.length; i++) {
       y[i] *= -1;
     }
