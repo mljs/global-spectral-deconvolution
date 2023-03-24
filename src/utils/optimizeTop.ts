@@ -21,21 +21,21 @@ export function optimizeTop<T extends { index: number; x: number; y: number }>(
     ) {
       currentIndex--;
     } else if (
-        y[currentIndex + 1] >= y[currentIndex] &&
-        y[currentIndex + 1] >= y[currentIndex + 2]
-      ) {
-        currentIndex++;
-      } else if (
-          y[currentIndex - 2] >= y[currentIndex - 3] &&
-          y[currentIndex - 2] >= y[currentIndex - 1]
-        ) {
-          currentIndex -= 2;
-        } else if (
-            y[currentIndex + 2] >= y[currentIndex + 1] &&
-            y[currentIndex + 2] >= y[currentIndex + 3]
-          ) {
-            currentIndex += 2;
-          }
+      y[currentIndex + 1] >= y[currentIndex] &&
+      y[currentIndex + 1] >= y[currentIndex + 2]
+    ) {
+      currentIndex++;
+    } else if (
+      y[currentIndex - 2] >= y[currentIndex - 3] &&
+      y[currentIndex - 2] >= y[currentIndex - 1]
+    ) {
+      currentIndex -= 2;
+    } else if (
+      y[currentIndex + 2] >= y[currentIndex + 1] &&
+      y[currentIndex + 2] >= y[currentIndex + 3]
+    ) {
+      currentIndex += 2;
+    }
     // interpolation to a sin() function
     if (
       y[currentIndex - 1] > 0 &&
