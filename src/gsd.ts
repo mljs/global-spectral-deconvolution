@@ -111,42 +111,35 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   let yData = y;
   let dY, ddY;
-  const { windowSize, polynomial } = sgOptions;
 
   if (equallySpaced) {
     if (smoothY) {
       yData = sgg(y, x[1] - x[0], {
-        windowSize,
-        polynomial,
+        ...sgOptions,
         derivative: 0,
       });
     }
     dY = sgg(y, x[1] - x[0], {
-      windowSize,
-      polynomial,
+      ...sgOptions,
       derivative: 1,
     });
     ddY = sgg(y, x[1] - x[0], {
-      windowSize,
-      polynomial,
+      ...sgOptions,
       derivative: 2,
     });
   } else {
     if (smoothY) {
       yData = sgg(y, x, {
-        windowSize,
-        polynomial,
+        ...sgOptions,
         derivative: 0,
       });
     }
     dY = sgg(y, x, {
-      windowSize,
-      polynomial,
+      ...sgOptions,
       derivative: 1,
     });
     ddY = sgg(y, x, {
-      windowSize,
-      polynomial,
+      ...sgOptions,
       derivative: 2,
     });
   }

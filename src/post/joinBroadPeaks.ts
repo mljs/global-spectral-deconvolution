@@ -100,7 +100,9 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
               id: generateID(),
               x: broadLines[maxI].x,
               y: max,
-              width: candidates.x[0] - candidates.x[candidates.x.length - 1],
+              width: Math.abs(
+                candidates.x[candidates.x.length - 1] - candidates.x[0],
+              ),
             },
           ],
           { shape, optimization },
