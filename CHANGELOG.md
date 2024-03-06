@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.4](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.3...v12.1.4) (2024-03-06)
+
+
+### Bug Fixes
+
+* fix new width in broad singlet peak ([#117](https://github.com/mljs/global-spectral-deconvolution/issues/117)) ([79eb832](https://github.com/mljs/global-spectral-deconvolution/commit/79eb832c78b7503a447dd8061d63ec9872eb0aca))
+
 ## [12.1.3](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.2...v12.1.3) (2023-03-24)
 
 
