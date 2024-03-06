@@ -4,9 +4,8 @@ import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
   xIsMonotonic,
-  xMinValue,
-  xMaxValue,
   xNoiseStandardDeviation,
+  xMinMaxValues,
 } from 'ml-spectra-processing';
 
 import { GSDPeak } from './GSDPeak';
@@ -79,7 +78,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
-  let equallySpaced = xIsEquallySpaced(x);
+  const equallySpaced = xIsEquallySpaced(x);
 
   if (noiseLevel === undefined) {
     if (equallySpaced) {
@@ -109,50 +108,25 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     }
   }
 
-  let yData = y;
-  let dY, ddY;
-  const { windowSize, polynomial } = sgOptions;
+  const xValue = equallySpaced ? x[1] - x[0] : x;
 
-  if (equallySpaced) {
-    if (smoothY) {
-      yData = sgg(y, x[1] - x[0], {
-        windowSize,
-        polynomial,
+  const yData = smoothY
+    ? sgg(y, xValue, {
+        ...sgOptions,
         derivative: 0,
-      });
-    }
-    dY = sgg(y, x[1] - x[0], {
-      windowSize,
-      polynomial,
-      derivative: 1,
-    });
-    ddY = sgg(y, x[1] - x[0], {
-      windowSize,
-      polynomial,
-      derivative: 2,
-    });
-  } else {
-    if (smoothY) {
-      yData = sgg(y, x, {
-        windowSize,
-        polynomial,
-        derivative: 0,
-      });
-    }
-    dY = sgg(y, x, {
-      windowSize,
-      polynomial,
-      derivative: 1,
-    });
-    ddY = sgg(y, x, {
-      windowSize,
-      polynomial,
-      derivative: 2,
-    });
-  }
+      })
+    : y;
 
-  const minY = xMinValue(yData);
-  const maxY = xMaxValue(yData);
+  const dY = sgg(y, xValue, {
+    ...sgOptions,
+    derivative: 1,
+  });
+  const ddY = sgg(y, xValue, {
+    ...sgOptions,
+    derivative: 2,
+  });
+
+  const { min: minY, max: maxY } = xMinMaxValues(yData);
 
   if (minY > maxY || minY === maxY) return [];
 
