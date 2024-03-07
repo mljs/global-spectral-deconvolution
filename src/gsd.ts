@@ -57,19 +57,19 @@ export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
  */
 
 export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
-  let {
+  let { noiseLevel } = options;
+  const {
     sgOptions = {
       windowSize: 9,
       polynomial: 3,
     },
-    noiseLevel,
     smoothY = false,
     maxCriteria = true,
     minMaxRatio = 0.00025,
     realTopDetection = false,
   } = options;
-
-  let { x, y } = data;
+  const { x } = data;
+  let { y } = data;
   if (xIsMonotonic(x) !== 1) {
     throw new Error('GSD only accepts monotone increasing x values');
   }
@@ -141,9 +141,9 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   let lastMax: XIndex | null = null;
   let lastMin: XIndex | null = null;
-  let minddY: number[] = [];
-  let intervalL: XIndex[] = [];
-  let intervalR: XIndex[] = [];
+  const minddY: number[] = [];
+  const intervalL: XIndex[] = [];
+  const intervalR: XIndex[] = [];
 
   // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
   for (let i = 1; i < yData.length - 1; ++i) {
@@ -186,7 +186,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   const peaks: GSDPeakID[] = [];
   for (const minddYIndex of minddY) {
-    let deltaX = x[minddYIndex];
+    const deltaX = x[minddYIndex];
     let possible = -1;
     let k = lastK + 1;
     let minDistance = Number.POSITIVE_INFINITY;
@@ -210,7 +210,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
     if (possible !== -1) {
       if (yData[minddYIndex] > yThreshold) {
-        let width = Math.abs(intervalR[possible].x - intervalL[possible].x);
+        const width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         peaks.push({
           id: generateID(),
           x: deltaX,

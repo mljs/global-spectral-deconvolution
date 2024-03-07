@@ -20,7 +20,7 @@ describe('optimizePeaksWithLogs', () => {
       },
     });
 
-    let result = optimizePeaksWithLogs(data, [
+    const result = optimizePeaksWithLogs(data, [
       {
         x: 0.01,
         y: 0.9,

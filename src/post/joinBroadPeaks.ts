@@ -41,7 +41,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   peakList: T[],
   options: JoinBroadPeaksOptions = {},
 ): GSDPeakOptimizedID[] {
-  let {
+  const {
     shape = { kind: 'gaussian' },
     optimization = { kind: 'lm', options: { timeout: 10 } },
     broadWidth = 0.25,
@@ -93,7 +93,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
       count++;
     } else {
       if (count > 2) {
-        let fitted = optimizePeaks(
+        const fitted = optimizePeaks(
           candidates,
           [
             {
@@ -132,7 +132,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
 function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
   const { id, shape, x, y, width } = peak;
 
-  let newPeak = {
+  const newPeak = {
     x,
     y,
     width,

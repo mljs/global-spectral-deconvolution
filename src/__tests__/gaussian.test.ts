@@ -29,9 +29,9 @@ describe('smooth:false option', () => {
   // we have here a low resolution spectrum so the impact is big
 
   it('positive maxima peaks', () => {
-    let peakList = gsd(data);
+    const peakList = gsd(data);
 
-    let expected = [
+    const expected = [
       {
         x: -0.5,
         y: 1,
@@ -59,9 +59,12 @@ describe('smooth:false option', () => {
   });
 
   it('negative maxima peaks', () => {
-    let peakList = gsd({ x: data.x, y: data.y.map((value) => value - 2) }, {});
+    const peakList = gsd(
+      { x: data.x, y: data.y.map((value) => value - 2) },
+      {},
+    );
 
-    let expected = [
+    const expected = [
       {
         x: -0.5,
         y: -1,
@@ -90,11 +93,11 @@ describe('smooth:false option', () => {
 
   it('Negative peaks', () => {
     // we check negative peaks
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => -value) },
       { maxCriteria: false },
     );
-    let expected = [
+    const expected = [
       {
         x: -0.5,
         y: -1,
@@ -124,11 +127,11 @@ describe('smooth:false option', () => {
 
   it('minima peaks', () => {
     // we check negative peaks
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => 1 - value) },
       { maxCriteria: false },
     );
-    let expected = [
+    const expected = [
       {
         x: -0.5,
         y: 0,
@@ -157,7 +160,7 @@ describe('smooth:false option', () => {
   });
 
   it('negative peaks with maxCriteria true', () => {
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => -value) },
       { maxCriteria: true },
     );

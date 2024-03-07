@@ -2,7 +2,7 @@ import { groupPeaks } from '../groupPeaks';
 
 describe('groupPeaks', () => {
   it('default factor value', () => {
-    let result = groupPeaks([
+    const result = groupPeaks([
       { x: 5, y: 10, width: 5 },
       { x: 10, y: 10, width: 5 },
       { x: 30, y: 10, width: 5 },
@@ -17,7 +17,7 @@ describe('groupPeaks', () => {
   });
 
   it('factor = 0.1', () => {
-    let result = groupPeaks(
+    const result = groupPeaks(
       [
         { x: 5, y: 10, width: 5 },
         { x: 10, y: 10, width: 5 },
@@ -33,7 +33,7 @@ describe('groupPeaks', () => {
   });
 
   it('factor=3', () => {
-    let result = groupPeaks(
+    const result = groupPeaks(
       [
         { x: 5, y: 10, width: 5 },
         { x: 10, y: 10, width: 5 },
@@ -51,7 +51,7 @@ describe('groupPeaks', () => {
   });
 
   it('factor=5', () => {
-    let result = groupPeaks(
+    const result = groupPeaks(
       [
         { x: 5, y: 10, width: 5 },
         { x: 10, y: 10, width: 5 },

@@ -29,12 +29,12 @@ describe('smooth:false option', () => {
   });
 
   it('positive maxima peaks but noiseLevel over the peaks', () => {
-    let peakList = gsd(data, { noiseLevel: 1.2 });
+    const peakList = gsd(data, { noiseLevel: 1.2 });
     expect(peakList).toStrictEqual([]);
   });
 
   it('positive maxima peaks', () => {
-    let peakList = gsd(data, { noiseLevel: 0.5 });
+    const peakList = gsd(data, { noiseLevel: 0.5 });
     expect(peakList).toMatchCloseTo([
       { x: -0.5, y: 1.131 },
       { x: 0.5, y: 1.05 },
@@ -42,7 +42,7 @@ describe('smooth:false option', () => {
   });
 
   it('negative maxima peaks', () => {
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => value - 2) },
       { noiseLevel: -1.5 },
     );
@@ -54,7 +54,7 @@ describe('smooth:false option', () => {
 
   it('Negative peaks', () => {
     // we check negative peaks
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => -value) },
       { maxCriteria: false, noiseLevel: -0.5 },
     );
@@ -66,7 +66,7 @@ describe('smooth:false option', () => {
 
   it('Negative peaks with noiseLevel too low', () => {
     // we check negative peaks
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => -value) },
       { maxCriteria: false, noiseLevel: -1.2 },
     );
@@ -75,7 +75,7 @@ describe('smooth:false option', () => {
 
   it('minima peaks', () => {
     // we check negative peaks
-    let peakList = gsd(
+    const peakList = gsd(
       { x: data.x, y: data.y.map((value) => 1 - value) },
       { maxCriteria: false, noiseLevel: 0.5 },
     );

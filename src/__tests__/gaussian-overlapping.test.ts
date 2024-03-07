@@ -27,7 +27,7 @@ describe('gaussian overlapping', () => {
       },
     });
 
-    let peaks = gsd(data, {});
+    const peaks = gsd(data, {});
     expect(peaks).toMatchCloseTo([
       {
         x: -0.1,
@@ -43,7 +43,7 @@ describe('gaussian overlapping', () => {
       },
     ]);
 
-    let optimizedPeaks = optimizePeaks(data, peaks, { groupingFactor: 3 });
+    const optimizedPeaks = optimizePeaks(data, peaks, { groupingFactor: 3 });
     expect(optimizedPeaks).toMatchCloseTo([
       {
         x: -0.1,

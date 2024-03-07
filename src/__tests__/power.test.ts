@@ -48,8 +48,8 @@ describe('power', () => {
   // we have here a low resolution spectrum so the impact is big
 
   it('default options', () => {
-    let peakList = gsd(data);
-    let expected = [
+    const peakList = gsd(data);
+    const expected = [
       {
         id: peakList[0].id,
         x: 5,
@@ -66,7 +66,7 @@ describe('power', () => {
     expect(peakList).toBeDeepCloseTo(expected);
   });
   it('custom options', () => {
-    let peakList = gsd(data, {
+    const peakList = gsd(data, {
       smoothY: false,
       sgOptions: { windowSize: 7, polynomial: 3 },
     });

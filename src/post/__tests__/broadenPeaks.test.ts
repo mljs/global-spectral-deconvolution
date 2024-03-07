@@ -6,12 +6,12 @@ expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 describe('broadenPeaks', () => {
   it('empty', () => {
-    let result = broadenPeaks([]);
+    const result = broadenPeaks([]);
     expect(result).toStrictEqual([]);
   });
 
   it('Default value, factor:2, overlap:false', () => {
-    let result = broadenPeaks([
+    const result = broadenPeaks([
       {
         x: -0.5,
         y: 1,
@@ -57,7 +57,7 @@ describe('broadenPeaks', () => {
   });
 
   it('no change, factor:1, overlap:false', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           x: -0.5,
@@ -105,7 +105,7 @@ describe('broadenPeaks', () => {
   });
 
   it('factor=10', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           x: -0.5,
@@ -153,7 +153,7 @@ describe('broadenPeaks', () => {
   });
 
   it('factor=20', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           x: -0.5,
@@ -201,7 +201,7 @@ describe('broadenPeaks', () => {
   });
 
   it('factor=20 not same width', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           x: -0.5,
@@ -249,7 +249,7 @@ describe('broadenPeaks', () => {
   });
 
   it('factor=20 overlap=true', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           x: -0.5,
@@ -297,7 +297,7 @@ describe('broadenPeaks', () => {
   });
 
   it('3 peaks factor=20', () => {
-    let result = broadenPeaks(
+    const result = broadenPeaks(
       [
         {
           id: '1',

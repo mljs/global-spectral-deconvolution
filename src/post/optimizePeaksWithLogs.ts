@@ -32,7 +32,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
   data: DataXY,
   peakList: T[],
   options: OptimizePeaksOptions = {},
-): { logs: any[]; optimizedPeaks: GSDPeakOptimizedIDOrNot<T>[] } {
+): { logs: any[]; optimizedPeaks: Array<GSDPeakOptimizedIDOrNot<T>> } {
   const {
     fromTo = {},
     baseline,
@@ -52,9 +52,9 @@ export function optimizePeaksWithLogs<T extends Peak>(
   We can not simply optimize everything because there would be too many variables to optimize
   and it would be too time consuming.
 */
-  let groups = groupPeaks(peakList, { factor: groupingFactor });
-  let logs: any[] = [];
-  let results: GSDPeakOptimizedIDOrNot<T>[] = [];
+  const groups = groupPeaks(peakList, { factor: groupingFactor });
+  const logs: any[] = [];
+  const results: Array<GSDPeakOptimizedIDOrNot<T>> = [];
   groups.forEach((peakGroup) => {
     const start = Date.now();
     // In order to make optimization we will add fwhm and shape on all the peaks
@@ -112,7 +112,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
         message: 'optimization successful',
       });
     } else {
-      results.push(...(peaks as GSDPeakOptimizedIDOrNot<T>[]));
+      results.push(...(peaks as Array<GSDPeakOptimizedIDOrNot<T>>));
       logs.push({
         ...log,
         iterations: 0,

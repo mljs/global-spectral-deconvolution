@@ -44,8 +44,8 @@ export function broadenPeaks<T extends GSDPeakOptionalShape>(
 
   if (!overlap) {
     for (let i = 0; i < peaks.length - 1; i++) {
-      let peak = peaks[i];
-      let nextPeak = peaks[i + 1];
+      const peak = peaks[i];
+      const nextPeak = peaks[i + 1];
       if (peak.to.x > nextPeak.from.x) {
         // we do it proportional to the width of the peaks
         peak.to.x =
@@ -73,7 +73,7 @@ export function broadenPeaks<T extends GSDPeakOptionalShape>(
 function mapPeaks<T extends GSDPeakOptionalShape>(
   peaks: T[],
   factor: number,
-): WithIDOrShape<T>[] {
+): Array<WithIDOrShape<T>> {
   return peaks.map((peak) => {
     const { id, shape } = peak;
     const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;

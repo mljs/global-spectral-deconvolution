@@ -9,10 +9,10 @@ const { parse, stringify } = JSON;
 export function addMissingShape<T extends { width: number }>(
   peaks: T[],
   options: { shape?: Shape1D; output?: T[] } = {},
-): (T & { shape: Shape1D })[] {
+): Array<T & { shape: Shape1D }> {
   const { shape = { kind: 'gaussian' }, output = parse(stringify(peaks)) } =
     options;
-  let shapeInstance = getShape1D(shape);
+  const shapeInstance = getShape1D(shape);
   return output.map((peak) => {
     if (hasShape(peak)) {
       if (!('fwhm' in peak.shape)) {

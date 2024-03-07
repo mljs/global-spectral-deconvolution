@@ -20,7 +20,7 @@ describe('optimizePeaks', () => {
       },
     });
 
-    let result = optimizePeaks(data, [
+    const result = optimizePeaks(data, [
       {
         x: 0.01,
         y: 0.9,

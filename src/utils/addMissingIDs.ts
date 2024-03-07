@@ -13,5 +13,5 @@ export function addMissingIDs<T extends { id?: string }>(
     }
   }
 
-  return output as (T & { id: string })[];
+  return output as Array<T & { id: string }>;
 }

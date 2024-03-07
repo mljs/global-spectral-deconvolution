@@ -28,7 +28,7 @@ describe('gaussian simulated peaks', () => {
       },
     });
 
-    let peakList = gsd(data, {
+    const peakList = gsd(data, {
       smoothY: true,
     });
     expect(peakList).toBeDeepCloseTo([

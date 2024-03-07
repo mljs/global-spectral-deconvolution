@@ -12,11 +12,11 @@ expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 describe('Global spectra deconvolution ubiquitin', () => {
   it('HR mass spectra', () => {
-    let spectrum = parseXY(
+    const spectrum = parseXY(
       readFileSync(`${__dirname}/data/ubiquitin.txt`, 'utf-8'),
     );
 
-    let peaks = gsd(spectrum, {
+    const peaks = gsd(spectrum, {
       minMaxRatio: 0.0,
       smoothY: false,
       realTopDetection: true,

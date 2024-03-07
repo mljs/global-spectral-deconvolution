@@ -23,7 +23,7 @@ export function groupPeaks<T extends { x: number; width: number }>(
 
   let previousPeak = peaks[0];
   let currentGroup: T[] = [previousPeak];
-  let groups: T[][] = [currentGroup];
+  const groups: T[][] = [currentGroup];
 
   for (let i = 1; i < peaks.length; i++) {
     const peak = peaks[i];

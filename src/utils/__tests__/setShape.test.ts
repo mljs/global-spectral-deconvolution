@@ -6,7 +6,7 @@ expect.extend({ toMatchCloseTo });
 
 describe('setShape', () => {
   it('gaussian shape', () => {
-    let result = setShape([
+    const result = setShape([
       {
         x: 5,
         y: 10,
@@ -51,7 +51,7 @@ describe('setShape', () => {
     ]);
   });
   it('lorentzian shape', () => {
-    let result = setShape(
+    const result = setShape(
       [
         {
           x: 5,
@@ -114,7 +114,7 @@ describe('setShape', () => {
     ]);
   });
   it('pseudovoigt shape', () => {
-    let result = setShape(
+    const result = setShape(
       [
         {
           x: 5,

@@ -45,10 +45,10 @@ export function optimizeTop<T extends { index: number; x: number; y: number }>(
       (y[currentIndex] !== y[currentIndex - 1] ||
         y[currentIndex] !== y[currentIndex + 1])
     ) {
-      let alpha = 20 * Math.log10(y[currentIndex - 1]);
-      let beta = 20 * Math.log10(y[currentIndex]);
-      let gamma = 20 * Math.log10(y[currentIndex + 1]);
-      let p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
+      const alpha = 20 * Math.log10(y[currentIndex - 1]);
+      const beta = 20 * Math.log10(y[currentIndex]);
+      const gamma = 20 * Math.log10(y[currentIndex + 1]);
+      const p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
       peak.x = x[currentIndex] + (x[currentIndex] - x[currentIndex - 1]) * p;
       peak.y =
         y[currentIndex] -

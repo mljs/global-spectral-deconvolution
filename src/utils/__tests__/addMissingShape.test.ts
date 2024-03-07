@@ -7,7 +7,7 @@ expect.extend({ toMatchCloseTo });
 
 describe('addMissingShape', () => {
   it('gaussian shape', () => {
-    let result = addMissingShape([
+    const result = addMissingShape([
       {
         x: 5,
         y: 10,
@@ -53,7 +53,7 @@ describe('addMissingShape', () => {
     ]);
   });
   it('lorentzian shape', () => {
-    let result = addMissingShape(
+    const result = addMissingShape(
       [
         {
           x: 5,
@@ -117,7 +117,7 @@ describe('addMissingShape', () => {
     ]);
   });
   it('pseudovoigt shape', () => {
-    let result = addMissingShape(
+    const result = addMissingShape(
       [
         {
           x: 5,
