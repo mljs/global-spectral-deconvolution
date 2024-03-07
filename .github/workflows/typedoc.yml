@@ -6,7 +6,7 @@ on:
     types: [published]
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 20.x
   ENTRY_FILE: 'src/index.ts'
 
 jobs:
