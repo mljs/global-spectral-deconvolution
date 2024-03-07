@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.5](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.4...v12.1.5) (2024-03-07)
+
+
+### Bug Fixes
+
+* update ml-spectra-processing and dependencies ([8b646d9](https://github.com/mljs/global-spectral-deconvolution/commit/8b646d91ba7ccf970f51dcb7dc6476635fcda3d4))
+
 ## [12.1.4](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.3...v12.1.4) (2024-03-06)
 
 
