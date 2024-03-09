@@ -7,8 +7,10 @@ import { GSDPeakOptimized } from '../GSDPeakOptimized';
 import { addMissingIDs } from '../utils/addMissingIDs';
 import { addMissingShape } from '../utils/addMissingShape';
 
-import { optimizePeaks } from './optimizePeaks';
-import { GSDPeakOptimizedID } from './optimizePeaksWithLogs';
+import {
+  GSDPeakOptimizedID,
+  optimizePeaksWithLogs,
+} from './optimizePeaksWithLogs';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -75,7 +77,6 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
 
   //@ts-expect-error Push a feke peak
   broadLines.push({ x: Number.MAX_VALUE, y: 0 });
-
   let candidates: { x: number[]; y: number[] } = {
     x: [broadLines[0].x],
     y: [broadLines[0].y],
@@ -93,26 +94,38 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
       count++;
     } else {
       if (count > 2) {
-        const fitted = optimizePeaks(
+        const initialWidth = Math.abs(
+          candidates.x[candidates.x.length - 1] - candidates.x[0],
+        );
+        const { logs, optimizedPeaks } = optimizePeaksWithLogs(
           candidates,
           [
             {
               id: generateID(),
               x: broadLines[maxI].x,
               y: max,
-              width: Math.abs(
-                candidates.x[candidates.x.length - 1] - candidates.x[0],
-              ),
+              width: initialWidth,
+              parameters: {
+                width: { max: initialWidth * 4, min: initialWidth * 0.8 },
+              },
             },
           ],
-          { shape, optimization },
+          { shape: { kind: 'pseudoVoigt' }, optimization },
         );
-        newPeaks.push(fitted[0]);
-      } else {
-        // Put back the candidates to the peak list
-        for (const index of indexes) {
-          newPeaks.push(getGSDPeakOptimizedStructure(broadLines[index]));
+        [max, maxI] = [0, 0];
+        const log = logs.find((l) => l.message === 'optimization successful');
+        if (log) {
+          const { error } = log;
+          if (error < 0.2) {
+            newPeaks.push(optimizedPeaks[0]);
+          } else {
+            pushBackPeaks(broadLines, indexes, newPeaks);
+          }
+        } else {
+          pushBackPeaks(broadLines, indexes, newPeaks);
         }
+      } else {
+        pushBackPeaks(broadLines, indexes, newPeaks);
       }
 
       candidates = { x: [broadLines[i].x], y: [broadLines[i].y] };
@@ -129,6 +142,11 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   return addMissingIDs(newPeaks, { output: newPeaks });
 }
 
+function pushBackPeaks(broadLines, indexes, peaks) {
+  for (const index of indexes) {
+    peaks.push(getGSDPeakOptimizedStructure(broadLines[index]));
+  }
+}
 function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
   const { id, shape, x, y, width } = peak;
 
