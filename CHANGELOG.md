@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.6](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.5...v12.1.6) (2024-03-09)
+
+
+### Bug Fixes
+
+* keep peaks if broad shape does not match well ([#120](https://github.com/mljs/global-spectral-deconvolution/issues/120)) ([1152b67](https://github.com/mljs/global-spectral-deconvolution/commit/1152b67e37bfcab11db150aac16e23539d1051c0))
+
 ## [12.1.5](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.4...v12.1.5) (2024-03-07)
 
 
