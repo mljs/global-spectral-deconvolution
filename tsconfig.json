@@ -9,5 +9,5 @@
     "strict": true,
     "target": "es2020"
   },
-  "include": ["./src/**/*", "old"]
+  "include": ["./src/**/*", "vitest.setup.ts"]
 }

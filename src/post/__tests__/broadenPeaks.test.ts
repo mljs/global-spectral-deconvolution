@@ -1,8 +1,6 @@
-import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { describe, expect, it } from 'vitest';
 
 import { broadenPeaks } from '../broadenPeaks';
-
-expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 describe('broadenPeaks', () => {
   it('empty', () => {

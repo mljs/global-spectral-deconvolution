@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs';
 
+import { describe, expect, it } from 'vitest';
+
 import { gsd } from '../gsd';
 
 describe('Global spectra deconvolution NMR spectra', () => {

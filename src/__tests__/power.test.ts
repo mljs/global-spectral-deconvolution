@@ -1,9 +1,7 @@
 import type { DataXY } from 'cheminfo-types';
-import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { describe, expect, it } from 'vitest';
 
 import { gsd } from '../gsd';
-
-expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 describe('power', () => {
   const data: DataXY = {

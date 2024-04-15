@@ -1,8 +1,6 @@
-import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
+import { describe, expect, it } from 'vitest';
 
 import { optimizeTop } from '../optimizeTop';
-
-expect.extend({ toBeDeepCloseTo });
 
 describe('optimizeTop', () => {
   it('no change', () => {

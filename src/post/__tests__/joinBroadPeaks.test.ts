@@ -1,4 +1,5 @@
 import { generateSpectrum } from 'spectrum-generator';
+import { describe, expect, it } from 'vitest';
 
 import { gsd } from '../../gsd';
 import { joinBroadPeaks } from '../joinBroadPeaks';

@@ -1,9 +1,7 @@
-import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { getShape1D } from 'ml-peak-shape-generator';
+import { describe, expect, it } from 'vitest';
 
 import { addMissingShape } from '../addMissingShape';
-
-expect.extend({ toMatchCloseTo });
 
 describe('addMissingShape', () => {
   it('gaussian shape', () => {

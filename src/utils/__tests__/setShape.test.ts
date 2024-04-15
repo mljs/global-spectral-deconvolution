@@ -1,8 +1,6 @@
-import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { describe, expect, it } from 'vitest';
 
 import { setShape } from '../setShape';
-
-expect.extend({ toMatchCloseTo });
 
 describe('setShape', () => {
   it('gaussian shape', () => {

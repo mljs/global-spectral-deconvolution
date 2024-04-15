@@ -1,10 +1,8 @@
 import type { DataXY } from 'cheminfo-types';
-import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
+import { describe, expect, it } from 'vitest';
 
 import { gsd } from '../gsd';
 import { optimizePeaks } from '../post/optimizePeaks';
-
-expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateSpectrum } = require('spectrum-generator');
