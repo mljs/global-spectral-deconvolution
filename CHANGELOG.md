@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.7](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.6...v12.1.7) (2024-09-26)
+
+
+### Bug Fixes
+
+* generalized lorentzian as a new shape ([#122](https://github.com/mljs/global-spectral-deconvolution/issues/122)) ([26a22da](https://github.com/mljs/global-spectral-deconvolution/commit/26a22da865db9f3173d4f37da09537792971ca72))
+
 ## [12.1.6](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.5...v12.1.6) (2024-03-09)
 
 
