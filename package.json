@@ -73,9 +73,9 @@
   "dependencies": {
     "@lukeed/uuid": "^2.0.1",
     "cheminfo-types": "^1.7.3",
-    "ml-peak-shape-generator": "^4.1.2",
+    "ml-peak-shape-generator": "^4.1.4",
     "ml-savitzky-golay-generalized": "^4.2.0",
-    "ml-spectra-fitting": "^4.2.3",
-    "ml-spectra-processing": "^14.5.0"
+    "ml-spectra-fitting": "^4.2.4",
+    "ml-spectra-processing": "^14.5.3"
   }
 }
