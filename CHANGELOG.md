@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.8](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.7...v12.1.8) (2024-09-27)
+
+
+### Bug Fixes
+
+* tsbuild ([23c1c53](https://github.com/mljs/global-spectral-deconvolution/commit/23c1c53757c646c52922900e8ec5e7c3fd24fb32))
+
 ## [12.1.7](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.6...v12.1.7) (2024-09-26)
 
 
