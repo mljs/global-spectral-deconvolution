@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { groupPeaks } from '../groupPeaks';
+import { groupPeaks } from '../groupPeaks.ts';
 
 describe('groupPeaks', () => {
   it('default factor value', () => {

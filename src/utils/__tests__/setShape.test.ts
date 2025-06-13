@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { setShape } from '../setShape';
+import { setShape } from '../setShape.ts';
 
 describe('setShape', () => {
   it('gaussian shape', () => {

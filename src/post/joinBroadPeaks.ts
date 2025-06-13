@@ -1,16 +1,14 @@
 import { v4 as generateID } from '@lukeed/uuid';
 import type { Shape1D } from 'ml-peak-shape-generator';
-import { OptimizationOptions } from 'ml-spectra-fitting';
+import type { OptimizationOptions } from 'ml-spectra-fitting';
 
-import { GSDPeak } from '../GSDPeak';
-import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { addMissingIDs } from '../utils/addMissingIDs';
-import { addMissingShape } from '../utils/addMissingShape';
+import type { GSDPeak } from '../GSDPeak.ts';
+import type { GSDPeakOptimized } from '../GSDPeakOptimized.ts';
+import { addMissingIDs } from '../utils/addMissingIDs.ts';
+import { addMissingShape } from '../utils/addMissingShape.ts';
 
-import {
-  GSDPeakOptimizedID,
-  optimizePeaksWithLogs,
-} from './optimizePeaksWithLogs';
+import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
+import type { GSDPeakOptimizedID } from './optimizePeaksWithLogs.ts';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -39,8 +37,8 @@ export interface JoinBroadPeaksOptions {
 
 export type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
 
-export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
-  peakList: T[],
+export function joinBroadPeaks(
+  peakList: GSDPeakOptionalShape[],
   options: JoinBroadPeaksOptions = {},
 ): GSDPeakOptimizedID[] {
   const {
@@ -53,7 +51,7 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   let max = 0;
   let maxI = 0;
   let count = 1;
-  const broadLines: T[] = [];
+  const broadLines: GSDPeakOptionalShape[] = [];
 
   if (peakList.length < 2) {
     return addMissingIDs(
@@ -142,12 +140,16 @@ export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
   return addMissingIDs(newPeaks, { output: newPeaks });
 }
 
-function pushBackPeaks(broadLines, indexes, peaks) {
+function pushBackPeaks(
+  broadLines: GSDPeakOptionalShape[],
+  indexes: number[],
+  peaks: GSDPeakOptimized[],
+) {
   for (const index of indexes) {
     peaks.push(getGSDPeakOptimizedStructure(broadLines[index]));
   }
 }
-function getGSDPeakOptimizedStructure<T extends GSDPeakOptionalShape>(peak: T) {
+function getGSDPeakOptimizedStructure(peak: GSDPeakOptionalShape) {
   const { id, shape, x, y, width } = peak;
 
   const newPeak = {

@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
+import { gsd } from '../gsd.ts';
 
 describe('Global spectra deconvolution NMR spectra', () => {
   // Test case obtained from Pag 443, Chap 8.

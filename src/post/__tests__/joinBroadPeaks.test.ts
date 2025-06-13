@@ -1,8 +1,8 @@
 import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../../gsd';
-import { joinBroadPeaks } from '../joinBroadPeaks';
+import { gsd } from '../../gsd.ts';
+import { joinBroadPeaks } from '../joinBroadPeaks.ts';
 
 describe('joinBroadPeaks', () => {
   it('mix broad and not broad peaks', () => {

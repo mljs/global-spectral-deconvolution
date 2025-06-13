@@ -1,4 +1,4 @@
-import { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1D } from 'ml-peak-shape-generator';
 
 export interface GSDBroadenPeak {
   id?: string;

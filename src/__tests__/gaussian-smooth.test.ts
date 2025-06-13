@@ -1,10 +1,8 @@
 import type { DataXY } from 'cheminfo-types';
+import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { generateSpectrum } = require('spectrum-generator');
+import { gsd } from '../gsd.ts';
 
 describe('gaussian simulated peaks', () => {
   it('smooth:true', () => {
@@ -21,7 +19,7 @@ describe('gaussian simulated peaks', () => {
         to: 1,
         nbPoints: 101,
       },
-      peaks: {
+      peakOptions: {
         factor: 6,
       },
     });

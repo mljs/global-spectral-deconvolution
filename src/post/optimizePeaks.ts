@@ -1,9 +1,9 @@
-import type { DataXY } from 'cheminfo-types';
-import { FromTo } from 'cheminfo-types';
-import { Shape1D } from 'ml-peak-shape-generator';
+import type { DataXY, FromTo } from 'cheminfo-types';
+import type { Shape1D } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
-import { Peak, optimizePeaksWithLogs } from './optimizePeaksWithLogs';
+import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
+import type { Peak } from './optimizePeaksWithLogs.ts';
 
 export interface OptimizePeaksOptions {
   /**

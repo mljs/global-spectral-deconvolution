@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { optimizeTop } from '../optimizeTop';
+import { optimizeTop } from '../optimizeTop.ts';
 
 describe('optimizeTop', () => {
   it('no change', () => {

@@ -1,7 +1,7 @@
 import { getShape1D } from 'ml-peak-shape-generator';
 import { describe, expect, it } from 'vitest';
 
-import { addMissingShape } from '../addMissingShape';
+import { addMissingShape } from '../addMissingShape.ts';
 
 describe('addMissingShape', () => {
   it('gaussian shape', () => {

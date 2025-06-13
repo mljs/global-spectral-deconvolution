@@ -1,7 +1,7 @@
 import type { DataXY } from 'cheminfo-types';
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
+import { gsd } from '../gsd.ts';
 
 describe('power', () => {
   const data: DataXY = {

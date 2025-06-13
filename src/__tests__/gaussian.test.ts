@@ -1,10 +1,10 @@
 import type { DataXY } from 'cheminfo-types';
+import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { generateSpectrum } = require('spectrum-generator');
+import type { GSDPeak } from '../GSDPeak.js';
+import { gsd } from '../gsd.ts';
+import type { GSDPeakID } from '../gsd.ts';
 
 describe('smooth:false option', () => {
   const peaks = [
@@ -18,7 +18,7 @@ describe('smooth:false option', () => {
       to: 1,
       nbPoints: 101,
     },
-    peaks: {
+    peakOptions: {
       factor: 6,
     },
   });
@@ -29,7 +29,7 @@ describe('smooth:false option', () => {
   it('positive maxima peaks', () => {
     const peakList = gsd(data);
 
-    const expected = [
+    const expected: GSDPeak[] = [
       {
         x: -0.5,
         y: 1,
@@ -53,7 +53,7 @@ describe('smooth:false option', () => {
         },
       },
     ];
-    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected) as never);
   });
 
   it('negative maxima peaks', () => {
@@ -62,7 +62,7 @@ describe('smooth:false option', () => {
       {},
     );
 
-    const expected = [
+    const expected: GSDPeak[] = [
       {
         x: -0.5,
         y: -1,
@@ -86,7 +86,7 @@ describe('smooth:false option', () => {
         },
       },
     ];
-    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected) as never);
   });
 
   it('Negative peaks', () => {
@@ -120,7 +120,7 @@ describe('smooth:false option', () => {
       },
     ];
 
-    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected) as never);
   });
 
   it('minima peaks', () => {
@@ -154,7 +154,7 @@ describe('smooth:false option', () => {
       },
     ];
 
-    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected));
+    expect(peakList).toBeDeepCloseTo(addMissingID(peakList, expected) as never);
   });
 
   it('negative peaks with maxCriteria true', () => {
@@ -166,7 +166,7 @@ describe('smooth:false option', () => {
   });
 });
 
-function addMissingID(peaks, expected) {
+function addMissingID(peaks: GSDPeakID[], expected: GSDPeak[]) {
   for (let i = 0; i < expected.length; i++) {
     expected[i].id = peaks[i].id;
   }
