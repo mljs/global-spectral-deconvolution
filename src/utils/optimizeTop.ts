@@ -6,9 +6,9 @@ import type { DataXY } from 'cheminfo-types';
  * @param data
  * @param peaks
  */
-export function optimizeTop<T extends { index: number; x: number; y: number }>(
+export function optimizeTop(
   data: DataXY,
-  peaks: T[],
+  peaks: Array<{ index: number; x: number; y: number }>,
 ): void {
   const { x, y } = data;
 

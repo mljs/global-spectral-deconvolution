@@ -37,8 +37,8 @@ export interface JoinBroadPeaksOptions {
 
 export type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
 
-export function joinBroadPeaks<T extends GSDPeakOptionalShape>(
-  peakList: T[],
+export function joinBroadPeaks(
+  peakList: GSDPeakOptionalShape[],
   options: JoinBroadPeaksOptions = {},
 ): GSDPeakOptimizedID[] {
   const {

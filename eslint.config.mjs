@@ -2,11 +2,6 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import ts from 'eslint-config-cheminfo-typescript/base';
 
 export default defineConfig(
-  globalIgnores(['coverage', 'lib', 'examples']),
+  globalIgnores(['coverage', 'lib', 'dist', 'examples']),
   ts,
-  {
-    rules: {
-      '@typescript-eslint/no-unnecessary-type-parameters': 'off',
-    },
-  },
 );
