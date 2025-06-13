@@ -2,28 +2,25 @@
   "name": "ml-gsd",
   "version": "12.1.8",
   "description": "Global Spectra Deconvolution",
-  "main": "./lib/index.js",
-  "module": "./lib-esm/index.js",
-  "types": "./lib/index.d.ts",
+  "type": "module",
+  "exports": "./lib/index.js",
   "files": [
     "lib",
-    "src",
-    "lib-esm"
+    "src"
   ],
   "scripts": {
-    "build": "npm run tsc-esm && cheminfo-build --entry lib-esm/index.js --root GSD",
+    "build": "npm run tsc && cheminfo-build --entry lib/index.js --root GSD",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf lib lib-esm",
-    "eslint": "eslint src --cache",
-    "eslint-fix": "npm run eslint -- --fix",
+    "clean": "rimraf lib",
+    "eslint": "eslint . --cache",
+    "eslint-fix": "eslint . --cache --fix",
     "prepack": "npm run tsc",
-    "prettier": "prettier --check src",
-    "prettier-write": "prettier --write src",
+    "prettier": "prettier --check .",
+    "prettier-write": "prettier --write .",
     "test": "npm run test-only && npm run eslint && npm run prettier && npm run check-types",
     "test-only": "vitest run --coverage",
-    "tsc": "npm run clean && npm run tsc-cjs && npm run tsc-esm",
-    "tsc-cjs": "tsc --project tsconfig.cjs.json",
-    "tsc-esm": "tsc --project tsconfig.esm.json"
+    "tsc": "npm run clean && npm run tsc-build",
+    "tsc-build": "tsc --project tsconfig.build.json"
   },
   "repository": {
     "type": "git",
@@ -56,9 +53,10 @@
   "devDependencies": {
     "@types/node": "^24.0.1",
     "@vitest/coverage-v8": "^1.6.0",
+    "@zakodium/tsconfig": "^1.0.1",
     "cheminfo-build": "^1.2.0",
-    "eslint": "^8.57.0",
-    "eslint-config-cheminfo-typescript": "^12.4.0",
+    "eslint": "^9.28.0",
+    "eslint-config-cheminfo-typescript": "^18.0.1",
     "esm": "^3.2.25",
     "jest-matcher-deep-close-to": "^3.0.2",
     "mf-global": "^3.0.20",
@@ -66,7 +64,7 @@
     "prettier": "^3.2.5",
     "rimraf": "^5.0.6",
     "spectrum-generator": "^8.0.11",
-    "typescript": "^5.4.5",
+    "typescript": "^5.8.3",
     "vitest": "^1.6.0",
     "xy-parser": "^5.0.5"
   },
