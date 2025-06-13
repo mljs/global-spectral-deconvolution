@@ -1,5 +1,16 @@
 # Changelog
 
+## [13.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.8...v13.0.0) (2025-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* switch to esm-only and update to `ml-spectra-fitting@5` ([#127](https://github.com/mljs/global-spectral-deconvolution/issues/127))
+
+### Code Refactoring
+
+* switch to esm-only and update to `ml-spectra-fitting@5` ([#127](https://github.com/mljs/global-spectral-deconvolution/issues/127)) ([170d023](https://github.com/mljs/global-spectral-deconvolution/commit/170d023f53aed10800f3d24068e1e1574fff6632))
+
 ## [12.1.8](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.7...v12.1.8) (2024-09-27)
 
 
