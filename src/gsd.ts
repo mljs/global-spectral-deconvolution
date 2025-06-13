@@ -1,12 +1,11 @@
-import { v4 as generateID } from '@lukeed/uuid';
 import type { DataXY } from 'cheminfo-types';
-import { sgg } from 'ml-savitzky-golay-generalized';
 import type { SGGOptions } from 'ml-savitzky-golay-generalized';
+import { sgg } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
   xIsMonotonic,
-  xNoiseStandardDeviation,
   xMinMaxValues,
+  xNoiseStandardDeviation,
 } from 'ml-spectra-processing';
 
 import type { GSDPeak } from './GSDPeak.ts';
@@ -213,7 +212,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
       if (yData[minddYIndex] > yThreshold) {
         const width = Math.abs(intervalR[possible].x - intervalL[possible].x);
         peaks.push({
-          id: generateID(),
+          id: crypto.randomUUID(),
           x: deltaX,
           y: yData[minddYIndex],
           width,

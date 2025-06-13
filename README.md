@@ -1,11 +1,13 @@
-# global-spectral-deconvolution and peak optimizer
+# ml-gsd
 
-[![NPM version][npm-image]][npm-url]
-[![build status][ci-image]][ci-url]
-[![Test coverage][codecov-image]][codecov-url]
-[![npm download][download-image]][download-url]
+[![NPM version](https://img.shields.io/npm/v/ml-gsd.svg)](https://www.npmjs.com/package/ml-gsd)
+[![npm download](https://img.shields.io/npm/dm/ml-gsd.svg)](https://www.npmjs.com/package/ml-gsd)
+[![test coverage](https://img.shields.io/codecov/c/github/mljs/global-spectral-deconvolution.svg)](https://codecov.io/gh/mljs/global-spectral-deconvolution)
+[![license](https://img.shields.io/npm/l/ml-gsd.svg)](https://github.com/mljs/global-spectral-deconvolution/blob/main/LICENSE)
 
-## Global Spectra Deconvolution
+Global spectral deconvolution and peak optimizer.
+
+## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
 
 `gsd`is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
 
@@ -29,7 +31,7 @@ The result of GSD is an array of GSDPeak:
   - from: { x, index }
   - to: { x, index }
 
-## Parameters
+### Parameters
 
 #### minMaxRatio=0.00025 (0-1)
 
@@ -51,14 +53,14 @@ Use a quadratic optimizations with the peak and its 3 closest neighbors to deter
 
 Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of the polynomial to use in the approximations. It should be bigger than 2.
 
-## Post methods
+### Post methods
 
-### GSD.broadenPeaks(peakList, {factor=2, overlap=false})
+#### GSD.broadenPeaks(peakList, {factor=2, overlap=false})
 
 We enlarge the peaks and add the properties from and to.
 By default we enlarge of a factor 2 and we don't allow overlap.
 
-### GSD.optimizePeaks(data, peakList, options)
+#### GSD.optimizePeaks(data, peakList, options)
 
 Optimize the position (x), max intensity (y), full width at half maximum (fwhm) and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
 
@@ -107,19 +109,6 @@ console.log(optimized);
 */
 ```
 
-i
-
-## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
-
 ## License
 
 [MIT](./LICENSE)
-
-[npm-image]: https://img.shields.io/npm/v/ml-gsd.svg
-[npm-url]: https://npmjs.org/package/ml-gsd
-[codecov-image]: https://img.shields.io/codecov/c/github/mljs/global-spectral-deconvolution.svg
-[codecov-url]: https://codecov.io/gh/mljs/global-spectral-deconvolution
-[ci-image]: https://github.com/mljs/global-spectral-deconvolution/workflows/Node.js%20CI/badge.svg?branch=main
-[ci-url]: https://github.com/mljs/global-spectral-deconvolution/actions?query=workflow%3A%22Node.js+CI%22
-[download-image]: https://img.shields.io/npm/dm/ml-gsd.svg
-[download-url]: https://npmjs.org/package/ml-gsd
