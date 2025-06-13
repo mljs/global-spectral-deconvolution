@@ -1,4 +1,3 @@
-import { v4 as generateID } from '@lukeed/uuid';
 import type { Shape1D } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
@@ -7,8 +6,8 @@ import type { GSDPeakOptimized } from '../GSDPeakOptimized.ts';
 import { addMissingIDs } from '../utils/addMissingIDs.ts';
 import { addMissingShape } from '../utils/addMissingShape.ts';
 
-import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
 import type { GSDPeakOptimizedID } from './optimizePeaksWithLogs.ts';
+import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
 
 export interface JoinBroadPeaksOptions {
   /**
@@ -99,7 +98,7 @@ export function joinBroadPeaks(
           candidates,
           [
             {
-              id: generateID(),
+              id: crypto.randomUUID(),
               x: broadLines[maxI].x,
               y: max,
               width: initialWidth,
