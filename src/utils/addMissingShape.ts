@@ -1,6 +1,6 @@
-import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1D } from 'ml-peak-shape-generator';
+import { getShape1D } from 'ml-peak-shape-generator';
 
-const { parse, stringify } = JSON;
 /**
  * add missing property if it does not exist in the peak,
  * if shape exists but fwhm doesn't, it will be calculated from peak.width
@@ -10,7 +10,7 @@ export function addMissingShape<T extends { width: number }>(
   peaks: T[],
   options: { shape?: Shape1D; output?: T[] } = {},
 ): Array<T & { shape: Shape1D }> {
-  const { shape = { kind: 'gaussian' }, output = parse(stringify(peaks)) } =
+  const { shape = { kind: 'gaussian' }, output = structuredClone(peaks) } =
     options;
   const shapeInstance = getShape1D(shape);
   return output.map((peak) => {
@@ -29,7 +29,7 @@ export function addMissingShape<T extends { width: number }>(
 }
 
 function hasShape<T extends { width: number; shape?: Shape1D }>(
-  peak,
+  peak: T,
 ): peak is T & { width: number; shape: Shape1D } {
   return 'shape' in peak;
 }

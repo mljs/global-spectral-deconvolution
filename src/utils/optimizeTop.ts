@@ -1,4 +1,4 @@
-import { DataXY } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 
 /**
  * Correction of the x and y coordinates using a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak.
@@ -49,7 +49,9 @@ export function optimizeTop<T extends { index: number; x: number; y: number }>(
       const beta = 20 * Math.log10(y[currentIndex]);
       const gamma = 20 * Math.log10(y[currentIndex + 1]);
       const p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
-      peak.x = x[currentIndex] + (x[currentIndex] - x[currentIndex - 1]) * p;
+      const xCurrent: number = x[currentIndex];
+      const xPrevious: number = x[currentIndex - 1];
+      peak.x = xCurrent + (xCurrent - xPrevious) * p;
       peak.y =
         y[currentIndex] -
         0.25 * (y[currentIndex - 1] - y[currentIndex + 1]) * p;

@@ -1,7 +1,7 @@
 import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
-import { optimizePeaks } from '../optimizePeaks';
+import { optimizePeaks } from '../optimizePeaks.ts';
 
 describe('optimizePeaks', () => {
   it('Should throw because execution time is over timeout', () => {

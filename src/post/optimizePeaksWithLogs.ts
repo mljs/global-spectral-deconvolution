@@ -3,12 +3,12 @@ import { getShape1D } from 'ml-peak-shape-generator';
 import { optimize } from 'ml-spectra-fitting';
 import { xGetFromToIndex } from 'ml-spectra-processing';
 
-import { GSDPeakOptimized } from '../GSDPeakOptimized';
-import { MakeMandatory } from '../utils/MakeMandatory';
-import { addMissingShape } from '../utils/addMissingShape';
-import { groupPeaks } from '../utils/groupPeaks';
+import type { GSDPeakOptimized } from '../GSDPeakOptimized.ts';
+import type { MakeMandatory } from '../utils/MakeMandatory.ts';
+import { addMissingShape } from '../utils/addMissingShape.ts';
+import { groupPeaks } from '../utils/groupPeaks.ts';
 
-import { OptimizePeaksOptions } from './optimizePeaks';
+import type { OptimizePeaksOptions } from './optimizePeaks.ts';
 
 export interface Peak extends PeakXYWidth {
   id?: string;

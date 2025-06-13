@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { describe, expect, it } from 'vitest';
 import { parseXY } from 'xy-parser';
 
-import { gsd } from '../gsd';
+import { gsd } from '../gsd.ts';
 
 // var gsd = require("../src/index");
 // var optimizePeaks = require("../src/optimize");

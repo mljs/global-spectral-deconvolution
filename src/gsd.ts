@@ -1,6 +1,7 @@
 import { v4 as generateID } from '@lukeed/uuid';
 import type { DataXY } from 'cheminfo-types';
-import { sgg, SGGOptions } from 'ml-savitzky-golay-generalized';
+import { sgg } from 'ml-savitzky-golay-generalized';
+import type { SGGOptions } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
   xIsMonotonic,
@@ -8,9 +9,9 @@ import {
   xMinMaxValues,
 } from 'ml-spectra-processing';
 
-import { GSDPeak } from './GSDPeak';
-import { MakeMandatory } from './utils/MakeMandatory';
-import { optimizeTop } from './utils/optimizeTop';
+import type { GSDPeak } from './GSDPeak.ts';
+import type { MakeMandatory } from './utils/MakeMandatory.ts';
+import { optimizeTop } from './utils/optimizeTop.ts';
 
 export interface GSDOptions {
   /**
@@ -51,9 +52,9 @@ export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
 /**
  * Global spectra deconvolution
  * @param  data - Object data with x and y arrays. Values in x has to be growing
+ * @param options
  * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
  * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
-
  */
 
 export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {

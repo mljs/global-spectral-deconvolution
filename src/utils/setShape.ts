@@ -1,4 +1,5 @@
-import { getShape1D, Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1D } from 'ml-peak-shape-generator';
+import { getShape1D } from 'ml-peak-shape-generator';
 
 const { parse, stringify } = JSON;
 

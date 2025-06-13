@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
+import { gsd } from '../gsd.ts';
 
 describe('Simple test cases', () => {
   it('length = 0', () => {
-    const x = [];
-    const y = [];
+    const x: number[] = [];
+    const y: number[] = [];
     expect(() => {
       gsd({ x, y });
     }).toThrow('input must not be empty');

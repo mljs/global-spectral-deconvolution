@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { broadenPeaks } from '../broadenPeaks';
+import { broadenPeaks } from '../broadenPeaks.ts';
 
 describe('broadenPeaks', () => {
   it('empty', () => {

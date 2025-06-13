@@ -1,11 +1,9 @@
 import type { DataXY } from 'cheminfo-types';
+import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
-import { optimizePeaks } from '../post/optimizePeaks';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { generateSpectrum } = require('spectrum-generator');
+import { gsd } from '../gsd.ts';
+import { optimizePeaks } from '../post/optimizePeaks.ts';
 
 describe('gaussian overlapping', () => {
   it('2 peaks detected', () => {
@@ -20,7 +18,7 @@ describe('gaussian overlapping', () => {
         to: 1,
         nbPoints: 1001,
       },
-      peaks: {
+      peakOptions: {
         factor: 6, // need a high factor so that we don't detect the end of the simulated peak
       },
     });

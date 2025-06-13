@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { gsd } from '../gsd';
+import { gsd } from '../gsd.ts';
 
 describe('Throw Errors', () => {
   it('decreasing x data', () => {
