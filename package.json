@@ -1,6 +1,6 @@
 {
   "name": "ml-gsd",
-  "version": "13.0.0",
+  "version": "13.0.1",
   "description": "Global Spectral Deconvolution",
   "type": "module",
   "exports": "./lib/index.js",
