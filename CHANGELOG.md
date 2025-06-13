@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.0.1](https://github.com/mljs/global-spectral-deconvolution/compare/v13.0.0...v13.0.1) (2025-06-13)
+
+
+### Bug Fixes
+
+* cleanup package and remove uuid generator package ([#129](https://github.com/mljs/global-spectral-deconvolution/issues/129)) ([a89e945](https://github.com/mljs/global-spectral-deconvolution/commit/a89e945978f2426e9b70ee6e3a1ee2221cf60713))
+
 ## [13.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v12.1.8...v13.0.0) (2025-06-13)
 
 
