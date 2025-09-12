@@ -48,6 +48,13 @@ export interface GSDOptions {
 }
 export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
 
+interface PeakCandidate {
+  height: number;
+  distance: number;
+  minddYIndex: number;
+  intervalIndex: number;
+}
+
 /**
  * Global spectra deconvolution
  * @param  data - Object data with x and y arrays. Values in x has to be growing
@@ -183,47 +190,54 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   }
 
   let lastK = -1;
-
   const peaks: GSDPeakID[] = [];
-  for (const minddYIndex of minddY) {
-    const deltaX = x[minddYIndex];
-    let possible = -1;
-    let k = lastK + 1;
+  for (let i = 0; i < intervalL.length; i++) {
     let minDistance = Number.POSITIVE_INFINITY;
-    let currentDistance = 0;
-    while (possible === -1 && k < intervalL.length) {
-      currentDistance = Math.abs(
-        deltaX - (intervalL[k].x + intervalR[k].x) / 2,
+    let k = lastK + 1;
+    const candidates: PeakCandidate[] = [];
+    for (; k < minddY.length; k++) {
+      const minddYIndex = minddY[k];
+      if (yData[minddYIndex] < yThreshold) {
+        continue;
+      }
+
+      const deltaX = x[minddYIndex];
+      const currentDistance = Math.abs(
+        deltaX - (intervalL[i].x + intervalR[i].x) / 2,
       );
-      if (currentDistance < (intervalR[k].x - intervalL[k].x) / 2) {
-        possible = k;
+
+      if (currentDistance < (intervalR[i].x - intervalL[i].x) / 2) {
+        candidates.push({
+          height: yData[minddYIndex],
+          distance: currentDistance,
+          minddYIndex,
+          intervalIndex: i,
+        });
         lastK = k;
       }
-      ++k;
 
-      // Not getting closer?
-      if (currentDistance >= minDistance) {
-        break;
-      }
+      if (currentDistance >= minDistance) break;
       minDistance = currentDistance;
     }
 
-    if (possible !== -1) {
-      if (yData[minddYIndex] > yThreshold) {
-        const width = Math.abs(intervalR[possible].x - intervalL[possible].x);
-        peaks.push({
-          id: crypto.randomUUID(),
-          x: deltaX,
-          y: yData[minddYIndex],
-          width,
-          index: minddYIndex,
-          ddY: ddY[minddYIndex],
-          inflectionPoints: {
-            from: intervalL[possible],
-            to: intervalR[possible],
-          },
-        });
-      }
+    if (candidates.length > 0) {
+      const scoredCandidates = getScoredCandidates(candidates);
+      const { minddYIndex, intervalIndex } = scoredCandidates[0];
+      const width = Math.abs(
+        intervalR[intervalIndex].x - intervalL[intervalIndex].x,
+      );
+      peaks.push({
+        id: crypto.randomUUID(),
+        x: x[minddYIndex],
+        y: yData[minddYIndex],
+        width,
+        index: minddYIndex,
+        ddY: ddY[minddYIndex],
+        inflectionPoints: {
+          from: intervalL[intervalIndex],
+          to: intervalR[intervalIndex],
+        },
+      });
     }
   }
 
@@ -243,4 +257,23 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   });
 
   return peaks;
+}
+
+function getScoredCandidates(candidates: PeakCandidate[]) {
+  const { min: minD, max: maxD } = xMinMaxValues(
+    candidates.map((c) => c.distance),
+  );
+  const { min: minY, max: maxY } = xMinMaxValues(
+    candidates.map((c) => c.height),
+  );
+  const yFactor = 1 / (maxY - minY);
+  const dFactor = 1 / (maxD - minD);
+  return candidates
+    .map((cand) => {
+      const { height, distance } = cand;
+      const yScore = (height - minY) * yFactor;
+      const dScore = (distance - minD) * dFactor;
+      return { ...cand, score: 0.7 * dScore + 0.3 * yScore };
+    })
+    .sort((a, b) => a.score - b.score);
 }
