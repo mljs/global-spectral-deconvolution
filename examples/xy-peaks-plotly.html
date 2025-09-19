@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XY Data Visualization with Peaks</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #plot { width: 100%; max-width: 900px; height: 600px; }
+  </style>
+</head>
+<body>
+  <h2>XY Data Visualization with Peaks</h2>
+  <input type="file" id="fileInput" accept="application/json">
+  <div id="plot"></div>
+  <script>
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const data = JSON.parse(event.target.result);
+        plotData(data);
+      };
+      reader.readAsText(file);
+    });
+
+    function rescaleArray(arr) {
+      if (!arr || arr.length === 0) return arr;
+      const max = Math.max(...arr);
+      if (max === 0) return arr;
+      return arr.map(v => v * 100 / max);
+    }
+
+    function plotData(data) {
+      // Rescale first and second arrays
+      const yRescaled = rescaleArray(data.y)
+      const firstRescaled = rescaleArray(data.first);
+      const secondRescaled = rescaleArray(data.second);
+
+      // Rescale peaks.y values
+      const peaksRescaled = (data.peaks || []).map(p => ({
+        ...p,
+        y: p.y * 100 / Math.max(...(data.peaks || []).map(pk => pk.y || 0) || [1])
+      }));
+
+      const xyTrace = {
+        x: data.x,
+        y: yRescaled,
+        mode: 'lines',
+        name: 'original',
+        line: { color: 'blue' }
+      };
+      // Plot 'first' in red
+      const firstTrace = {
+        x: data.x,
+        y: firstRescaled,
+        mode: 'lines',
+        name: 'First',
+        line: { color: 'red' }
+      };
+
+      // Plot 'second' in blue
+      const secondTrace = {
+        x: data.x,
+        y: secondRescaled,
+        mode: 'lines',
+        name: 'Second',
+        line: { color: 'green' }
+      };
+
+      // Vertical lines for peaks
+      const peakTraces = peaksRescaled.map(peak => ({
+        x: [peak.x, peak.x],
+        y: [0, peak.y],
+        mode: 'lines',
+        name: 'Peak',
+        line: { color: 'black', width: 2 },
+        showlegend: false
+      }));
+
+      // Mark the peak points
+      const peakPoints = {
+        x: peaksRescaled.map(p => p.x),
+        y: peaksRescaled.map(p => p.y),
+        mode: 'markers',
+        marker: { color: 'red', size: 8 },
+        name: 'Peak Center'
+      };
+
+      Plotly.newPlot('plot', [xyTrace, firstTrace, secondTrace, ...peakTraces, peakPoints], {
+        margin: { t: 40 },
+        xaxis: { title: 'X', autorange: true },
+        yaxis: { title: 'Y', autorange: true },
+        title: 'XY Data with Peaks',
+        dragmode: 'zoom',
+      }, {responsive: true});
+    }
+  </script>
+</body>
+</html>
