@@ -6,6 +6,7 @@ import type { GSDPeakID } from '../gsd.ts';
 export function secondDerivative(input: {
   x: NumberArray;
   y: NumberArray;
+  yData: NumberArray;
   dY: NumberArray;
   ddY: NumberArray;
   yThreshold: number;
@@ -58,12 +59,12 @@ export function secondDerivative(input: {
   const peaks: GSDPeakID[] = [];
   for (let i = 0; i < intervalL.length; i++) {
     let minDistance = Number.POSITIVE_INFINITY;
-    const intervalWidth = (intervalR[i].x - intervalL[i].x) / 3;
+    const intervalWidth = (intervalR[i].x - intervalL[i].x) / 2;
 
     let possible = -1;
-    for (let k = lastK + 1; k < minddY.length; k++) {
+    for (let k = lastK + 1; k < minddY.length; ++k) {
       const minddYIndex = minddY[k];
-      if (yData[minddYIndex] < yThreshold) {
+      if (yData[minddYIndex] <= yThreshold) {
         continue;
       }
 
@@ -78,7 +79,6 @@ export function secondDerivative(input: {
         }
         lastK = k;
       }
-
       if (currentDistance >= minDistance) break;
       minDistance = currentDistance;
     }
