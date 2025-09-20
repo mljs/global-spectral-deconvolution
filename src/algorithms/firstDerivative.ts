@@ -1,109 +1,36 @@
-import type { NumberArray } from 'cheminfo-types';
+import type { PeakData } from './PeakData.ts';
+import { getMinMaxIntervalsDy } from './getMinMaxIntervals.ts';
+import { getPeakFromIntervals } from './getPeaksFromIntervals.ts';
 
-import type { XIndex } from '../XIndex.ts';
-import type { GSDPeakID } from '../gsd.ts';
-
-export function firstDerivative(input: {
-  x: NumberArray;
-  y: NumberArray;
-  yData: NumberArray;
-  dY: NumberArray;
-  ddY: NumberArray;
-  yThreshold: number;
-  dX: number;
-}) {
+export function firstDerivative(input: PeakData) {
   const { x, y, yData, dY, ddY, dX, yThreshold } = input;
 
-  let lastMax: XIndex | null = null;
-  let lastMin: XIndex | null = null;
   const crossDy: number[] = [];
-  const intervalL: XIndex[] = [];
-  const intervalR: XIndex[] = [];
-  for (let i = 1; i < y.length - 1; ++i) {
-    if (
-      (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
-      (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
-    ) {
-      lastMin = {
-        x: x[i],
-        index: i,
-      };
-      if (dX > 0 && lastMax !== null) {
-        intervalL.push(lastMax);
-        intervalR.push(lastMin);
-      }
-    }
+  const { intervalL, intervalR } = getMinMaxIntervalsDy(y, x, dY, dX);
 
-    // Maximum in first derivative
-    if (
-      (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1]) ||
-      (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
-    ) {
-      lastMax = {
-        x: x[i],
-        index: i,
-      };
-      if (dX < 0 && lastMin !== null) {
-        intervalL.push(lastMax);
-        intervalR.push(lastMin);
-      }
-    }
+  for (let i = 1; i < y.length - 1; ++i) {
     if ((dY[i] < 0 && dY[i + 1] > 0) || (dY[i] > 0 && dY[i + 1] < 0)) {
       // push the index of the element closer to zero
       crossDy.push(Math.abs(dY[i]) < Math.abs(dY[i + 1]) ? i : i + 1);
     }
     // Handle exact zero
-    if (dY[i] === 0) {
+    if (
+      dY[i] === 0 &&
+      dY[i] < Math.abs(dY[i + 1]) &&
+      dY[i] < Math.abs(dY[i - 1])
+    ) {
       crossDy.push(i);
     }
   }
 
-  let lastK = -1;
-  const peaks: GSDPeakID[] = [];
-  for (let i = 0; i < intervalL.length; i++) {
-    let minDistance = Number.POSITIVE_INFINITY;
-    const intervalWidth = (intervalR[i].x - intervalL[i].x) / 3;
-
-    let possible = -1;
-    for (let k = lastK + 1; k < crossDy.length; k++) {
-      const crossDyIndex = crossDy[k];
-      if (yData[crossDyIndex] < yThreshold) {
-        continue;
-      }
-
-      const deltaX = x[crossDyIndex];
-      const currentDistance = Math.abs(
-        deltaX - (intervalL[i].x + intervalR[i].x) / 2,
-      );
-
-      if (currentDistance < intervalWidth) {
-        if (currentDistance < minDistance) {
-          possible = k;
-        }
-        lastK = k;
-      }
-
-      if (currentDistance >= minDistance) break;
-      minDistance = currentDistance;
-    }
-
-    if (possible !== -1) {
-      const crossdYIndex = crossDy[possible];
-      const width = Math.abs(intervalR[i].x - intervalL[i].x);
-      peaks.push({
-        id: crypto.randomUUID(),
-        x: x[crossdYIndex],
-        y: y[crossdYIndex],
-        width,
-        index: crossdYIndex,
-        ddY: ddY[crossdYIndex],
-        inflectionPoints: {
-          from: intervalL[i],
-          to: intervalR[i],
-        },
-      });
-    }
-  }
-
-  return peaks;
+  return getPeakFromIntervals({
+    minData: crossDy,
+    intervalL,
+    intervalR,
+    x,
+    y,
+    yData,
+    yThreshold,
+    ddY,
+  });
 }

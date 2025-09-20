@@ -9,6 +9,7 @@ import {
 } from 'ml-spectra-processing';
 
 import type { GSDPeak } from './GSDPeak.ts';
+import { autoAlgorithm } from './algorithms/autoAlgorithm.ts';
 import { firstDerivative } from './algorithms/firstDerivative.ts';
 import { secondDerivative } from './algorithms/secondDerivative.ts';
 import type { MakeMandatory } from './utils/MakeMandatory.ts';
@@ -149,7 +150,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   } else if (peakDetectionAlgorithm === 'second') {
     peaks = secondDerivative(peakData);
   } else {
-    peaks = secondDerivative(peakData);
+    peaks = autoAlgorithm(peakData);
   }
 
   if (realTopDetection) {
