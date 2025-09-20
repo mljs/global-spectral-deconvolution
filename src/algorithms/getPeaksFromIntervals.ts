@@ -5,7 +5,7 @@ import type { PeakData } from './PeakData.ts';
 import { tryMatchOneIntervalWithMinData } from './tryMatchOneIntervalWithMinData.ts';
 
 export function getPeakFromIntervals(
-  options: Pick<PeakData, 'yThreshold' | 'ddY' | 'yData' | 'x' | 'y'> & {
+  options: Pick<PeakData, 'yThreshold' | 'ddY' | 'yData' | 'x'> & {
     intervalR: XIndex[];
     intervalL: XIndex[];
     minData: number[];
@@ -13,8 +13,7 @@ export function getPeakFromIntervals(
 ) {
   let lastK = -1;
   const peaks: GSDPeakID[] = [];
-  const { x, y, ddY, yData, yThreshold, intervalR, intervalL, minData } =
-    options;
+  const { x, ddY, yData, yThreshold, intervalR, intervalL, minData } = options;
 
   for (let i = 0; i < intervalL.length; i++) {
     const intervalWidth = (intervalR[i].x - intervalL[i].x) / 2;

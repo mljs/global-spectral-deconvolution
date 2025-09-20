@@ -28,7 +28,6 @@ export function firstDerivative(input: PeakData) {
     intervalL,
     intervalR,
     x,
-    y,
     yData,
     yThreshold,
     ddY,
