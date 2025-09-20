@@ -30,7 +30,6 @@ export function secondDerivative(input: {
     intervalL,
     intervalR,
     x,
-    y,
     yData,
     yThreshold,
     ddY,
