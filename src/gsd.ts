@@ -9,6 +9,9 @@ import {
 } from 'ml-spectra-processing';
 
 import type { GSDPeak } from './GSDPeak.ts';
+import { autoAlgorithm } from './algorithms/autoAlgorithm.ts';
+import { firstDerivative } from './algorithms/firstDerivative.ts';
+import { secondDerivative } from './algorithms/secondDerivative.ts';
 import type { MakeMandatory } from './utils/MakeMandatory.ts';
 import { optimizeTop } from './utils/optimizeTop.ts';
 
@@ -45,7 +48,18 @@ export interface GSDOptions {
    * @default false
    */
   realTopDetection?: boolean;
+  /**
+   * Algorithm used for peak detection:
+   * - 'first': Uses the first derivative to detect peaks, detecting only
+   *            the peaks which first derivative cross the zero.
+   * - 'second': Uses the second derivative to detect peaks (inflection points).
+   * - 'auto': Automatically selects the peaks by checking the zero crossing of the first derivative
+   *           or the local minima in the second derivative.
+   * @default 'second'
+   */
+  peakDetectionAlgorithm?: 'first' | 'second' | 'auto';
 }
+
 export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
 
 /**
@@ -67,6 +81,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     maxCriteria = true,
     minMaxRatio = 0.00025,
     realTopDetection = false,
+    peakDetectionAlgorithm = 'second',
   } = options;
   const { x } = data;
   let { y } = data;
@@ -78,10 +93,10 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   // If the max difference between delta x is less than 5%, then,
   // we can assume it to be equally spaced variable
-  const equallySpaced = xIsEquallySpaced(x);
+  const isEquallySpaced = xIsEquallySpaced(x);
 
   if (noiseLevel === undefined) {
-    if (equallySpaced) {
+    if (isEquallySpaced) {
       const noiseInfo = xNoiseStandardDeviation(y);
       if (maxCriteria) {
         noiseLevel = noiseInfo.median + 1.5 * noiseInfo.sd;
@@ -108,7 +123,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     }
   }
 
-  const xValue = equallySpaced ? x[1] - x[0] : x;
+  const xValue = isEquallySpaced ? x[1] - x[0] : x;
 
   const yData = smoothY
     ? sgg(y, xValue, {
@@ -117,114 +132,31 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
       })
     : y;
 
+  const { min: minY, max: maxY } = xMinMaxValues(yData);
+  if (minY > maxY || minY === maxY) return [];
+
   const dY = sgg(y, xValue, {
     ...sgOptions,
     derivative: 1,
   });
+
   const ddY = sgg(y, xValue, {
     ...sgOptions,
     derivative: 2,
   });
 
-  const { min: minY, max: maxY } = xMinMaxValues(yData);
-
-  if (minY > maxY || minY === maxY) return [];
-
   const yThreshold = minY + (maxY - minY) * minMaxRatio;
 
   const dX = x[1] - x[0];
 
-  interface XIndex {
-    x: number;
-    index: number;
-  }
-
-  let lastMax: XIndex | null = null;
-  let lastMin: XIndex | null = null;
-  const minddY: number[] = [];
-  const intervalL: XIndex[] = [];
-  const intervalR: XIndex[] = [];
-
-  // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
-  for (let i = 1; i < yData.length - 1; ++i) {
-    if (
-      (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1]) ||
-      (dY[i] <= dY[i - 1] && dY[i] < dY[i + 1])
-    ) {
-      lastMin = {
-        x: x[i],
-        index: i,
-      };
-      if (dX > 0 && lastMax !== null) {
-        intervalL.push(lastMax);
-        intervalR.push(lastMin);
-      }
-    }
-
-    // Maximum in first derivative
-    if (
-      (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1]) ||
-      (dY[i] > dY[i - 1] && dY[i] >= dY[i + 1])
-    ) {
-      lastMax = {
-        x: x[i],
-        index: i,
-      };
-      if (dX < 0 && lastMin !== null) {
-        intervalL.push(lastMax);
-        intervalR.push(lastMin);
-      }
-    }
-
-    // Minimum in second derivative
-    if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
-      minddY.push(i);
-    }
-  }
-
-  let lastK = -1;
-
-  const peaks: GSDPeakID[] = [];
-  for (const minddYIndex of minddY) {
-    const deltaX = x[minddYIndex];
-    let possible = -1;
-    let k = lastK + 1;
-    let minDistance = Number.POSITIVE_INFINITY;
-    let currentDistance = 0;
-    while (possible === -1 && k < intervalL.length) {
-      currentDistance = Math.abs(
-        deltaX - (intervalL[k].x + intervalR[k].x) / 2,
-      );
-      if (currentDistance < (intervalR[k].x - intervalL[k].x) / 2) {
-        possible = k;
-        lastK = k;
-      }
-      ++k;
-
-      // Not getting closer?
-      if (currentDistance >= minDistance) {
-        break;
-      }
-      minDistance = currentDistance;
-    }
-
-    if (possible !== -1) {
-      if (yData[minddYIndex] > yThreshold) {
-        const width = Math.abs(intervalR[possible].x - intervalL[possible].x);
-        peaks.push({
-          id: crypto.randomUUID(),
-          x: deltaX,
-          y: yData[minddYIndex],
-          width,
-          index: minddYIndex,
-          ddY: ddY[minddYIndex],
-          inflectionPoints: {
-            from: intervalL[possible],
-            to: intervalR[possible],
-          },
-        });
-      }
-    }
+  const peakData = { x, y, yData, dY, ddY, dX, yThreshold };
+  let peaks: GSDPeakID[] = [];
+  if (peakDetectionAlgorithm === 'first') {
+    peaks = firstDerivative(peakData);
+  } else if (peakDetectionAlgorithm === 'second') {
+    peaks = secondDerivative(peakData);
+  } else {
+    peaks = autoAlgorithm(peakData);
   }
 
   if (realTopDetection) {
