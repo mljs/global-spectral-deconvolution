@@ -49,6 +49,12 @@ export interface GSDOptions {
    */
   realTopDetection?: boolean;
   /**
+   * Algorithm used for peak detection:
+   * - 'first': Uses the first derivative to detect peaks, detecting only
+   *            the peaks which first derivative cross the zero.
+   * - 'second': Uses the second derivative to detect peaks (inflection points).
+   * - 'auto': Automatically selects the peaks by checking the zero crossing of the first derivative
+   *           or the local minima in the second derivative.
    * @default 'second'
    */
   peakDetectionAlgorithm?: 'first' | 'second' | 'auto';
