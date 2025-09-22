@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v13.0.1...v13.1.0) (2025-09-22)
+
+
+### Features
+
+* add peakDetectionAlgorithm option ([11370e8](https://github.com/mljs/global-spectral-deconvolution/commit/11370e8982f074068111f4ba9f9d5c4125aad403))
+
 ## [13.0.1](https://github.com/mljs/global-spectral-deconvolution/compare/v13.0.0...v13.0.1) (2025-06-13)
 
 
