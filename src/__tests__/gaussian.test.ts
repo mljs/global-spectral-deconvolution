@@ -3,8 +3,8 @@ import { generateSpectrum } from 'spectrum-generator';
 import { describe, expect, it } from 'vitest';
 
 import type { GSDPeak } from '../GSDPeak.js';
-import { gsd } from '../gsd.ts';
 import type { GSDPeakID } from '../gsd.ts';
+import { gsd } from '../gsd.ts';
 
 describe('smooth:false option', () => {
   const peaks = [

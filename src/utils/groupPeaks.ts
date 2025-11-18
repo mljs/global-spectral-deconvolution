@@ -14,7 +14,7 @@ export function groupPeaks<T extends { x: number; width: number }>(
     factor?: number;
   } = {},
 ): T[][] {
-  if (peaks && peaks.length === 0) return [];
+  if (peaks?.length === 0) return [];
 
   const { factor = 1 } = options;
 
