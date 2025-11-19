@@ -1,6 +1,15 @@
 import type { PeakData } from './PeakData.ts';
 
 export type XGetCrossZeroPointsInput = Pick<PeakData, 'y' | 'dY'>;
+
+/**
+ * Finds the indices where the first derivative crosses zero (sign change),
+ * which are potential peak positions. This function does not detect zero-crossings
+ * in regions with consecutive zero values in the derivative (flat regions).
+ *
+ * @param input - Object containing the y values and their first derivative (dY).
+ * @returns Array of indices where the first derivative crosses zero (excluding consecutive zeros).
+ */
 export function xGetCrossZeroPoints(input: XGetCrossZeroPointsInput) {
   const { y, dY } = input;
 
