@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.1](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.0...v13.1.1) (2025-11-19)
+
+
+### Bug Fixes
+
+* first derivative algorithm to detect peaks ([#135](https://github.com/mljs/global-spectral-deconvolution/issues/135)) ([05b0925](https://github.com/mljs/global-spectral-deconvolution/commit/05b092550330d8b152ae5e8294e64d5c5ac5bc13))
+
 ## [13.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v13.0.1...v13.1.0) (2025-09-22)
 
 
