@@ -145,7 +145,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     derivative: 2,
   });
 
-  const yThreshold = minY + (maxY - minY) * minMaxRatio;
+  const yThreshold = Math.max(noiseLevel, minY + (maxY - minY) * minMaxRatio);
 
   const dX = x[1] - x[0];
 
