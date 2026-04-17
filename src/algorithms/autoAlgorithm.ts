@@ -1,19 +1,16 @@
-import type { NumberArray } from 'cheminfo-types';
-
 import type { GSDPeakID } from '../gsd.ts';
 
+import type { PeakData } from './PeakData.ts';
 import { getMinMaxIntervalsDy } from './getMinMaxIntervals.ts';
 import { tryMatchOneIntervalWithMinData } from './tryMatchOneIntervalWithMinData.ts';
 
-export function autoAlgorithm(input: {
-  x: NumberArray;
-  y: NumberArray;
-  yData: NumberArray;
-  dY: NumberArray;
-  ddY: NumberArray;
-  yThreshold: number;
-  dX: number;
-}) {
+/**
+ * Peak detection that combines first-derivative zero-crossings and
+ * second-derivative local minima to find peaks inside each interval.
+ * @param input - Spectrum values together with its first and second derivatives.
+ * @returns The detected peaks.
+ */
+export function autoAlgorithm(input: PeakData) {
   const { x, y, yData, dY, ddY, dX, yThreshold } = input;
 
   const minddY: number[] = [];
@@ -41,7 +38,8 @@ export function autoAlgorithm(input: {
   }
 
   const peaks: GSDPeakID[] = [];
-  let [lastK, lastJ] = [-1, -1];
+  let lastK = -1;
+  let lastJ = -1;
   for (let i = 0; i < intervalL.length; i++) {
     const intervalWidth = (intervalR[i].x - intervalL[i].x) / 2;
     const intervalCenter = (intervalR[i].x + intervalL[i].x) / 2;

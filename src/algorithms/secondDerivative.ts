@@ -1,17 +1,13 @@
-import type { NumberArray } from 'cheminfo-types';
-
+import type { PeakData } from './PeakData.ts';
 import { getMinMaxIntervalsDy } from './getMinMaxIntervals.ts';
 import { getPeakFromIntervals } from './getPeaksFromIntervals.ts';
 
-export function secondDerivative(input: {
-  x: NumberArray;
-  y: NumberArray;
-  yData: NumberArray;
-  dY: NumberArray;
-  ddY: NumberArray;
-  yThreshold: number;
-  dX: number;
-}) {
+/**
+ * Detect peaks using local minima of the second derivative (inflection points).
+ * @param input - Spectrum values and its first/second derivatives.
+ * @returns The detected peaks.
+ */
+export function secondDerivative(input: PeakData) {
   const { x, y, yData, dY, ddY, dX, yThreshold } = input;
 
   const minddY: number[] = [];

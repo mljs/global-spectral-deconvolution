@@ -11,31 +11,37 @@ import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
 
 export interface JoinBroadPeaksOptions {
   /**
-   * broadRatio
+   * Ratio (relative to the maximum `|ddY|`) below which a peak is treated as
+   * part of a broad signal.
    * @default 0.0025
    */
   broadRatio?: number;
   /**
-   * width limit to join peaks.
+   * Maximum `x` distance between two consecutive peaks for them to still be
+   * considered part of the same broad signal.
    * @default 0.25
    */
   broadWidth?: number;
   /**
-   * it's specify the kind of shape used to fitting.
+   * Shape used for fitting the broad peak.
+   * @default { kind: 'gaussian' }
    */
   shape?: Shape1D;
   /**
-   * it's specify the kind and options of the algorithm use to optimize parameters.
+   * Kind and options of the algorithm used to optimize parameters.
+   * @default { kind: 'lm', options: { timeout: 10 } }
    */
   optimization?: OptimizationOptions;
 }
 
-/**
- * This function tries to join the peaks that seems to belong to a broad signal in a single broad peak.
- */
-
 export type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
 
+/**
+ * Join peaks that seem to belong to a broad signal into a single broad peak.
+ * @param peakList - Detected peaks, possibly containing fragments of a broad signal.
+ * @param options - Join options.
+ * @returns The peak list with broad fragments fitted as a single peak.
+ */
 export function joinBroadPeaks(
   peakList: GSDPeakOptionalShape[],
   options: JoinBroadPeaksOptions = {},
@@ -58,9 +64,10 @@ export function joinBroadPeaks(
     );
   }
 
-  let maxDdy = peakList[0].ddY;
+  let maxDdy = Math.abs(peakList[0].ddY);
   for (let i = 1; i < peakList.length; i++) {
-    if (Math.abs(peakList[i].ddY) > maxDdy) maxDdy = Math.abs(peakList[i].ddY);
+    const absDdy = Math.abs(peakList[i].ddY);
+    if (absDdy > maxDdy) maxDdy = absDdy;
   }
 
   const newPeaks: GSDPeakOptimized[] = [];
@@ -72,7 +79,8 @@ export function joinBroadPeaks(
     }
   }
 
-  //@ts-expect-error Push a feke peak
+  // Sentinel: forces the final group to be flushed by the `else` branch below.
+  //@ts-expect-error Sentinel peak, x=+Infinity guarantees the distance check fails.
   broadLines.push({ x: Number.MAX_VALUE, y: 0 });
   let candidates: { x: number[]; y: number[] } = {
     x: [broadLines[0].x],
@@ -92,7 +100,7 @@ export function joinBroadPeaks(
     } else {
       if (count > 2) {
         const initialWidth = Math.abs(
-          candidates.x[candidates.x.length - 1] - candidates.x[0],
+          (candidates.x.at(-1) as number) - candidates.x[0],
         );
         const { logs, optimizedPeaks } = optimizePeaksWithLogs(
           candidates,
@@ -109,15 +117,11 @@ export function joinBroadPeaks(
           ],
           { shape: { kind: 'pseudoVoigt' }, optimization },
         );
-        [max, maxI] = [0, 0];
+        max = 0;
+        maxI = 0;
         const log = logs.find((l) => l.message === 'optimization successful');
-        if (log) {
-          const { error } = log;
-          if (error < 0.2) {
-            newPeaks.push(optimizedPeaks[0]);
-          } else {
-            pushBackPeaks(broadLines, indexes, newPeaks);
-          }
+        if (log?.error !== undefined && log.error < 0.2) {
+          newPeaks.push(optimizedPeaks[0]);
         } else {
           pushBackPeaks(broadLines, indexes, newPeaks);
         }
@@ -132,9 +136,7 @@ export function joinBroadPeaks(
       count = 1;
     }
   }
-  newPeaks.sort((a, b) => {
-    return a.x - b.x;
-  });
+  newPeaks.sort((a, b) => a.x - b.x);
 
   return addMissingIDs(newPeaks, { output: newPeaks });
 }

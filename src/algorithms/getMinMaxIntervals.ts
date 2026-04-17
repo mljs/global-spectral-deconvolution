@@ -2,6 +2,15 @@ import type { NumberArray } from 'cheminfo-types';
 
 import type { XIndex } from '../XIndex.ts';
 
+/**
+ * Compute the `[left, right]` intervals around each peak by locating
+ * consecutive extrema (minima / maxima) of the first derivative.
+ * @param y - Spectrum y values.
+ * @param x - Spectrum x values.
+ * @param dY - First derivative of `y`.
+ * @param dX - Sign of the x step (positive for increasing x, negative otherwise).
+ * @returns `intervalL` / `intervalR` arrays defining each peak's inflection-point bounds.
+ */
 export function getMinMaxIntervalsDy(
   y: NumberArray,
   x: NumberArray,

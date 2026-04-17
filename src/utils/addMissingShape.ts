@@ -1,29 +1,46 @@
 import type { Shape1D } from 'ml-peak-shape-generator';
 import { getShape1D } from 'ml-peak-shape-generator';
 
-/**
- * add missing property if it does not exist in the peak,
- * if shape exists but fwhm doesn't, it will be calculated from peak.width
- */
+export interface AddMissingShapeOptions<T> {
+  /**
+   * Shape used when a peak has none.
+   * @default { kind: 'gaussian' }
+   */
+  shape?: Shape1D;
+  /**
+   * Destination array.
+   * @default structuredClone(peaks)
+   */
+  output?: T[];
+}
 
+/**
+ * Add a `shape` property to peaks that do not have one.
+ * If a peak already has a `shape` but no `fwhm`, the FWHM is computed from `peak.width`.
+ * @param peaks - Peaks with a `width` property.
+ * @param options - Shape options.
+ * @returns A peak list where every peak has a `shape` property.
+ */
 export function addMissingShape<T extends { width: number }>(
   peaks: T[],
-  options: { shape?: Shape1D; output?: T[] } = {},
+  options: AddMissingShapeOptions<T> = {},
 ): Array<T & { shape: Shape1D }> {
   const { shape = { kind: 'gaussian' }, output = structuredClone(peaks) } =
     options;
-  const shapeInstance = getShape1D(shape);
+  const defaultShapeInstance = getShape1D(shape);
   return output.map((peak) => {
     if (hasShape(peak)) {
       if (!('fwhm' in peak.shape)) {
-        const shapeInstance = getShape1D(peak.shape);
-        peak.shape.fwhm = shapeInstance.widthToFWHM(peak.width);
+        peak.shape.fwhm = getShape1D(peak.shape).widthToFWHM(peak.width);
       }
       return peak;
     }
     return {
       ...peak,
-      shape: { fwhm: shapeInstance.widthToFWHM(peak.width), ...shape },
+      shape: {
+        fwhm: defaultShapeInstance.widthToFWHM(peak.width),
+        ...shape,
+      },
     };
   });
 }

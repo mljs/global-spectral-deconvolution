@@ -35,7 +35,10 @@ export interface GSDOptions {
    */
   maxCriteria?: boolean;
   /**
-   * Peak under the noiseLevel (or over in case of maxCriteria=false) are ignored.
+   * Peaks under the `noiseLevel` (or above it in case of `maxCriteria=false`) are ignored.
+   * When omitted, the noise level is estimated from the spectrum for equally-spaced x,
+   * and set to `0` otherwise.
+   * @default undefined
    */
   noiseLevel?: number;
   /**
@@ -63,13 +66,11 @@ export interface GSDOptions {
 export type GSDPeakID = MakeMandatory<GSDPeak, 'id'>;
 
 /**
- * Global spectra deconvolution
- * @param  data - Object data with x and y arrays. Values in x has to be growing
- * @param options
- * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
- * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
+ * Global spectra deconvolution.
+ * @param data - Object with `x` and `y` arrays. `x` must be monotone increasing.
+ * @param options - Peak detection options.
+ * @returns The detected peaks, sorted by ascending `x`.
  */
-
 export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   let { noiseLevel } = options;
   const {
@@ -88,7 +89,7 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
   if (xIsMonotonic(x) !== 1) {
     throw new Error('GSD only accepts monotone increasing x values');
   }
-  //rescale;
+  // Copy so the `maxCriteria` / clipping loops below don't mutate the caller's array.
   y = y.slice();
 
   // If the max difference between delta x is less than 5%, then,
@@ -163,12 +164,12 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     optimizeTop({ x, y: yData }, peaks);
   }
 
-  peaks.forEach((peak) => {
+  for (const peak of peaks) {
     if (!maxCriteria) {
       peak.y *= -1;
       peak.ddY = peak.ddY * -1;
     }
-  });
+  }
 
   peaks.sort((a, b) => {
     return a.x - b.x;

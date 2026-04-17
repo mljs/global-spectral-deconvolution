@@ -17,27 +17,31 @@ export type WithIDOrShape<T> = T extends { id: string }
   ? WithOrWithout<T, GSDPeak, GSDBroadenPeakWithShapeID, GSDBroadenPeakWithID>
   : WithOrWithout<T, GSDPeak, GSDBroadenPeakWithShape, GSDBroadenPeak>;
 
-/**
- * This method will allow to enlarge peaks while preventing overlap between peaks
- * A typical application in chromatography peak picking.
- * We should not make the hypothesis that x is equidistant
- * Because peaks may not be symmetric after we add 2 properties, from and to.
- * @return {Array} peakList
- */
+export interface BroadenPeaksOptions {
+  /**
+   * Width multiplier applied to each peak.
+   * @default 2
+   */
+  factor?: number;
+  /**
+   * Whether to allow overlap between adjacent broadened peaks.
+   * @default false
+   */
+  overlap?: boolean;
+}
 
+/**
+ * Enlarge peaks while preventing overlap between them.
+ * A typical application is chromatography peak picking.
+ * We should not make the hypothesis that `x` is equidistant, because peaks
+ * may not be symmetric once we add the `from` and `to` properties.
+ * @param peakList - Peaks to broaden.
+ * @param options - Broadening options.
+ * @returns The broadened peaks.
+ */
 export function broadenPeaks<T extends GSDPeakOptionalShape>(
   peakList: T[],
-  options: {
-    /**
-     * @default 2
-     */
-    factor?: number;
-    /**
-     * by default we don't allow overlap
-     * @default false
-     */
-    overlap?: boolean;
-  } = {},
+  options: BroadenPeaksOptions = {},
 ) {
   const { factor = 2, overlap = false } = options;
 
@@ -63,7 +67,7 @@ export function broadenPeaks<T extends GSDPeakOptionalShape>(
       const { shape, width } = peak;
       if (shape.fwhm !== undefined) {
         const shapeFct = getShape1D(shape);
-        peak.shape.fwhm = shapeFct.widthToFWHM(width);
+        shape.fwhm = shapeFct.widthToFWHM(width);
       }
     }
   }
@@ -76,14 +80,14 @@ function mapPeaks<T extends GSDPeakOptionalShape>(
   factor: number,
 ): Array<WithIDOrShape<T>> {
   return peaks.map((peak) => {
-    const { id, shape } = peak;
-    const xFrom = peak.x - (peak.x - peak.inflectionPoints.from.x) * factor;
-    const xTo = peak.x + (peak.inflectionPoints.to.x - peak.x) * factor;
+    const { id, shape, x, y, index, inflectionPoints } = peak;
+    const xFrom = x - (x - inflectionPoints.from.x) * factor;
+    const xTo = x + (inflectionPoints.to.x - x) * factor;
 
     let result = {
-      x: peak.x,
-      y: peak.y,
-      index: peak.index,
+      x,
+      y,
+      index,
       width: xTo - xFrom,
       from: { x: xFrom },
       to: { x: xTo },

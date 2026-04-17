@@ -1,10 +1,11 @@
 import type { DataXY } from 'cheminfo-types';
 
 /**
- * Correction of the x and y coordinates using a quadratic optimizations with the peak and its 3 closest neighbors to determine the true x,y values of the peak.
- * This process is done in place and is very fast.
- * @param data
- * @param peaks
+ * Refine the `x` and `y` coordinates of each peak by running a quadratic
+ * interpolation over the peak and its 3 closest neighbors.
+ * The correction is performed in place.
+ * @param data - Object with `x` and `y` arrays.
+ * @param peaks - Peaks to refine (mutated in place).
  */
 export function optimizeTop(
   data: DataXY,
@@ -36,7 +37,7 @@ export function optimizeTop(
     ) {
       currentIndex += 2;
     }
-    // interpolation to a sin() function
+    // Quadratic interpolation on log-intensities to refine the peak top.
     if (
       y[currentIndex - 1] > 0 &&
       y[currentIndex + 1] > 0 &&
@@ -45,9 +46,9 @@ export function optimizeTop(
       (y[currentIndex] !== y[currentIndex - 1] ||
         y[currentIndex] !== y[currentIndex + 1])
     ) {
-      const alpha = 20 * Math.log10(y[currentIndex - 1]);
-      const beta = 20 * Math.log10(y[currentIndex]);
-      const gamma = 20 * Math.log10(y[currentIndex + 1]);
+      const alpha = Math.log10(y[currentIndex - 1]);
+      const beta = Math.log10(y[currentIndex]);
+      const gamma = Math.log10(y[currentIndex + 1]);
       const p = (0.5 * (alpha - gamma)) / (alpha - 2 * beta + gamma);
       const xCurrent: number = x[currentIndex];
       const xPrevious: number = x[currentIndex - 1];

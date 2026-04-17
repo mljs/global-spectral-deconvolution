@@ -11,6 +11,10 @@ import { groupPeaks } from '../utils/groupPeaks.ts';
 import type { OptimizePeaksOptions } from './optimizePeaks.ts';
 
 export interface Peak extends PeakXYWidth {
+  /**
+   * Optional stable identifier preserved through the optimization.
+   * @default undefined
+   */
   id?: string;
 }
 
@@ -22,17 +26,41 @@ type GSDPeakOptimizedIDOrNot<T extends Peak> = T extends {
   ? GSDPeakOptimizedID
   : GSDPeakOptimized;
 
+export interface OptimizePeaksLog {
+  /** x range over which this group of peaks was optimized. */
+  range: { from: number; to: number };
+  /** Optimization parameters used for this group. */
+  parameters: unknown;
+  /** Number of peaks in the group. */
+  groupSize: number;
+  /** Time spent on this group, in milliseconds. */
+  time: number;
+  /** Number of iterations run by the optimizer (`0` when optimization was skipped). */
+  iterations: number;
+  /** Final error reported by the optimizer. Absent when optimization was skipped. */
+  error?: number;
+  /** Human-readable outcome (e.g. `optimization successful`). */
+  message: string;
+}
+
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
- * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * and the ratio of gaussian contribution (mu) if it's required.
+ * It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt.
+ * Returns both the optimized peaks and per-group diagnostic logs.
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ * @param options - Optimization options.
+ * @returns An object with the optimized peaks and the per-group logs.
  */
 export function optimizePeaksWithLogs<T extends Peak>(
   data: DataXY,
   peakList: T[],
   options: OptimizePeaksOptions = {},
-): { logs: any[]; optimizedPeaks: Array<GSDPeakOptimizedIDOrNot<T>> } {
+): {
+  logs: OptimizePeaksLog[];
+  optimizedPeaks: Array<GSDPeakOptimizedIDOrNot<T>>;
+} {
   const {
     fromTo = {},
     baseline,
@@ -45,23 +73,19 @@ export function optimizePeaksWithLogs<T extends Peak>(
         timeout: 10,
       },
     },
-  }: OptimizePeaksOptions = options;
+  } = options;
 
-  /*
-  The optimization algorithm will take some group of peaks.
-  We can not simply optimize everything because there would be too many variables to optimize
-  and it would be too time consuming.
-*/
+  // Optimize peaks in groups: fitting everything at once would be too slow and
+  // have too many free parameters.
   const groups = groupPeaks(peakList, { factor: groupingFactor });
-  const logs: any[] = [];
+  const logs: OptimizePeaksLog[] = [];
   const results: Array<GSDPeakOptimizedIDOrNot<T>> = [];
-  groups.forEach((peakGroup) => {
+  for (const peakGroup of groups) {
     const start = Date.now();
-    // In order to make optimization we will add fwhm and shape on all the peaks
     const peaks = addMissingShape(peakGroup, { shape });
 
     const firstPeak = peaks[0];
-    const lastPeak = peaks[peaks.length - 1];
+    const lastPeak = peaks.at(-1) as (typeof peaks)[number];
 
     const {
       from = firstPeak.x - firstPeak.width * factorLimits,
@@ -119,7 +143,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
         message: 'x length too small for optimization',
       });
     }
-  });
+  }
 
   return { logs, optimizedPeaks: results };
 }
