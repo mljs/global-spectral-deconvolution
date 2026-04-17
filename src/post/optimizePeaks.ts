@@ -7,39 +7,47 @@ import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
 
 export interface OptimizePeaksOptions {
   /**
-   * baseline
+   * Constant baseline subtracted from the spectrum before fitting.
+   * @default undefined
    */
   baseline?: number;
   /**
-   * range to apply the optimization
+   * Range over which the optimization is applied. Values default to
+   * `firstPeak.x - firstPeak.width * factorLimits` and
+   * `lastPeak.x + lastPeak.width * factorLimits` when omitted.
+   * @default {}
    */
   fromTo?: Partial<FromTo>;
   /**
-   * Shape to use for optimization
-   * @default {kind:'gaussian'}
+   * Shape to use for optimization.
+   * @default { kind: 'gaussian' }
    */
   shape?: Shape1D;
   /**
-   * Number of times we should multiply the width determining if the peaks have to be grouped and therefore optimized together
+   * Multiplier applied to peak widths when deciding whether adjacent peaks
+   * should be grouped and optimized together.
    * @default 1
    */
   groupingFactor?: number;
   /**
-   * Define the min / max values
+   * Width multiplier used to derive the default `from` / `to` bounds.
    * @default 2
    */
   factorLimits?: number;
   /**
-   * it's specify the kind and options of the algorithm use to optimize parameters.
+   * Kind and options of the algorithm used to optimize parameters.
+   * @default { kind: 'lm', options: { timeout: 10 } }
    */
   optimization?: OptimizationOptions;
 }
 
 /**
  * Optimize the position (x), max intensity (y), full width at half maximum (fwhm)
- * and the ratio of gaussian contribution (mu) if it's required. It currently supports three kind of shapes: gaussian, lorentzian and pseudovoigt
+ * and the ratio of gaussian contribution (mu) if it's required.
  * @param data - An object containing the x and y data to be fitted.
  * @param peakList - A list of initial parameters to be optimized. e.g. coming from a peak picking [{x, y, width}].
+ * @param options - Optimization options.
+ * @returns The optimized peaks.
  */
 export function optimizePeaks<T extends Peak>(
   data: DataXY,
