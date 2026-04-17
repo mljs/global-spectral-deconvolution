@@ -10,6 +10,12 @@ interface TryMatchOneIntervalWithMinDataOptions {
   yData: NumberArray;
 }
 
+/**
+ * Find the `minData` index closest to the center of one interval,
+ * above the intensity threshold and bounded by the half-width.
+ * @param options - Interval, candidate indices and spectrum data.
+ * @returns The picked candidate (`possible`) and the last visited index (`lastIndex`).
+ */
 export function tryMatchOneIntervalWithMinData(
   options: TryMatchOneIntervalWithMinDataOptions,
 ) {

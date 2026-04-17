@@ -1,32 +1,36 @@
-/**
- * Group peaks based on factor
- * In order to group peaks we only need the x and width value. This means that
- * in the current implementation we don't take into account the asymmetry of peaks
- */
+export interface GroupPeaksOptions {
+  /**
+   * Multiplier applied to the average width of two adjacent peaks when
+   * deciding whether to group them.
+   * @default 1
+   */
+  factor?: number;
+}
 
+/**
+ * Group peaks based on a width-aware factor.
+ * Only `x` and `width` are used, so the current implementation does not take
+ * peak asymmetry into account.
+ * @param peaks - Peaks with `x` and `width` properties.
+ * @param options - Grouping options.
+ * @returns Groups of peaks sorted by ascending `x`.
+ */
 export function groupPeaks<T extends { x: number; width: number }>(
   peaks: T[],
-  options: {
-    /**
-     * In order to group peaks we will use a factor that takes into account the peak width.
-     *
-     */
-    factor?: number;
-  } = {},
+  options: GroupPeaksOptions = {},
 ): T[][] {
-  if (peaks?.length === 0) return [];
+  if (peaks.length === 0) return [];
 
   const { factor = 1 } = options;
 
-  peaks = JSON.parse(JSON.stringify(peaks));
-  peaks.sort((a, b) => a.x - b.x);
+  const sortedPeaks = peaks.toSorted((a, b) => a.x - b.x);
 
-  let previousPeak = peaks[0];
+  let previousPeak = sortedPeaks[0];
   let currentGroup: T[] = [previousPeak];
   const groups: T[][] = [currentGroup];
 
-  for (let i = 1; i < peaks.length; i++) {
-    const peak = peaks[i];
+  for (let i = 1; i < sortedPeaks.length; i++) {
+    const peak = sortedPeaks[i];
     if (
       (peak.x - previousPeak.x) / ((peak.width + previousPeak.width) / 2) <=
       factor
