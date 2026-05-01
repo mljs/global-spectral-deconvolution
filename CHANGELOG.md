@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.2](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.1...v13.1.2) (2026-05-01)
+
+
+### Bug Fixes
+
+* update dependencies ([#140](https://github.com/mljs/global-spectral-deconvolution/issues/140)) ([b12d42e](https://github.com/mljs/global-spectral-deconvolution/commit/b12d42e3a95cdef8d45fca67542a7aac863b9b23))
+
 ## [13.1.1](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.0...v13.1.1) (2025-11-19)
 
 
