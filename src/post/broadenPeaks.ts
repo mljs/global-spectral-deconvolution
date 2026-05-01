@@ -94,13 +94,11 @@ function mapPeaks<T extends GSDPeakOptionalShape>(
     } as GSDBroadenPeak;
 
     if (id) {
-      result = { ...result, id } as GSDBroadenPeakWithID;
+      result = { ...result, id };
     }
 
     if (shape) {
-      result = { ...result, shape } as T extends { id: string }
-        ? GSDBroadenPeakWithShapeID
-        : GSDBroadenPeakWithShape;
+      result = { ...result, shape };
     }
 
     return result as WithIDOrShape<T>;
