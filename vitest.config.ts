@@ -7,8 +7,5 @@ export default defineConfig({
       exclude: ['**/__tests__/data/**', '**/.npmignore'],
     },
     setupFiles: ['vitest.setup.ts'],
-    snapshotFormat: {
-      maxOutputLength: Number.MAX_SAFE_INTEGER,
-    },
   },
 });

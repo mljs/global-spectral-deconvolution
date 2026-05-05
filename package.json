@@ -48,8 +48,8 @@
   "dependencies": {
     "cheminfo-types": "^1.15.0",
     "ml-peak-shape-generator": "^4.2.0",
-    "ml-savitzky-golay-generalized": "^4.2.1",
-    "ml-spectra-fitting": "^5.0.1",
+    "ml-savitzky-golay-generalized": "^5.0.0",
+    "ml-spectra-fitting": "^6.0.1",
     "ml-spectra-processing": "^14.28.1"
   },
   "devDependencies": {

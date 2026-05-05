@@ -27,8 +27,8 @@ test('Should throw because execution time is over timeout', () => {
 
   expect(result.logs).toMatchObject([
     {
-      iterations: 100,
-      error: 0.000017852931247867768,
+      iterations: 3,
+      error: 1.0756013093985772e-10,
       parameters: { kind: 'lm', options: { timeout: 10 } },
       message: 'optimization successful',
       groupSize: 1,

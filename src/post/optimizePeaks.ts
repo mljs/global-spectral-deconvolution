@@ -1,16 +1,11 @@
 import type { DataXY, FromTo } from 'cheminfo-types';
 import type { Shape1D } from 'ml-peak-shape-generator';
-import type { OptimizationOptions } from 'ml-spectra-fitting';
+import type { OptimizationOptions, OptimizeOptions } from 'ml-spectra-fitting';
 
 import type { Peak } from './optimizePeaksWithLogs.ts';
 import { optimizePeaksWithLogs } from './optimizePeaksWithLogs.ts';
 
 export interface OptimizePeaksOptions {
-  /**
-   * Constant baseline subtracted from the spectrum before fitting.
-   * @default undefined
-   */
-  baseline?: number;
   /**
    * Range over which the optimization is applied. Values default to
    * `firstPeak.x - firstPeak.width * factorLimits` and
@@ -39,6 +34,14 @@ export interface OptimizePeaksOptions {
    * @default { kind: 'lm', options: { timeout: 10 } }
    */
   optimization?: OptimizationOptions;
+  /**
+   * Per-parameter optimization options (for example `x`, `y`, `fwhm`, `mu`),
+   * allowing custom init/min/max/gradientDifference values.
+   *
+   * This follows the same structure as `ml-spectra-fitting` `OptimizeOptions.parameters`.
+   * @default undefined
+   */
+  parameters?: OptimizeOptions['parameters'];
 }
 
 /**
