@@ -104,7 +104,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
 
     const log = {
       range: { from, to },
-      parameters: optimization,
+      parameters: { optimization, parameters },
       groupSize: peakGroup.length,
       time: Date.now() - start,
     };
