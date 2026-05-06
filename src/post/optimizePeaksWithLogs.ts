@@ -63,10 +63,10 @@ export function optimizePeaksWithLogs<T extends Peak>(
 } {
   const {
     fromTo = {},
-    baseline,
     shape = { kind: 'gaussian' },
     groupingFactor = 1,
     factorLimits = 2,
+    parameters,
     optimization = {
       kind: 'lm',
       options: {
@@ -91,7 +91,6 @@ export function optimizePeaksWithLogs<T extends Peak>(
       from = firstPeak.x - firstPeak.width * factorLimits,
       to = lastPeak.x + lastPeak.width * factorLimits,
     } = fromTo;
-
     const { fromIndex, toIndex } = xGetFromToIndex(data.x, { from, to });
 
     const x =
@@ -105,7 +104,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
 
     const log = {
       range: { from, to },
-      parameters: optimization,
+      parameters: { optimization, parameters },
       groupSize: peakGroup.length,
       time: Date.now() - start,
     };
@@ -117,7 +116,7 @@ export function optimizePeaksWithLogs<T extends Peak>(
         peaks: optimizedPeaks,
       } = optimize({ x, y }, peaks, {
         shape,
-        baseline,
+        parameters,
         optimization,
       });
 
