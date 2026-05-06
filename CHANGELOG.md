@@ -1,5 +1,16 @@
 # Changelog
 
+## [14.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.2...v14.0.0) (2026-05-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove baseline option due it was removed from ml-spectra-fitting v6.0.1
+
+### Features
+
+* add parameters option for shape parameter optimization n update ml-spectra-fitting ([42eaf55](https://github.com/mljs/global-spectral-deconvolution/commit/42eaf55c5796c596dc680568e33d9f91cca50bd0))
+
 ## [13.1.2](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.1...v13.1.2) (2026-05-01)
 
 
