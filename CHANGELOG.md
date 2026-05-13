@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.1](https://github.com/mljs/global-spectral-deconvolution/compare/v14.0.0...v14.0.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* setShape does not overwrite computed fwhm value and add test ([#145](https://github.com/mljs/global-spectral-deconvolution/issues/145)) ([7080ba2](https://github.com/mljs/global-spectral-deconvolution/commit/7080ba2e9bbaa68c76c1306e76edc4be280c39d5))
+
 ## [14.0.0](https://github.com/mljs/global-spectral-deconvolution/compare/v13.1.2...v14.0.0) (2026-05-06)
 
 
