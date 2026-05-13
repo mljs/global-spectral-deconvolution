@@ -142,3 +142,32 @@ test('pseudovoigt shape', () => {
     },
   ]);
 });
+
+test('setShape should not overwrite the computed fwhm value', () => {
+  const result = setShape(
+    [
+      {
+        x: 5,
+        y: 10,
+        width: 5,
+        index: 1,
+        inflectionPoints: {
+          from: { x: 0, index: 0 },
+          to: { x: 0, index: 0 },
+        },
+      },
+    ],
+    { shape: { kind: 'pseudoVoigt', fwhm: 1, mu: 0.5 } },
+  );
+
+  expect(result).toMatchCloseTo([
+    {
+      x: 5,
+      y: 10,
+      width: 5,
+      index: 1,
+      shape: { kind: 'pseudoVoigt', fwhm: 5.443525056288687, mu: 0.5 },
+      inflectionPoints: { from: { x: 0, index: 0 }, to: { x: 0, index: 0 } },
+    },
+  ]);
+});
