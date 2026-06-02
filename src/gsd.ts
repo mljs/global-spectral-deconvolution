@@ -4,6 +4,8 @@ import { sgg } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
   xIsMonotonic,
+  xMaxAbsoluteValue,
+  xMaxValue,
   xMinMaxValues,
   xNoiseStandardDeviation,
 } from 'ml-spectra-processing';
@@ -47,6 +49,13 @@ export interface GSDOptions {
    */
   minMaxRatio?: number;
   /**
+   * Threshold to use an absolute ratio of the maximum absolute Y value as
+   * an additional minimum peak height. Value must be between 0 and 1.
+   * When `0` (default) this option is ignored and `noiseLevel` is used.
+   * @default 0
+   */
+  maxAbsoluteRatio?: number;
+  /**
    * Use a quadratic optimizations with the peak and its 3 closest neighbors
    * @default false
    */
@@ -80,10 +89,14 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     },
     smoothY = false,
     maxCriteria = true,
+    maxAbsoluteRatio = 0,
     minMaxRatio = 0.00025,
     realTopDetection = false,
     peakDetectionAlgorithm = 'second',
   } = options;
+  if (maxAbsoluteRatio < 0 || maxAbsoluteRatio > 1) {
+    throw new Error('maxAbsoluteRatio must be between 0 and 1');
+  }
   const { x } = data;
   let { y } = data;
   if (xIsMonotonic(x) !== 1) {
@@ -113,9 +126,13 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   if (!maxCriteria) {
     for (let i = 0; i < y.length; i++) {
-      y[i] *= -1;
+      y[i] = -y[i];
     }
   }
+
+  const maxAbsoluteValue =
+    maxAbsoluteRatio > 0 ? maxAbsoluteRatio * xMaxAbsoluteValue(y) : noiseLevel;
+
   if (noiseLevel !== undefined) {
     for (let i = 0; i < y.length; i++) {
       if (y[i] < noiseLevel) {
@@ -132,8 +149,8 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
         derivative: 0,
       })
     : y;
-
   const { min: minY, max: maxY } = xMinMaxValues(yData);
+
   if (minY > maxY || minY === maxY) return [];
 
   const dY = sgg(y, xValue, {
@@ -146,10 +163,13 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
     derivative: 2,
   });
 
-  const yThreshold = Math.max(noiseLevel, minY + (maxY - minY) * minMaxRatio);
+  const yThreshold = xMaxValue([
+    noiseLevel,
+    minY + (maxY - minY) * minMaxRatio,
+    maxAbsoluteValue,
+  ]);
 
   const dX = x[1] - x[0];
-
   const peakData = { x, y, yData, dY, ddY, dX, yThreshold };
   let peaks: GSDPeakID[] = [];
   if (peakDetectionAlgorithm === 'first') {
