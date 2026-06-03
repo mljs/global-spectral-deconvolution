@@ -37,6 +37,10 @@ The result of GSD is an array of GSDPeak:
 
 Threshold to determine if a given peak should be considered as a noise, bases on its relative height compared to the highest peak.
 
+#### maxAbsoluteRatio=0 (0-1)
+
+Use an absolute threshold based on a fraction of the maximum absolute Y value. When set to a value in (0,1] the threshold will be `maxAbsoluteRatio * maxAbsoluteValue(y)`. When `0` (default) this option is ignored and `noiseLevel` is used. Value must be between 0 and 1.
+
 #### maxCriteria=true [true||false]
 
 Peaks are local maximum(true) or minimum(false)
