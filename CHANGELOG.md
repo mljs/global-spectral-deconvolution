@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0](https://github.com/mljs/global-spectral-deconvolution/compare/v14.0.1...v14.1.0) (2026-06-03)
+
+
+### Features
+
+* **gsd:** add maxAbsoluteRatio options to filterout peaks ([#148](https://github.com/mljs/global-spectral-deconvolution/issues/148)) ([392652f](https://github.com/mljs/global-spectral-deconvolution/commit/392652f0cf3b1999721184469b008d8b380f973d))
+
 ## [14.0.1](https://github.com/mljs/global-spectral-deconvolution/compare/v14.0.0...v14.0.1) (2026-05-13)
 
 
