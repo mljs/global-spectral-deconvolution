@@ -3,8 +3,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     coverage: {
-      include: ['src/**'],
-      exclude: ['**/__tests__/data/**', '**/.npmignore'],
+      include: ['src/**/*.ts'],
+      provider: 'v8',
     },
     setupFiles: ['vitest.setup.ts'],
     snapshotFormat: {

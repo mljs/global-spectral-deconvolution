@@ -1,4 +1,5 @@
 src/__tests__/data/*.json
 CHANGELOG.md
+coverage
 lib
 examples
