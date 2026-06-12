@@ -7,7 +7,7 @@
 
 Global spectral deconvolution and peak optimizer.
 
-## [API documentation](http://mljs.github.io/global-spectral-deconvolution/)
+## [API documentation](https://mljs.github.io/global-spectral-deconvolution/)
 
 `gsd`is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
 
