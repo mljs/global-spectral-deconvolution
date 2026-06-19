@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grouped Peaks Visualization</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      color: #222;
+    }
+    #controls {
+      display: grid;
+      gap: 12px;
+      max-width: 900px;
+      margin-bottom: 18px;
+    }
+    #plot {
+      width: 100%;
+      max-width: 960px;
+      height: 640px;
+    }
+    label {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .note {
+      color: #555;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grouped Peaks Visualization</h1>
+  <p class="note">
+    Automatically load <strong>xyData.json</strong> and <strong>groupedPeaks.json</strong> from this folder.
+  </p>
+
+  <div id="controls">
+    <div id="status">Loading example data...</div>
+  </div>
+
+  <div id="plot"></div>
+
+  <script>
+    const status = document.getElementById('status');
+    const plot = document.getElementById('plot');
+
+    let xyData = null;
+    let groupedPeaks = null;
+
+    async function loadData() {
+      try {
+        const [xyResponse, groupsResponse] = await Promise.all([
+          fetch('./xyData.json'),
+          fetch('./groupedPeaks.json'),
+        ]);
+
+        if (!xyResponse.ok || !groupsResponse.ok) {
+          throw new Error(
+            `Failed to load example data: ${xyResponse.status} ${xyResponse.statusText}, ${groupsResponse.status} ${groupsResponse.statusText}`,
+          );
+        }
+
+        xyData = await xyResponse.json();
+        groupedPeaks = await groupsResponse.json();
+        renderPlot(xyData, groupedPeaks);
+      } catch (error) {
+        setStatus('Failed to load example data: ' + error.message);
+        console.error(error);
+      }
+    }
+
+    loadData();
+
+    function setStatus(message) {
+      status.textContent = message;
+    }
+
+    function buildGroupTrace(group, index, maxY) {
+      const colors = [
+        '#1f77b4',
+        '#ff7f0e',
+        '#2ca02c',
+        '#d62728',
+        '#9467bd',
+        '#8c564b',
+        '#e377c2',
+        '#7f7f7f',
+        '#bcbd22',
+        '#17becf',
+      ];
+      const color = colors[index % colors.length];
+      const x = [];
+      const y = [];
+
+      for (const peak of group) {
+        const peakHeight = Number.isFinite(peak.y)
+          ? peak.y
+          : maxY * 0.25;
+        x.push(peak.x, peak.x, null);
+        y.push(0, peakHeight, null);
+      }
+
+      return {
+        x,
+        y,
+        mode: 'lines',
+        line: {
+          color,
+          width: 2,
+        },
+        name: `Group ${index + 1}`,
+        showlegend: true,
+      };
+    }
+
+    function renderPlot(data, groups) {
+      if (!Array.isArray(data.x) || !Array.isArray(data.y)) {
+        setStatus('xyData.json must contain arrays x and y.');
+        return;
+      }
+      if (!Array.isArray(groups)) {
+        setStatus('groupedPeaks.json must be an array of peak groups.');
+        return;
+      }
+
+      const maxY = Math.max(...data.y.map((value) => Number(value) || 0), 1);
+      const xyTrace = {
+        x: data.x,
+        y: data.y,
+        mode: 'lines',
+        name: 'XY data',
+        line: { color: '#000000', width: 2 },
+      };
+
+      const groupTraces = groups.map((group, index) => buildGroupTrace(group, index, maxY));
+
+      const peakMarkers = {
+        x: groups.flatMap((group) => group.map((peak) => peak.x)),
+        y: groups.flatMap((group) => group.map((peak) => Number.isFinite(peak.y) ? peak.y : 0)),
+        mode: 'markers',
+        marker: {
+          size: 7,
+          color: groups.flatMap((group, index) => Array(group.length).fill(index)),
+          colorscale: 'Portland',
+          showscale: false,
+        },
+        name: 'Peak centers',
+      };
+
+      Plotly.newPlot(plot, [xyTrace, ...groupTraces, peakMarkers], {
+        title: 'XY Data with Grouped Peak Lines',
+        xaxis: { title: 'x' },
+        yaxis: { title: 'y' },
+        legend: { orientation: 'h', x: 0, y: -0.1 },
+        margin: { t: 50, b: 80 },
+      }, { responsive: true });
+
+      setStatus('Rendered plot successfully.');
+    }
+  </script>
+</body>
+</html>
