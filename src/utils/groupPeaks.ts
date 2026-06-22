@@ -1,3 +1,5 @@
+import { splitGroup } from './splitGroup.ts';
+
 export interface GroupPeaksOptions {
   /**
    * Multiplier applied to the average width of two adjacent peaks when
@@ -5,6 +7,12 @@ export interface GroupPeaksOptions {
    * @default 1
    */
   factor?: number;
+  /**
+   * If provided, any group exceeding this size will be recursively split
+   * at the largest normalised gap until all groups satisfy the constraint.
+   * @default 15
+   */
+  maxNumberOfPeaks?: number;
 }
 
 /**
@@ -21,7 +29,7 @@ export function groupPeaks<T extends { x: number; width: number }>(
 ): T[][] {
   if (peaks.length === 0) return [];
 
-  const { factor = 1 } = options;
+  const { factor = 1, maxNumberOfPeaks = 15 } = options;
 
   const sortedPeaks = peaks.toSorted((a, b) => a.x - b.x);
 
@@ -41,6 +49,14 @@ export function groupPeaks<T extends { x: number; width: number }>(
       groups.push(currentGroup);
     }
     previousPeak = peak;
+  }
+
+  if (maxNumberOfPeaks !== undefined) {
+    return groups.flatMap((group) =>
+      group.length > maxNumberOfPeaks
+        ? splitGroup(group, maxNumberOfPeaks)
+        : [group],
+    );
   }
 
   return groups;
