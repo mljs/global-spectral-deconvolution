@@ -6,7 +6,7 @@ export interface GroupPeaksOptions {
    * deciding whether to group them.
    * @default 1
    */
-  factor?: number;
+  groupingFactor?: number;
   /**
    * If provided, any group exceeding this size will be recursively split
    * at the largest normalised gap until all groups satisfy the constraint.
@@ -29,7 +29,7 @@ export function groupPeaks<T extends { x: number; width: number }>(
 ): T[][] {
   if (peaks.length === 0) return [];
 
-  const { factor = 1, maxNumberOfPeaks = 15 } = options;
+  const { groupingFactor = 1, maxNumberOfPeaks = 15 } = options;
 
   const sortedPeaks = peaks.toSorted((a, b) => a.x - b.x);
 
@@ -41,7 +41,7 @@ export function groupPeaks<T extends { x: number; width: number }>(
     const peak = sortedPeaks[i];
     if (
       (peak.x - previousPeak.x) / ((peak.width + previousPeak.width) / 2) <=
-      factor
+      groupingFactor
     ) {
       currentGroup.push(peak);
     } else {

@@ -66,3 +66,29 @@ test('Should throw because execution time is over timeout', () => {
     optimizePeaksWithLogs(data, [{ x: 0.1, y: 0.9, width: 0.11 }], options),
   ).toThrow('The execution time is over to 0 seconds');
 });
+
+test('passes maxNumberOfPeaks to groupPeaks and splits large groups', () => {
+  const peaks = [
+    { x: 0, y: 1, width: 0.12 },
+    { x: 0.5, y: 0.8, width: 0.12 },
+  ];
+
+  const data = generateSpectrum(peaks, {
+    generator: {
+      from: -1,
+      to: 1.5,
+      nbPoints: 201,
+      shape: {
+        kind: 'gaussian',
+      },
+    },
+  });
+
+  const result = optimizePeaksWithLogs(data, peaks, {
+    groupingFactor: 10,
+    maxNumberOfPeaks: 1,
+  });
+
+  expect(result.logs).toHaveLength(2);
+  expect(result.logs.map((log) => log.groupSize)).toStrictEqual([1, 1]);
+});
