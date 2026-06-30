@@ -64,7 +64,8 @@ export function optimizePeaksWithLogs<T extends Peak>(
   const {
     fromTo = {},
     shape = { kind: 'gaussian' },
-    groupingFactor = 1,
+    maxNumberOfPeaks,
+    groupingFactor,
     factorLimits = 2,
     parameters,
     optimization = {
@@ -77,7 +78,10 @@ export function optimizePeaksWithLogs<T extends Peak>(
 
   // Optimize peaks in groups: fitting everything at once would be too slow and
   // have too many free parameters.
-  const groups = groupPeaks(peakList, { factor: groupingFactor });
+  const groups = groupPeaks(peakList, {
+    groupingFactor,
+    maxNumberOfPeaks,
+  });
   const logs: OptimizePeaksLog[] = [];
   const results: Array<GSDPeakOptimizedIDOrNot<T>> = [];
   for (const peakGroup of groups) {

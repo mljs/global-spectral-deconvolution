@@ -25,6 +25,12 @@ export interface OptimizePeaksOptions {
    */
   groupingFactor?: number;
   /**
+   * Maximum number of peaks included in a single optimization group.
+   * When a group exceeds this size, it is recursively split.
+   * @default 15
+   */
+  maxNumberOfPeaks?: number;
+  /**
    * Width multiplier used to derive the default `from` / `to` bounds.
    * @default 2
    */
