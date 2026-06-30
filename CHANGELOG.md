@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.1](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.0...v14.2.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* add maxNumberOfPeaks option to optimizePeaks grouping ([#155](https://github.com/mljs/global-spectral-deconvolution/issues/155)) ([1df145c](https://github.com/mljs/global-spectral-deconvolution/commit/1df145cc298df224db9e45645ca6ff1f88b093f0))
+
 ## [14.2.0](https://github.com/mljs/global-spectral-deconvolution/compare/v14.1.0...v14.2.0) (2026-06-22)
 
 
