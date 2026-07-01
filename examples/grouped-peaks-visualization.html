@@ -155,7 +155,7 @@
 
       Plotly.newPlot(plot, [xyTrace, ...groupTraces, peakMarkers], {
         title: 'XY Data with Grouped Peak Lines',
-        xaxis: { title: 'x' },
+        xaxis: { title: 'x', autorange: 'reversed' },
         yaxis: { title: 'y' },
         legend: { orientation: 'h', x: 0, y: -0.1 },
         margin: { t: 50, b: 80 },
