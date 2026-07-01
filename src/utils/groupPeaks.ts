@@ -8,6 +8,15 @@ export interface GroupPeaksOptions {
    */
   groupingFactor?: number;
   /**
+   * Multiplier used to define an effective influence radius around each peak
+   * (scaled by `sqrt(groupingFactor)`) for overlap-based grouping.
+   *
+   * This captures broad partially-overlapping peaks that are frequently found
+   * in NMR spectra and should usually be optimized together.
+   * @default 0.8
+   */
+  overlapFactor?: number;
+  /**
    * If provided, any group exceeding this size will be recursively split
    * at the largest normalised gap until all groups satisfy the constraint.
    * @default 15
@@ -17,6 +26,11 @@ export interface GroupPeaksOptions {
 
 /**
  * Group peaks based on a width-aware factor.
+ *
+ * The grouping criterion is hybrid:
+ * 1. Legacy center-distance criterion normalised by mean width.
+ * 2. Effective-overlap criterion using influence radii around each peak.
+ *
  * Only `x` and `width` are used, so the current implementation does not take
  * peak asymmetry into account.
  * @param peaks - Peaks with `x` and `width` properties.
@@ -29,7 +43,14 @@ export function groupPeaks<T extends { x: number; width: number }>(
 ): T[][] {
   if (peaks.length === 0) return [];
 
-  const { groupingFactor = 1, maxNumberOfPeaks = 15 } = options;
+  const {
+    groupingFactor = 1,
+    overlapFactor = 0.8,
+    maxNumberOfPeaks = 15,
+  } = options;
+
+  const safeGroupingFactor = Math.max(0, groupingFactor);
+  const overlapScale = overlapFactor * Math.sqrt(safeGroupingFactor);
 
   const sortedPeaks = peaks.toSorted((a, b) => a.x - b.x);
 
@@ -39,9 +60,16 @@ export function groupPeaks<T extends { x: number; width: number }>(
 
   for (let i = 1; i < sortedPeaks.length; i++) {
     const peak = sortedPeaks[i];
+    const distance = peak.x - previousPeak.x;
+    const averageWidth = (peak.width + previousPeak.width) / 2;
+
+    const normalizedDistance = distance / averageWidth;
+    const overlapDistance =
+      overlapScale * (previousPeak.width + peak.width) - distance;
+
     if (
-      (peak.x - previousPeak.x) / ((peak.width + previousPeak.width) / 2) <=
-      groupingFactor
+      normalizedDistance <= safeGroupingFactor ||
+      (Number.isFinite(overlapDistance) && overlapDistance >= 0)
     ) {
       currentGroup.push(peak);
     } else {

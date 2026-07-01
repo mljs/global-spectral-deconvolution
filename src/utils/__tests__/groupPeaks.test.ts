@@ -72,3 +72,36 @@ test('groupingFactor=5', () => {
     ],
   ]);
 });
+
+test('groups broad partially-overlapping peaks with default hybrid criterion', () => {
+  const result = groupPeaks([
+    { x: 10, y: 10, width: 20 },
+    { x: 25, y: 10, width: 2 },
+    { x: 60, y: 10, width: 2 },
+  ]);
+
+  expect(result).toStrictEqual([
+    [
+      { x: 10, y: 10, width: 20 },
+      { x: 25, y: 10, width: 2 },
+    ],
+    [{ x: 60, y: 10, width: 2 }],
+  ]);
+});
+
+test('overlapFactor=0 disables overlap-based extension and keeps strict distance grouping', () => {
+  const result = groupPeaks(
+    [
+      { x: 10, y: 10, width: 20 },
+      { x: 25, y: 10, width: 2 },
+      { x: 60, y: 10, width: 2 },
+    ],
+    { overlapFactor: 0 },
+  );
+
+  expect(result).toStrictEqual([
+    [{ x: 10, y: 10, width: 20 }],
+    [{ x: 25, y: 10, width: 2 }],
+    [{ x: 60, y: 10, width: 2 }],
+  ]);
+});
