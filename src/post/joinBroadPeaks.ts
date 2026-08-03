@@ -1,4 +1,4 @@
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 import type { OptimizationOptions } from 'ml-spectra-fitting';
 
 import type { GSDPeak } from '../GSDPeak.ts';
@@ -26,7 +26,7 @@ export interface JoinBroadPeaksOptions {
    * Shape used for fitting the broad peak.
    * @default { kind: 'gaussian' }
    */
-  shape?: Shape1D;
+  shape?: Shape1DWithFWHM;
   /**
    * Kind and options of the algorithm used to optimize parameters.
    * @default { kind: 'lm', options: { timeout: 10 } }
@@ -34,7 +34,7 @@ export interface JoinBroadPeaksOptions {
   optimization?: OptimizationOptions;
 }
 
-export type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
+export type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1DWithFWHM };
 
 /**
  * Join peaks that seem to belong to a broad signal into a single broad peak.

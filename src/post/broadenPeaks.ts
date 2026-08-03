@@ -1,14 +1,16 @@
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 import { getShape1D } from 'ml-peak-shape-generator';
 
 import type { GSDBroadenPeak } from '../GSDBroadenPeak.ts';
 import type { GSDPeak } from '../GSDPeak.ts';
 
-type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1D };
+type GSDPeakOptionalShape = GSDPeak & { shape?: Shape1DWithFWHM };
 
 type GSDBroadenPeakWithID = GSDBroadenPeak & { id: string };
-type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1D };
-type GSDBroadenPeakWithShapeID = GSDBroadenPeakWithID & { shape: Shape1D };
+type GSDBroadenPeakWithShape = GSDBroadenPeak & { shape: Shape1DWithFWHM };
+type GSDBroadenPeakWithShapeID = GSDBroadenPeakWithID & {
+  shape: Shape1DWithFWHM;
+};
 
 export type WithOrWithout<T, ToExtends, TrueType, FalseType> =
   T extends ToExtends ? TrueType : FalseType;

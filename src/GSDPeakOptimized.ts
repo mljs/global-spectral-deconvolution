@@ -1,4 +1,4 @@
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 
 export interface GSDPeakOptimized {
   /**
@@ -13,5 +13,5 @@ export interface GSDPeakOptimized {
   /** Width at the level of the inflection points. */
   width: number;
   /** Fitted shape (including `fwhm`). */
-  shape: Shape1D;
+  shape: Shape1DWithFWHM;
 }

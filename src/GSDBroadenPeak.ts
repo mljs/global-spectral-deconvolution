@@ -1,4 +1,4 @@
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 
 export interface GSDBroadenPeak {
   /**
@@ -16,7 +16,7 @@ export interface GSDBroadenPeak {
    * Shape propagated from the source peak.
    * @default undefined
    */
-  shape?: Shape1D;
+  shape?: Shape1DWithFWHM;
   /** Index of the peak in the source spectrum. */
   index: number;
   /** Left edge of the broadened peak. */
