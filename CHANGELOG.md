@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.2](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.1...v14.2.2) (2026-08-03)
+
+
+### Bug Fixes
+
+* force shapes with `fwhm` property ([#157](https://github.com/mljs/global-spectral-deconvolution/issues/157)) ([fc0491f](https://github.com/mljs/global-spectral-deconvolution/commit/fc0491f5be7e68d2252999de36ec89d71cf9cedf))
+
 ## [14.2.1](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.0...v14.2.1) (2026-06-30)
 
 
