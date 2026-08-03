@@ -1,5 +1,5 @@
 import type { DataXY, FromTo } from 'cheminfo-types';
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 import type { OptimizationOptions, OptimizeOptions } from 'ml-spectra-fitting';
 
 import type { Peak } from './optimizePeaksWithLogs.ts';
@@ -17,7 +17,7 @@ export interface OptimizePeaksOptions {
    * Shape to use for optimization.
    * @default { kind: 'gaussian' }
    */
-  shape?: Shape1D;
+  shape?: Shape1DWithFWHM;
   /**
    * Multiplier applied to peak widths when deciding whether adjacent peaks
    * should be grouped and optimized together.

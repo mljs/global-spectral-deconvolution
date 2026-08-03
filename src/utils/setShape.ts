@@ -1,4 +1,4 @@
-import type { Shape1D } from 'ml-peak-shape-generator';
+import type { Shape1DWithFWHM } from 'ml-peak-shape-generator';
 import { getShape1D } from 'ml-peak-shape-generator';
 
 export interface SetShapeOptions<T> {
@@ -6,7 +6,7 @@ export interface SetShapeOptions<T> {
    * Shape to use to calculate FWHM.
    * @default { kind: 'gaussian' }
    */
-  shape?: Shape1D;
+  shape?: Shape1DWithFWHM;
   /**
    * Destination array.
    * @default structuredClone(peaks)
@@ -23,7 +23,7 @@ export interface SetShapeOptions<T> {
 export function setShape<T extends { width: number }>(
   peaks: T[],
   options: SetShapeOptions<T> = {},
-): Array<T & { shape: Shape1D }> {
+): Array<T & { shape: Shape1DWithFWHM }> {
   const { shape = { kind: 'gaussian' }, output = structuredClone(peaks) } =
     options;
   const shapeInstance = getShape1D(shape);
