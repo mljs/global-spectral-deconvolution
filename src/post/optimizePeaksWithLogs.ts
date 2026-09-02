@@ -124,11 +124,11 @@ export function optimizePeaksWithLogs<T extends Peak>(
         optimization,
       });
 
-      for (let i = 0; i < optimizedPeaks.length; i++) {
+      for (const optimizedPeak of optimizedPeaks) {
         results.push({
-          ...optimizedPeaks[i],
-          width: getShape1D(optimizedPeaks[i].shape).fwhmToWidth(
-            optimizedPeaks[i].shape.fwhm,
+          ...optimizedPeak,
+          width: getShape1D(optimizedPeak.shape).fwhmToWidth(
+            optimizedPeak.shape.fwhm,
           ),
         } as GSDPeakOptimizedIDOrNot<T>);
       }
