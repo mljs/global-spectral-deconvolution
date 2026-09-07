@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.3](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.2...v14.2.3) (2026-09-07)
+
+
+### Bug Fixes
+
+* **optimizepeaks:** getshape1d called with unoptimized peaks on line 127 ([#160](https://github.com/mljs/global-spectral-deconvolution/issues/160)) ([2e97b7e](https://github.com/mljs/global-spectral-deconvolution/commit/2e97b7e5b6fce03c284dc841e60de03e75519d2d))
+
 ## [14.2.2](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.1...v14.2.2) (2026-08-03)
 
 
