@@ -7,14 +7,23 @@
 
 Global spectral deconvolution and peak optimizer.
 
+## Installation
+
+```console
+npm i ml-gsd
+```
+
+This package is ESM-only. CommonJS consumers need Node.js >= 22.12 or any 24.x
+or later, where `require()` of a synchronous ES module is supported.
+
 ## [API documentation](https://mljs.github.io/global-spectral-deconvolution/)
 
-`gsd`is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
+`gsd` is using an algorithm that is searching for inflection points to determine the position and width of peaks. The width is defined as the distance between the 2 inflection points. Depending the shape of the peak this width may differ from 'fwhm' (Full Width Half Maximum).
 
 Preprocessing of the data involves the following parameters
 
 - `maxCriteria`: search either for maxima or minima. We will invert the data and the results if searching for a minima
-- `noiseLevel`: specifies the noise level. All the peaks bellow this value (or above in case of maxCriteria=false) are ignored. By default the noiseLevel will be set to the median + 3 x sd. This is a good value when not too many peaks are present in the spectrum.
+- `noiseLevel`: specifies the noise level. All the peaks below this value (or above in case of maxCriteria=false) are ignored. By default the noiseLevel will be set to the median + 3 x sd. This is a good value when not too many peaks are present in the spectrum.
 - `sgOptions`: Savitzky-Golay filter that is used to smooth the data for the calculation of the derivatives
 - `smoothY`: If this value is true the SG filter is not only applied during the calculation of the derivatives but also on the original data
 
@@ -57,6 +66,10 @@ Use a quadratic optimizations with the peak and its 3 closest neighbors to deter
 
 Savitzky-Golay parameters. windowSize should be odd; polynomial is the degree of the polynomial to use in the approximations. It should be bigger than 2.
 
+#### ids=true [true||false]
+
+Give every peak a random `id`. Minting one costs more than finding the peak did — on a mass-spectrometry imaging run picking millions of peaks it is around 20% of the whole deconvolution — so a caller that reads only the coordinates should pass `ids: false`, and the `id` property is then left off the peaks entirely.
+
 ### Post methods
 
 #### GSD.broadenPeaks(peakList, {factor=2, overlap=false})
@@ -77,12 +90,13 @@ import { gsd, optimizePeaks } from 'ml-gsd';
 // generate a sample spectrum of the form {x:[], y:[]}
 const data = new IsotopicDistribution('C').getGaussian();
 
-let peaks = gsd(data, {
+const peaks = gsd(data, {
   minMaxRatio: 0.00025, // Threshold to determine if a given peak should be considered as a noise
   realTopDetection: true, // Correction of the x and y coordinates using a quadratic optimizations
   maxCriteria: true, // Are we looking for maxima or minima
   smoothY: false, // should we smooth the spectra and return smoothed peaks ? Default false.
   sgOptions: { windowSize: 7, polynomial: 3 }, // Savitzky-Golay smoothing parameters for first and second derivative calculation
+  ids: true, // Give each peak a random id. Pass false when you only read the coordinates
 });
 console.log(peaks);
 /*
@@ -91,23 +105,23 @@ console.log(peaks);
   - ddY = second derivative on the top of the peak
  */
 
-let optimized = optimizePeaks(data, peaks);
+const optimized = optimizePeaks(data, peaks);
 console.log(optimized);
 /*
 [
   {
-    x: 11.99999999960885,
-    y: 0.9892695646808637,
-    shape: { kind: 'gaussian' },
-    fwhm: 0.010000209455943584,
-    width: 0.008493395898379276
+    x: 11.999999999607912,
+    y: 0.9892695155316565,
+    shape: { fwhm: 0.010000209739248308, kind: 'gaussian' },
+    id: '80b85a44-e14f-4bfd-a317-78a0b27feb39',
+    width: 0.008493396138996155
   },
   {
-    x: 13.003354834590702,
-    y: 0.010699637653261198,
-    shape: { kind: 'gaussian' },
-    fwhm: 0.010000226962299321,
-    width: 0.008493410766908847
+    x: 13.003354834677824,
+    y: 0.010699670320385445,
+    shape: { fwhm: 0.010000209728620733, kind: 'gaussian' },
+    id: '4deb729b-c44c-4713-b7c7-f630621fc44d',
+    width: 0.008493396129969924
   }
 ]
 */
