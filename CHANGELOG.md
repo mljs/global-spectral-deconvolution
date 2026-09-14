@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.3.0](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.2...v14.3.0) (2026-09-14)
+
+
+### Features
+
+* speed improvement  using sggPair ([2c13ce1](https://github.com/mljs/global-spectral-deconvolution/commit/2c13ce189fcc8c55564fce3a00c8571d8c0d8d10))
+
+
+### Bug Fixes
+
+* **optimizepeaks:** getshape1d called with unoptimized peaks on line 127 ([#160](https://github.com/mljs/global-spectral-deconvolution/issues/160)) ([2e97b7e](https://github.com/mljs/global-spectral-deconvolution/commit/2e97b7e5b6fce03c284dc841e60de03e75519d2d))
+
 ## [14.2.2](https://github.com/mljs/global-spectral-deconvolution/compare/v14.2.1...v14.2.2) (2026-08-03)
 
 
