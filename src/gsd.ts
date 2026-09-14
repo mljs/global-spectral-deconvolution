@@ -1,6 +1,6 @@
 import type { DataXY } from 'cheminfo-types';
 import type { SGGOptions } from 'ml-savitzky-golay-generalized';
-import { sgg } from 'ml-savitzky-golay-generalized';
+import { sgg, sggPair } from 'ml-savitzky-golay-generalized';
 import {
   xIsEquallySpaced,
   xIsMonotonic,
@@ -153,14 +153,10 @@ export function gsd(data: DataXY, options: GSDOptions = {}): GSDPeakID[] {
 
   if (minY > maxY || minY === maxY) return [];
 
-  const dY = sgg(y, xValue, {
-    ...sgOptions,
-    derivative: 1,
-  });
-
-  const ddY = sgg(y, xValue, {
-    ...sgOptions,
-    derivative: 2,
+  const [dY, ddY] = sggPair(y, xValue, {
+    windowSize: sgOptions.windowSize,
+    polynomial: sgOptions.polynomial,
+    derivatives: [1, 2],
   });
 
   const yThreshold = xMaxValue([
